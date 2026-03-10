@@ -573,8 +573,8 @@ function showTrade(dateStr) {{
         html += '<div class="chart-wrap">';
         html += '<div class="ch-header"><span class="ch-title">0DTE Call $' + t.strike + 'C &mdash; ' + dateStr + '</span>';
         html += '<span class="ch-sub">';
-        html += '<span style="color:#ff9800">&#9646; Entry $' + t.opt_entry_price.toFixed(2) + '</span> &middot; ';
-        html += '<span style="color:#e040fb">&#9646; Exit $' + t.opt_exit_price.toFixed(2) + '</span>';
+        html += '<span style="color:#2962ff">&#9646; Entry $' + t.opt_entry_price.toFixed(2) + '</span> &middot; ';
+        html += '<span style="color:' + (t.pnl_dollars >= 0 ? '#00d4aa' : '#ff4466') + '">&#9646; Exit $' + t.opt_exit_price.toFixed(2) + '</span>';
         html += '</span></div>';
         html += '<div id="optChartContainer"><div id="optOhlcLegend"></div></div>';
         html += '</div>';
@@ -676,18 +676,20 @@ function renderOptionChart(dateStr, t) {{
     }});
 
     tvOptCandleSeries = tvOptChart.addCandlestickSeries({{
-        upColor: '#ff9800', downColor: '#e040fb',
-        borderUpColor: '#ff9800', borderDownColor: '#e040fb',
-        wickUpColor: '#ff9800', wickDownColor: '#e040fb',
+        upColor: '#26a69a', downColor: '#ef5350',
+        borderUpColor: '#26a69a', borderDownColor: '#ef5350',
+        wickUpColor: '#26a69a', wickDownColor: '#ef5350',
     }});
 
     const candleData = bars.map(b => ({{ time: b[0], open: b[1], high: b[2], low: b[3], close: b[4] }}));
     tvOptCandleSeries.setData(candleData);
 
+    const exitColor = t.pnl_dollars >= 0 ? '#00d4aa' : '#ff4466';
+
     // Entry price line
-    tvOptCandleSeries.createPriceLine({{ price: t.opt_entry_price, color: '#ff9800', lineWidth: 1, lineStyle: 2, lineVisible: false, axisLabelVisible: true, title: '' }});
+    tvOptCandleSeries.createPriceLine({{ price: t.opt_entry_price, color: '#2962ff', lineWidth: 1, lineStyle: 2, lineVisible: false, axisLabelVisible: true, title: '' }});
     // Exit price line
-    tvOptCandleSeries.createPriceLine({{ price: t.opt_exit_price, color: '#e040fb', lineWidth: 1, lineStyle: 2, lineVisible: false, axisLabelVisible: true, title: '' }});
+    tvOptCandleSeries.createPriceLine({{ price: t.opt_exit_price, color: exitColor, lineWidth: 1, lineStyle: 2, lineVisible: false, axisLabelVisible: true, title: '' }});
 
     // Find entry and exit times
     let entryTime = candleData[0].time;
@@ -704,9 +706,8 @@ function renderOptionChart(dateStr, t) {{
         if (barTimeStr === t.exit_time) {{ exitTime = bar.time; break; }}
     }}
 
-    const exitColor = t.pnl_dollars >= 0 ? '#00d4aa' : '#ff4466';
     const markers = [
-        {{ time: entryTime, position: 'belowBar', color: '#ff9800', shape: 'arrowUp', text: 'BUY $' + t.opt_entry_price.toFixed(2) + ' x' + t.opt_contracts }},
+        {{ time: entryTime, position: 'belowBar', color: '#2962ff', shape: 'arrowUp', text: 'BUY $' + t.opt_entry_price.toFixed(2) + ' x' + t.opt_contracts }},
         {{ time: exitTime, position: 'aboveBar', color: exitColor, shape: 'arrowDown', text: 'SELL $' + t.opt_exit_price.toFixed(2) }},
     ];
     markers.sort((a, b) => a.time - b.time);
@@ -721,7 +722,7 @@ function renderOptionChart(dateStr, t) {{
         if (!data) {{ legend.innerHTML = ''; return; }}
         const o = data.open, h = data.high, l = data.low, c = data.close;
         const chg = c - o;
-        const color = chg >= 0 ? '#ff9800' : '#e040fb';
+        const color = chg >= 0 ? '#26a69a' : '#ef5350';
         const dt = new Date(param.time * 1000);
         const hh = String(dt.getUTCHours()).padStart(2,'0');
         const mm = String(dt.getUTCMinutes()).padStart(2,'0');
