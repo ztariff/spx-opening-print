@@ -46,7 +46,22 @@ API_KEY = "cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF"
 BASE_URL = "https://api.polygon.io"
 
 MIN_RISK = 25000
-MAX_RISK = 150000
+MAX_LOSS_TARGET = 150000  # Target max loss in dollars
+
+# Dynamic max premium by score bracket, based on historical worst-case loss %
+# Score < 25: worst loss = 100% of premium -> max premium $150k
+# Score 25-40: worst loss = 99% -> max premium $155k
+# Score 40-55: worst loss = 89% -> max premium $170k
+# Score 55-70: worst loss = 87% -> max premium $175k
+# Score 70-85: worst loss = 77% -> max premium $200k
+# Score 85+:   worst loss = 75% -> max premium $200k
+def get_max_premium(score):
+    if score < 25:   return 150000
+    elif score < 40: return 155000
+    elif score < 55: return 170000
+    elif score < 70: return 175000
+    elif score < 85: return 200000
+    else:            return 200000
 HYBRID_THRESHOLD = 25
 
 # Rate limit: Polygon free tier = 5 req/min. Paid tiers are higher.
@@ -475,11 +490,12 @@ def evaluate_signals(d, bars, intra_dates, intra_idx, spx_intraday,
     if n_positive < 1:
         return None
 
+    max_premium = get_max_premium(score)
     clamped_score = max(0, min(score, 80))
-    risk = MIN_RISK + (MAX_RISK - MIN_RISK) * (clamped_score / 80)
-    if n_positive >= 5: risk = min(risk * 1.3, MAX_RISK)
-    elif n_positive >= 3: risk = min(risk * 1.15, MAX_RISK)
-    risk = max(MIN_RISK, min(MAX_RISK, round(risk / 1000) * 1000))
+    risk = MIN_RISK + (max_premium - MIN_RISK) * (clamped_score / 80)
+    if n_positive >= 5: risk = min(risk * 1.3, max_premium)
+    elif n_positive >= 3: risk = min(risk * 1.15, max_premium)
+    risk = max(MIN_RISK, min(max_premium, round(risk / 1000) * 1000))
 
     return {
         "score": score,
