@@ -1,0 +1,107 @@
+================================================================================
+SPX OPENING PRINT — 0DTE OPTIONS BACKTEST
+================================================================================
+  Entry: Buy ATM 0DTE SPX call at 9:30:10 (10-second bars)
+  Trades with 10s entry price: 543/545 (100%)
+  Fallback: 1st 1-min bar close when 10s data unavailable
+  Max loss per trade = premium paid (no bail needed)
+  Approach C hybrid (threshold=25)
+  Date range: 2023-02-14 to 2026-03-04
+
+================================================================================
+OPTIONS-BASED RESULTS
+--------------------------------------------------------------------------------
+  Trades: 545  |  WR: 40.4%
+  Total P&L: $4,798,881
+  Avg Win: $78,458  |  Avg Loss: $-38,344
+  Best: $418,700  |  Worst: $-130,095
+  Max Drawdown: $750,668
+  Avg Premium per Trade: $91,660
+  Avg Contracts per Trade: 62
+
+================================================================================
+LINEAR COMPARISON (same days, Approach C)
+--------------------------------------------------------------------------------
+  Trades: 545  |  WR: 38.9%
+  Total P&L: $16,695,001
+  Best: $2,500,000  |  Worst: $-1,172,250
+  Max Drawdown: $2,500,855
+
+================================================================================
+BAIL TRADE COMPARISON (bearish 1st bar, score >= 25)
+--------------------------------------------------------------------------------
+  Bail trades: 135
+  Options P&L on bail days: $88,257
+  Linear P&L on bail days:  $-12,801,848
+  Options advantage: $12,890,105
+
+================================================================================
+TOP 10 BEST OPTIONS TRADES
+--------------------------------------------------------------------------------
+  2023-08-29  |  P&L: $   418,700  |  Entry: $   9.40  Exit: $  48.90  |  106 contracts  |  Profit Target (SPX)
+  2023-08-23  |  P&L: $   365,695  |  Entry: $  13.65  Exit: $  47.20  |  109 contracts  |  Time Stop
+  2024-04-05  |  P&L: $   298,056  |  Entry: $  16.95  Exit: $  50.82  |  88 contracts  |  Profit Target (SPX)
+  2025-03-20  |  P&L: $   295,680  |  Entry: $  19.40  Exit: $  57.80  |  77 contracts  |  Profit Target (SPX)
+  2024-04-23  |  P&L: $   294,483  |  Entry: $  13.40  Exit: $  39.93  |  111 contracts  |  Time Stop
+  2023-04-28  |  P&L: $   273,346  |  Entry: $   8.10  Exit: $  36.28  |  97 contracts  |  Time Stop
+  2023-05-26  |  P&L: $   268,386  |  Entry: $  15.10  Exit: $  47.83  |  82 contracts  |  Time Stop
+  2023-10-06  |  P&L: $   265,200  |  Entry: $  16.70  Exit: $  55.70  |  68 contracts  |  Profit Target (SPX)
+  2023-07-07  |  P&L: $   264,726  |  Entry: $   8.30  Exit: $  35.04  |  99 contracts  |  Time Stop
+  2024-07-26  |  P&L: $   259,458  |  Entry: $  17.86  Exit: $  49.12  |  83 contracts  |  Profit Target (SPX)
+
+TOP 10 WORST OPTIONS TRADES
+--------------------------------------------------------------------------------
+  2025-03-25  |  P&L: $   -95,760  |  Entry: $  14.90  Exit: $   3.50  |  84 contracts  |  Time Stop
+  2023-10-24  |  P&L: $   -97,317  |  Entry: $  15.03  Exit: $   5.20  |  99 contracts  |  Stop Loss (SPX)
+  2024-04-17  |  P&L: $  -104,995  |  Entry: $  17.95  Exit: $   5.30  |  83 contracts  |  Stop Loss (SPX)
+  2023-03-01  |  P&L: $  -107,640  |  Entry: $  10.80  Exit: $   3.00  |  138 contracts  |  Stop Loss (SPX)
+  2025-01-02  |  P&L: $  -112,384  |  Entry: $  23.20  Exit: $   5.64  |  64 contracts  |  Stop Loss (SPX)
+  2024-04-19  |  P&L: $  -112,398  |  Entry: $  19.20  Exit: $   4.79  |  78 contracts  |  Stop Loss (SPX)
+  2025-02-26  |  P&L: $  -112,465  |  Entry: $  18.05  Exit: $   4.50  |  83 contracts  |  Time Stop
+  2024-04-18  |  P&L: $  -113,535  |  Entry: $  17.05  Exit: $   4.00  |  87 contracts  |  Stop Loss (SPX)
+  2023-03-08  |  P&L: $  -114,950  |  Entry: $  13.60  Exit: $   1.50  |  95 contracts  |  Time Stop
+  2023-05-12  |  P&L: $  -130,095  |  Entry: $  10.20  Exit: $   1.35  |  147 contracts  |  Stop Loss (SPX)
+
+================================================================================
+MONTHLY BREAKDOWN (OPTIONS)
+--------------------------------------------------------------------------------
+  2023-02  |  Trades:   8  |  P&L: $  -199,946  |  Cum: $    -199,946  |  WR: 12%
+  2023-03  |  Trades:  21  |  P&L: $   167,709  |  Cum: $     -32,237  |  WR: 43%
+  2023-04  |  Trades:  11  |  P&L: $   385,715  |  Cum: $     353,478  |  WR: 36%
+  2023-05  |  Trades:  13  |  P&L: $   336,145  |  Cum: $     689,623  |  WR: 46%
+  2023-06  |  Trades:  11  |  P&L: $   302,466  |  Cum: $     992,089  |  WR: 73%
+  2023-07  |  Trades:  14  |  P&L: $   174,800  |  Cum: $   1,166,889  |  WR: 43%
+  2023-08  |  Trades:  19  |  P&L: $   786,690  |  Cum: $   1,953,579  |  WR: 42%
+  2023-09  |  Trades:  16  |  P&L: $  -554,178  |  Cum: $   1,399,401  |  WR: 25%
+  2023-10  |  Trades:  18  |  P&L: $   -12,683  |  Cum: $   1,386,718  |  WR: 28%
+  2023-11  |  Trades:  17  |  P&L: $    -4,453  |  Cum: $   1,382,265  |  WR: 35%
+  2023-12  |  Trades:  16  |  P&L: $   160,260  |  Cum: $   1,542,525  |  WR: 62%
+  2024-01  |  Trades:  14  |  P&L: $  -128,651  |  Cum: $   1,413,874  |  WR: 36%
+  2024-02  |  Trades:  11  |  P&L: $   -47,627  |  Cum: $   1,366,247  |  WR: 36%
+  2024-03  |  Trades:  12  |  P&L: $       502  |  Cum: $   1,366,749  |  WR: 25%
+  2024-04  |  Trades:  18  |  P&L: $   172,109  |  Cum: $   1,538,858  |  WR: 28%
+  2024-05  |  Trades:  15  |  P&L: $  -142,063  |  Cum: $   1,396,795  |  WR: 40%
+  2024-06  |  Trades:   5  |  P&L: $   -44,914  |  Cum: $   1,351,881  |  WR: 60%
+  2024-07  |  Trades:  14  |  P&L: $   454,161  |  Cum: $   1,806,042  |  WR: 50%
+  2024-08  |  Trades:  20  |  P&L: $   372,728  |  Cum: $   2,178,770  |  WR: 50%
+  2024-09  |  Trades:  13  |  P&L: $   -52,313  |  Cum: $   2,126,457  |  WR: 31%
+  2024-10  |  Trades:  12  |  P&L: $    87,169  |  Cum: $   2,213,626  |  WR: 50%
+  2024-11  |  Trades:  16  |  P&L: $   121,844  |  Cum: $   2,335,470  |  WR: 56%
+  2024-12  |  Trades:  14  |  P&L: $   167,442  |  Cum: $   2,502,912  |  WR: 36%
+  2025-01  |  Trades:  15  |  P&L: $   168,190  |  Cum: $   2,671,102  |  WR: 47%
+  2025-02  |  Trades:  13  |  P&L: $  -360,083  |  Cum: $   2,311,019  |  WR: 23%
+  2025-03  |  Trades:  21  |  P&L: $   155,157  |  Cum: $   2,466,176  |  WR: 33%
+  2025-04  |  Trades:  19  |  P&L: $    99,821  |  Cum: $   2,565,997  |  WR: 32%
+  2025-05  |  Trades:  13  |  P&L: $   -24,703  |  Cum: $   2,541,294  |  WR: 23%
+  2025-06  |  Trades:  17  |  P&L: $   204,725  |  Cum: $   2,746,019  |  WR: 47%
+  2025-07  |  Trades:  15  |  P&L: $   -24,554  |  Cum: $   2,721,465  |  WR: 47%
+  2025-08  |  Trades:  14  |  P&L: $   502,220  |  Cum: $   3,223,685  |  WR: 43%
+  2025-09  |  Trades:   8  |  P&L: $    62,546  |  Cum: $   3,286,231  |  WR: 50%
+  2025-10  |  Trades:  16  |  P&L: $   252,550  |  Cum: $   3,538,781  |  WR: 38%
+  2025-11  |  Trades:  16  |  P&L: $   405,685  |  Cum: $   3,944,466  |  WR: 50%
+  2025-12  |  Trades:  14  |  P&L: $    86,089  |  Cum: $   4,030,555  |  WR: 43%
+  2026-01  |  Trades:  16  |  P&L: $   230,738  |  Cum: $   4,261,293  |  WR: 38%
+  2026-02  |  Trades:  17  |  P&L: $   429,388  |  Cum: $   4,690,681  |  WR: 41%
+  2026-03  |  Trades:   3  |  P&L: $   108,200  |  Cum: $   4,798,881  |  WR: 67%
+
+================================================================================
