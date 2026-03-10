@@ -1,9 +1,10 @@
 """
 SPX Opening Print Strategy — Phase 9: Trade Calendar with TradingView Charts
 ==============================================================================
-Rebuilds the trade calendar with embedded TradingView Lightweight Charts.
-Clicking a trade day opens a chart modal showing SPX 1-min candles for that
-day with entry, exit, profit target, and stop loss lines/markers.
+Approach C (Hybrid): Score >= 25 uses Approach B (enter at open, bail if bearish).
+Score < 25 uses Approach A (wait for bullish 1st bar confirmation, enter at 9:31).
+Interactive calendar with embedded TradingView Lightweight Charts, equity curves,
+monthly stats, and OHLC hover legend.
 
 Requires: spx_1min_bars.csv + all data from prior phases.
 
@@ -111,7 +112,11 @@ def simulate_trade(bars, entry_price, pt, sl, ts, entry_idx=0):
 
 # ── Signal Detection & Scoring (same as 08) ───────────────────────────
 
+HYBRID_THRESHOLD = 25
+
 def evaluate_day(d, bars, intra_dates, intra_idx, spx_intraday, vix_daily, spx_daily, spx_dates, tlt_daily, tlt_dates):
+    """Approach C (Hybrid): Score >= 25 → Approach B (enter at open, bail if bearish).
+    Score < 25 → Approach A (wait for bullish confirmation, enter at 9:31 close)."""
     if len(bars) < 10:
         return None
 
@@ -120,10 +125,12 @@ def evaluate_day(d, bars, intra_dates, intra_idx, spx_intraday, vix_daily, spx_d
     entry_open = bars[0]["open"]
 
     first_bar_bullish = bars[0]["close"] > bars[0]["open"]
-    if not first_bar_bullish:
-        return None
 
-    signals = ["Bullish 1st bar"]
+    signals = []
+    if first_bar_bullish:
+        signals.append("Bullish 1st bar")
+    else:
+        signals.append("Bearish 1st bar (bail)")
     score = 0
 
     dow = dt.strftime("%A")
@@ -262,23 +269,52 @@ def evaluate_day(d, bars, intra_dates, intra_idx, spx_intraday, vix_daily, spx_d
     elif gap_dir == "up": pt, sl, ts = 50, 20, 390
     elif "Monday" in signal_set: pt, sl, ts = 15, 20, 390
 
-    n_positive = len([s for s in signals if "negative" not in s.lower()]) - 1
+    # Need at least one positive signal to trade
+    n_positive = len([s for s in signals if "negative" not in s.lower() and "bail" not in s.lower()])
+    if n_positive < 1:
+        return None
+
     clamped_score = max(0, min(score, 80))
     risk = MIN_RISK + (MAX_RISK - MIN_RISK) * (clamped_score / 80)
     if n_positive >= 5: risk = min(risk * 1.3, MAX_RISK)
     elif n_positive >= 3: risk = min(risk * 1.15, MAX_RISK)
     risk = max(MIN_RISK, min(MAX_RISK, round(risk / 1000) * 1000))
 
-    pnl_pts, exit_reason, hold_mins, exit_price, exit_time = simulate_trade(bars, entry_open, pt, sl, ts, entry_idx=0)
     dollars_per_point = risk / sl
+
+    if score >= HYBRID_THRESHOLD:
+        # Approach B: enter at 9:30 open, bail if bearish
+        entry_price_used = entry_open
+        entry_time_used = "09:30"
+        if first_bar_bullish:
+            pnl_pts, exit_reason, hold_mins, exit_price, exit_time = simulate_trade(
+                bars, entry_price_used, pt, sl, ts, entry_idx=1
+            )
+        else:
+            bail_price = bars[0]["close"]
+            pnl_pts = round(bail_price - entry_price_used, 2)
+            exit_reason = "Bail (bearish 1st bar)"
+            hold_mins = 1
+            exit_price = bail_price
+            exit_time = bars[0]["time"]
+    else:
+        # Approach A: wait for bullish confirmation, skip if bearish
+        if not first_bar_bullish:
+            return None
+        entry_price_used = bars[0]["close"]
+        entry_time_used = "09:31"
+        pnl_pts, exit_reason, hold_mins, exit_price, exit_time = simulate_trade(
+            bars, entry_price_used, pt, sl, ts, entry_idx=1
+        )
+
     pnl_dollars = round(pnl_pts * dollars_per_point, 2)
 
     return {
         "date": d,
         "day_of_week": dow,
-        "entry_price": round(entry_open, 2),
+        "entry_price": round(entry_price_used, 2),
         "exit_price": round(exit_price, 2),
-        "entry_time": "09:30",
+        "entry_time": entry_time_used,
         "exit_time": exit_time,
         "signals": signals,
         "n_signals": len(signals),
@@ -298,21 +334,23 @@ def evaluate_day(d, bars, intra_dates, intra_idx, spx_intraday, vix_daily, spx_d
 
 def build_chart_data(spx_intraday, trade_dates):
     """Build compact 1-min bar arrays for each trade day.
-    Returns dict: date → list of [time_unix, o, h, l, c]"""
+    Returns dict: date → list of [time_unix, o, h, l, c]
+    Timestamps are UTC seconds that represent ET wall-clock times
+    so lightweight-charts displays correct ET times."""
+    import calendar
     chart_data = {}
     for d in trade_dates:
         bars = spx_intraday.get(d, [])
         if not bars:
             continue
-        # Convert time strings to unix timestamps
         dt_base = datetime.strptime(d, "%Y-%m-%d")
         day_bars = []
         for bar in bars:
             h, m = bar["time"].split(":")
-            # Create ET timestamp — use a fixed offset approach
-            # lightweight-charts uses UTC timestamps, we pass ET as-if-UTC so labels show ET
+            # Build a struct_time in UTC that has the ET hours/minutes
+            # This way lightweight-charts (which interprets as UTC) shows ET times
             bar_dt = dt_base.replace(hour=int(h), minute=int(m), second=0)
-            ts = int(bar_dt.timestamp())
+            ts = int(calendar.timegm(bar_dt.timetuple()))
             day_bars.append([
                 ts,
                 round(bar["open"], 2),
@@ -490,7 +528,16 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans
 }}
 #chartWrap .ch-header .ch-title {{ font-weight: 600; font-size: 13px; }}
 #chartWrap .ch-header .ch-sub {{ color: #888; margin-left: 10px; }}
-#chartContainer {{ width: 100%; height: 500px; }}
+#chartContainer {{ width: 100%; height: 500px; position: relative; }}
+#ohlcLegend {{
+    position: absolute; top: 8px; left: 12px; z-index: 10;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+    font-size: 11px; color: #aaa; pointer-events: none;
+    display: flex; gap: 10px;
+}}
+#ohlcLegend span {{ white-space: nowrap; }}
+#ohlcLegend .ol {{ color: #666; }}
+#ohlcLegend .ov {{ font-weight: 600; }}
 
 /* ── Legend labels overlaid on chart ── */
 .chart-legend {{
@@ -727,7 +774,7 @@ function showTrade(dateStr) {{
     html += '<span style="color:#00d4aa">&#9646; PT +' + t.pt + '</span> &middot; ';
     html += '<span style="color:#ff4466">&#9646; SL -' + t.sl + '</span>';
     html += '</span></div>';
-    html += '<div id="chartContainer"></div>';
+    html += '<div id="chartContainer"><div id="ohlcLegend"></div></div>';
     html += '</div>';
 
     document.getElementById('detailContent').innerHTML = html;
@@ -777,7 +824,7 @@ function renderChart(dateStr, t) {{
     let exitTime = candleData[candleData.length - 1].time;
     for (const bar of candleData) {{
         const barDate = new Date(bar.time * 1000);
-        const barTimeStr = String(barDate.getHours()).padStart(2,'0') + ':' + String(barDate.getMinutes()).padStart(2,'0');
+        const barTimeStr = String(barDate.getUTCHours()).padStart(2,'0') + ':' + String(barDate.getUTCMinutes()).padStart(2,'0');
         if (barTimeStr === t.exit_time) {{
             exitTime = bar.time;
             break;
@@ -844,6 +891,30 @@ function renderChart(dateStr, t) {{
     tvCandleSeries.setMarkers(markers);
 
     tvChart.timeScale().fitContent();
+
+    // ── OHLC legend on crosshair move ──
+    const legend = document.getElementById('ohlcLegend');
+    tvChart.subscribeCrosshairMove(param => {{
+        if (!param || !param.time || !param.seriesData) {{
+            legend.innerHTML = '';
+            return;
+        }}
+        const data = param.seriesData.get(tvCandleSeries);
+        if (!data) {{ legend.innerHTML = ''; return; }}
+        const o = data.open, h = data.high, l = data.low, c = data.close;
+        const chg = c - o;
+        const color = chg >= 0 ? '#26a69a' : '#ef5350';
+        // Format time from unix timestamp
+        const dt = new Date(param.time * 1000);
+        const hh = String(dt.getUTCHours()).padStart(2,'0');
+        const mm = String(dt.getUTCMinutes()).padStart(2,'0');
+        legend.innerHTML = '<span><span class="ol">T</span> <span class="ov">' + hh + ':' + mm + '</span></span>' +
+            '<span><span class="ol">O</span> <span class="ov">' + o.toFixed(2) + '</span></span>' +
+            '<span><span class="ol">H</span> <span class="ov">' + h.toFixed(2) + '</span></span>' +
+            '<span><span class="ol">L</span> <span class="ov">' + l.toFixed(2) + '</span></span>' +
+            '<span><span class="ol">C</span> <span class="ov" style="color:' + color + '">' + c.toFixed(2) + '</span></span>' +
+            '<span style="color:' + color + '">' + (chg >= 0 ? '+' : '') + chg.toFixed(2) + '</span>';
+    }});
 
     // Resize handler
     const resizeObs = new ResizeObserver(() => {{
