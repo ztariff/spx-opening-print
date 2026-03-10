@@ -459,10 +459,12 @@ function renderChart(dateStr, t) {
     const entryPrice = t.entry_price;
 
     let exitTime = candleData[candleData.length - 1].time;
+    const [spxExitHH, spxExitMM] = t.exit_time.split(':').map(Number);
+    const spxExitMins = spxExitHH * 60 + spxExitMM;
     for (const bar of candleData) {
         const barDate = new Date(bar.time * 1000);
-        const barTimeStr = String(barDate.getUTCHours()).padStart(2,'0') + ':' + String(barDate.getUTCMinutes()).padStart(2,'0');
-        if (barTimeStr === t.exit_time) { exitTime = bar.time; break; }
+        const barMins = barDate.getUTCHours() * 60 + barDate.getUTCMinutes();
+        if (barMins >= spxExitMins) { exitTime = bar.time; break; }
     }
 
     tvCandleSeries.createPriceLine({ price: entryPrice, color: '#2962ff', lineWidth: 1, lineStyle: 2, lineVisible: false, axisLabelVisible: true, title: '' });
@@ -544,10 +546,12 @@ function renderOptionChart(dateStr, t) {
         const barTimeStr = String(barDate.getUTCHours()).padStart(2,'0') + ':' + String(barDate.getUTCMinutes()).padStart(2,'0');
         if (barTimeStr === '09:31') { entryTime = bar.time; break; }
     }
+    const [optExitHH, optExitMM] = t.exit_time.split(':').map(Number);
+    const optExitMins = optExitHH * 60 + optExitMM;
     for (const bar of candleData) {
         const barDate = new Date(bar.time * 1000);
-        const barTimeStr = String(barDate.getUTCHours()).padStart(2,'0') + ':' + String(barDate.getUTCMinutes()).padStart(2,'0');
-        if (barTimeStr === t.exit_time) { exitTime = bar.time; break; }
+        const barMins = barDate.getUTCHours() * 60 + barDate.getUTCMinutes();
+        if (barMins >= optExitMins) { exitTime = bar.time; break; }
     }
 
     const markers = [
