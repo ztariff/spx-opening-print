@@ -66,6 +66,8 @@ HYBRID_THRESHOLD = 25
 VIX_FILTER = 16   # Skip days where VIX open < this level
 VIX_CAP    = 30   # Skip days where VIX open > this level (panic markets)
 BULLISH_ONLY = True  # Only trade when first bar is bullish (skip bail trades)
+SMA50_FILTER = True  # Only trade when SPX is above 50-day SMA
+RSI_FILTER = (35, 70)  # Only trade when RSI14 is within this band (None to disable)
 
 REQUEST_DELAY = 0.05  # seconds between requests
 
@@ -364,6 +366,32 @@ def compute_ma(daily_data, dates, target_date, period):
     if len(closes) < period * 0.8:
         return None
     return mean(closes)
+
+def compute_rsi(daily_data, dates, target_date, period=14):
+    idx = None
+    for i, d in enumerate(dates):
+        if d == target_date:
+            idx = i
+            break
+    if idx is None or idx < period + 1:
+        return None
+    gains, losses = [], []
+    for j in range(idx - period, idx):
+        if j < 1 or dates[j] not in daily_data or dates[j-1] not in daily_data:
+            continue
+        change = daily_data[dates[j]]["close"] - daily_data[dates[j-1]]["close"]
+        if change > 0:
+            gains.append(change); losses.append(0)
+        else:
+            gains.append(0); losses.append(abs(change))
+    if not gains:
+        return None
+    avg_gain = sum(gains) / len(gains)
+    avg_loss = sum(losses) / len(losses)
+    if avg_loss == 0:
+        return 100
+    rs = avg_gain / avg_loss
+    return 100 - (100 / (1 + rs))
 
 
 # ── Signal Detection (same as 09, returns score + signals + params) ──
@@ -731,6 +759,16 @@ def main():
             # VIX cap: skip panic-VIX days
             if VIX_CAP and result.get("vix") and result["vix"] > VIX_CAP:
                 continue
+            # SMA50 filter: only trade above 50-day moving average
+            if SMA50_FILTER:
+                sma50 = compute_ma(spx_daily, spx_dates, d, 50)
+                if sma50 and result["entry_open"] < sma50:
+                    continue
+            # RSI filter: only trade within RSI band
+            if RSI_FILTER:
+                rsi = compute_rsi(spx_daily, spx_dates, d, 14)
+                if rsi is not None and (rsi < RSI_FILTER[0] or rsi > RSI_FILTER[1]):
+                    continue
             trade_days.append((d, result))
 
     print(f"Trade days identified: {len(trade_days)}")
@@ -919,6 +957,7 @@ def main():
     report.append(f"  Max loss per trade = premium paid")
     report.append(f"  Bullish only: {BULLISH_ONLY}  |  Approach C hybrid (threshold={HYBRID_THRESHOLD})")
     report.append(f"  VIX filter: {VIX_FILTER} <= VIX <= {VIX_CAP}")
+    report.append(f"  SMA50 filter: {SMA50_FILTER}  |  RSI14 filter: {RSI_FILTER}")
     report.append(f"  Date range: {options_trades[0]['date']} to {options_trades[-1]['date']}")
     report.append("")
 
