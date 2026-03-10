@@ -63,6 +63,7 @@ def get_max_premium(score):
     elif score < 85: return 200000
     else:            return 200000
 HYBRID_THRESHOLD = 25
+VIX_FILTER = 16  # Skip days where VIX open < this level
 
 # Rate limit: Polygon free tier = 5 req/min. Paid tiers are higher.
 # We'll do 4 req/sec with backoff on 429s.
@@ -686,6 +687,9 @@ def main():
             # Apply Approach C filter
             if result["score"] < HYBRID_THRESHOLD and not result["first_bar_bullish"]:
                 continue  # Approach A would skip this day
+            # VIX filter: skip low-VIX days
+            if VIX_FILTER and result.get("vix") and result["vix"] < VIX_FILTER:
+                continue
             trade_days.append((d, result))
 
     print(f"Trade days identified: {len(trade_days)}")
@@ -868,6 +872,7 @@ def main():
     report.append(f"  Fallback: 1st 1-min bar close when 10s data unavailable")
     report.append(f"  Max loss per trade = premium paid (no bail needed)")
     report.append(f"  Approach C hybrid (threshold={HYBRID_THRESHOLD})")
+    report.append(f"  VIX filter: skip days with VIX open < {VIX_FILTER}")
     report.append(f"  Date range: {options_trades[0]['date']} to {options_trades[-1]['date']}")
     report.append("")
 
