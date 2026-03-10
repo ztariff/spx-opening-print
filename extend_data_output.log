@@ -1,0 +1,23 @@
+================================================================================
+EXTENDING DATA BACK TO 2018
+================================================================================
+
+[1/5] SPX Daily Bars
+
+  Fetching I:SPX daily bars (2018-01-01 to 2023-02-13)...
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 1
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 2
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 3
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 4
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 5
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 1
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 2
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 3
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 4
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 5
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 1
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 2
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 3
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 4
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 5
+    Error: <urlopen error Tunnel connection failed: 403 Forbidden> on attempt 1

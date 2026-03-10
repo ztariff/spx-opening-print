@@ -1,0 +1,161 @@
+Loading 1-min data...
+Building day context...
+Total trading days: 765
+
+================================================================================
+SINGLE POSITIVE CONDITIONS (with best exits)
+================================================================================
+  Condition                          N    WR%   AvgEOD BestPT BestSL BestTS  BestAvg  BestPF
+  bullish_1st_bar                  410  59.5%    +3.71     50      2     30    +5.81    6.61
+  monday                           143  65.0%    +8.94     50     20    390    +5.37    1.72
+  gap_up                           445  54.6%    +1.43     50      2     30    +4.04    4.15
+  3+_down_streak                    71  54.9%    +8.04     50      8    240    +7.31    2.47
+  lower_20d_range                   68  61.8%   +17.24     50     20    390    +7.89    1.71
+  prev_big_down                     55  54.5%   +13.72     50      2    120    +4.50    3.75
+  prev_close_near_low              170  56.5%    +5.21     50     10    390    +2.63    1.39
+  wide_prev_range                   98  59.2%    +8.69     15      2     60    +3.44    3.55
+  2nd_week                         180  57.2%    +5.70     50     15    390    +3.54    1.43
+
+================================================================================
+TWO-CONDITION COMBOS (positive + positive)
+================================================================================
+  Combo                                             N    WR%   AvgEOD  BestAvg  BestPF   PT   SL    TS
+  bullish_1st_bar + 3+_down_streak                 37  64.9%   +19.61   +16.53    4.30   50   20   240
+  gap_up + lower_20d_range                         33  66.7%   +14.18   +14.75    2.74   50   20   390
+  prev_close_near_low + 2nd_week                   33  78.8%   +32.88   +13.89    2.91   50   20   390
+  bullish_1st_bar + lower_20d_range                35  62.9%   +12.05   +13.56    2.48   50   20   390
+  lower_20d_range + wide_prev_range                23  78.3%   +39.70   +11.82    2.13   50   20   390
+  prev_big_down + 2nd_week                         15  86.7%   +60.58   +11.65    2.25   50   20   390
+  monday + 2nd_week                                36  63.9%   +11.14   +10.07    2.86   50   15   390
+  gap_up + 3+_down_streak                          42  57.1%    +9.10    +9.86    3.96   50    5   240
+  bullish_1st_bar + prev_big_down                  32  62.5%   +13.05    +9.51    2.90   20   20   390
+  gap_up + prev_big_down                           30  60.0%    +9.61    +9.26    7.61   50    2   120
+  bullish_1st_bar + wide_prev_range                53  64.2%    +7.51    +9.25    4.06   15   20   390
+  bullish_1st_bar + monday                         89  65.2%    +8.13    +7.87    3.53   15   20   390
+  monday + 3+_down_streak                          17  70.6%   +16.77    +7.72    2.61   30   20   240
+  gap_up + wide_prev_range                         57  61.4%    +4.99    +7.50    2.10   50   15   120
+  bullish_1st_bar + prev_close_near_low            94  62.8%    +5.57    +6.81    1.80   50   20   390
+  bullish_1st_bar + gap_up                        310  60.6%    +3.50    +6.47    7.45   50    2    30
+  lower_20d_range + prev_close_near_low            21  57.1%   +24.44    +6.38    2.03   50   20    30
+  monday + gap_up                                  83  61.4%    +6.99    +6.06    2.47   15   20   390
+  monday + wide_prev_range                         19  63.2%    +9.70    +6.05    6.75   15    2   390
+  3+_down_streak + prev_close_near_low             34  55.9%   +11.33    +5.95    1.62   50   20   390
+  bullish_1st_bar + 2nd_week                      104  57.7%    +4.12    +5.92    2.00   50   10   390
+  gap_up + prev_close_near_low                    100  63.0%    +6.42    +5.85    1.68   50   20   390
+  monday + prev_close_near_low                     29  86.2%   +17.01    +5.34    2.04   15   20   390
+  prev_big_down + wide_prev_range                  38  57.9%   +20.57    +5.06    4.20   50    2   120
+  wide_prev_range + 2nd_week                       26  69.2%   +18.67    +4.95    1.46   50   20   390
+  gap_up + 2nd_week                               117  53.8%    +2.19    +3.94    1.62   50   10   390
+  prev_close_near_low + wide_prev_range            38  65.8%   +22.87    +3.69    3.26   50    2   120
+  prev_big_down + prev_close_near_low              49  55.1%   +12.68    +3.40    3.03   50    2   120
+
+================================================================================
+THREE-CONDITION COMBOS
+================================================================================
+  Combo                                                           N    WR%   AvgEOD  BestAvg     PF
+  bullish_1st_bar + prev_close_near_low + 2nd_week               20  80.0%   +20.15   +17.05   3.84
+  gap_up + prev_close_near_low + 2nd_week                        22  77.3%   +19.57   +16.91   3.66
+  bullish_1st_bar + gap_up + 3+_down_streak                      31  64.5%   +17.54   +16.31   4.06
+  bullish_1st_bar + gap_up + lower_20d_range                     29  69.0%   +16.41   +15.68   2.89
+  bullish_1st_bar + gap_up + prev_big_down                       24  66.7%   +13.36   +12.08  10.66
+  monday + gap_up + prev_close_near_low                          16  81.2%    +8.94   +11.94   3.75
+  bullish_1st_bar + 3+_down_streak + prev_close_near_low         17  52.9%   +11.23   +11.07   2.34
+  bullish_1st_bar + prev_close_near_low + wide_prev_range        22  77.3%   +17.72   +10.88   2.33
+  bullish_1st_bar + prev_big_down + wide_prev_range              23  69.6%   +19.13   +10.62   3.44
+  gap_up + prev_big_down + wide_prev_range                       21  66.7%   +12.62    +9.84   8.38
+  bullish_1st_bar + gap_up + wide_prev_range                     44  63.6%    +3.02    +9.67   4.54
+  bullish_1st_bar + monday + 2nd_week                            20  65.0%   +12.85    +9.49   2.79
+  bullish_1st_bar + monday + prev_close_near_low                 19  78.9%    +4.84    +9.47   4.64
+  gap_up + prev_close_near_low + wide_prev_range                 22  77.3%   +18.76    +9.41   2.03
+  bullish_1st_bar + prev_big_down + prev_close_near_low          27  63.0%    +9.72    +9.05   2.75
+  bullish_1st_bar + lower_20d_range + prev_close_near_low        16  50.0%    -4.48    +8.65   2.96
+  bullish_1st_bar + gap_up + prev_close_near_low                 75  68.0%    +8.17    +8.10   2.02
+  bullish_1st_bar + monday + gap_up                              65  66.2%    +8.29    +7.70   3.35
+  gap_up + prev_big_down + prev_close_near_low                   26  61.5%    +8.80    +7.42   6.08
+  gap_up + 3+_down_streak + prev_close_near_low                  17  52.9%    +6.82    +7.37   2.78
+  monday + gap_up + 2nd_week                                     20  50.0%    +9.56    +7.28   2.38
+  bullish_1st_bar + gap_up + 2nd_week                            82  57.3%    +1.81    +5.53   1.63
+  prev_big_down + prev_close_near_low + wide_prev_range          33  60.6%   +20.66    +4.55   3.89
+
+================================================================================
+NEGATIVE / DON'T-TRADE CONDITIONS
+================================================================================
+  Condition                                         N    WR%   AvgEOD
+  bearish_1st_bar                                 354  46.9%    -1.64
+  thursday                                        151  44.4%    -7.63
+  near_20d_low                                     35  45.7%    -1.56
+  gap_down_large                                   67  38.8%    -9.62
+  3rd_week                                        174  49.4%    -3.41
+
+  --- Negative combo stacks ---
+  bearish_1st_bar + thursday                       78  41.0%    -8.05
+  bearish_1st_bar + near_20d_low                   22  45.5%    -9.39
+  bearish_1st_bar + gap_down_large                 61  39.3%    -8.63
+  bearish_1st_bar + 3rd_week                       93  43.0%    -4.65
+  thursday + gap_down_large                        11  18.2%   -34.01
+  thursday + 3rd_week                              36  41.7%    -9.23
+  near_20d_low + gap_down_large                    13  46.2%   -13.48
+  near_20d_low + 3rd_week                          10  30.0%    -5.44
+  gap_down_large + 3rd_week                        17  29.4%   -17.52
+
+================================================================================
+POSITIVE CONDITIONS WITH NEGATIVE FILTERS REMOVED
+================================================================================
+  Setup                                                      N    WR%   AvgEOD  BestAvg     PF
+  bullish_1st_bar (no Thu/no bear)                         338  62.1%    +6.17    +6.58   1.84
+  bullish_1st_bar + gap_up (no Thu/no bear)                248  64.5%    +6.91    +7.66   2.02
+  bullish_1st_bar + monday (no Thu/no bear)                 89  65.2%    +8.13    +7.87   3.53
+  bullish_1st_bar + 3+_down_streak (no Thu/no bear)         32  75.0%   +28.49   +20.68   4.58
+  bullish_1st_bar + wide_prev_range (no Thu/no bear)        45  68.9%    +9.83   +10.24   3.56
+  bullish_1st_bar + prev_big_down (no Thu/no bear)          23  73.9%   +20.15   +11.76   4.07
+  bullish_1st_bar + lower_20d_range (no Thu/no bear)        31  67.7%   +14.67   +15.63   2.86
+  bullish_1st_bar + prev_close_near_low (no Thu/no bear)    73  68.5%    +7.96    +8.39   2.08
+
+
+================================================================================
+FINAL STRATEGY RANKING
+(sorted by best avg P&L from grid search, minimum 15 days)
+================================================================================
+
+    # Setup                                                      N  EOD_WR  BestAvg     PF   PT   SL    TS  AvgHld
+  --- ------------------------------------------------------- ---- ------- -------- ------ ---- ---- ----- -------
+    1 bullish_1st_bar + 3+_down_streak (no Thu/no bear)         32   75.0%   +20.68   4.58   50   20   390  226.6m
+    2 bullish_1st_bar + prev_close_near_low + 2nd_week          20   80.0%   +17.05   3.84   50   20   390  257.1m
+    3 gap_up + prev_close_near_low + 2nd_week                   22   77.3%   +16.91   3.66   50   20   390  268.0m
+    4 bullish_1st_bar + 3+_down_streak                          37   64.9%   +16.53   4.30   50   20   240  164.0m
+    5 bullish_1st_bar + gap_up + 3+_down_streak                 31   64.5%   +16.31   4.06   50   20   240  164.9m
+    6 bullish_1st_bar + gap_up + lower_20d_range                29   69.0%   +15.68   2.89   50   20   390  179.9m
+    7 bullish_1st_bar + lower_20d_range (no Thu/no bear)        31   67.7%   +15.63   2.86   50   20   390  178.6m
+    8 gap_up + lower_20d_range                                  33   66.7%   +14.75   2.74   50   20   390  181.5m
+    9 prev_close_near_low + 2nd_week                            33   78.8%   +13.89   2.91   50   20   390  238.7m
+   10 bullish_1st_bar + lower_20d_range                         35   62.9%   +13.56   2.48   50   20   390  172.9m
+   11 bullish_1st_bar + gap_up + prev_big_down                  24   66.7%   +12.08  10.66   50    2   120   57.0m
+   12 monday + gap_up + prev_close_near_low                     16   81.2%   +11.94   3.75   30   20   390  234.3m
+   13 lower_20d_range + wide_prev_range                         23   78.3%   +11.82   2.13   50   20   390  106.5m
+   14 bullish_1st_bar + prev_big_down (no Thu/no bear)          23   73.9%   +11.76   4.07   50    8   240  118.2m
+   15 prev_big_down + 2nd_week                                  15   86.7%   +11.65   2.25   50   20   390  150.5m
+   16 bullish_1st_bar + 3+_down_streak + prev_close_near_low    17   52.9%   +11.07   2.34   50   20   390  228.5m
+   17 bullish_1st_bar + prev_close_near_low + wide_prev_range   22   77.3%   +10.88   2.33   50   20   390  215.4m
+   18 bullish_1st_bar + prev_big_down + wide_prev_range         23   69.6%   +10.62   3.44   20   20   390   74.1m
+   19 bullish_1st_bar + wide_prev_range (no Thu/no bear)        45   68.9%   +10.24   3.56   20   15   390   51.1m
+   20 monday + 2nd_week                                         36   63.9%   +10.07   2.86   50   15   390  269.9m
+   21 gap_up + 3+_down_streak                                   42   57.1%    +9.86   3.96   50    5   240   77.1m
+   22 gap_up + prev_big_down + wide_prev_range                  21   66.7%    +9.84   8.38   50    2   120   50.1m
+   23 bullish_1st_bar + gap_up + wide_prev_range                44   63.6%    +9.67   4.54   15   20   390   47.6m
+   24 bullish_1st_bar + prev_big_down                           32   62.5%    +9.51   2.90   20   20   390   91.9m
+   25 bullish_1st_bar + monday + 2nd_week                       20   65.0%    +9.49   2.79   50   15   390  283.9m
+   26 bullish_1st_bar + monday + prev_close_near_low            19   78.9%    +9.47   4.64   15   20   390  110.4m
+   27 gap_up + prev_close_near_low + wide_prev_range            22   77.3%    +9.41   2.03   50   20   390  183.3m
+   28 gap_up + prev_big_down                                    30   60.0%    +9.26   7.61   50    2   120   45.8m
+   29 bullish_1st_bar + wide_prev_range                         53   64.2%    +9.25   4.06   15   20   390   45.0m
+   30 bullish_1st_bar + prev_big_down + prev_close_near_low     27   63.0%    +9.05   2.75   20   20   390   96.6m
+   31 bullish_1st_bar + lower_20d_range + prev_close_near_low   16   50.0%    +8.65   2.96   50   20    30   28.0m
+   32 bullish_1st_bar + prev_close_near_low (no Thu/no bear)    73   68.5%    +8.39   2.08   50   20   390  253.1m
+   33 bullish_1st_bar + gap_up + prev_close_near_low            75   68.0%    +8.10   2.02   50   20   390  255.2m
+   34 lower_20d_range                                           68   61.8%    +7.89   1.71   50   20   390  131.2m
+   35 bullish_1st_bar + monday                                  89   65.2%    +7.87   3.53   15   20   390  127.7m
+   36 bullish_1st_bar + monday (no Thu/no bear)                 89   65.2%    +7.87   3.53   15   20   390  127.7m
+   37 monday + 3+_down_streak                                   17   70.6%    +7.72   2.61   30   20   240  146.6m
+   38 bullish_1st_bar + monday + gap_up                         65   66.2%    +7.70   3.35   15   20   390  134.2m
+   39 bullish_1st_bar + gap_up (no Thu/no bear)                248   64.5%    +7.66   2.02   50   20   390  273.5m
+   40 gap_up + wide_prev_range                                  57   61.4%    +7.50   2.10   50   15   120   71.3m

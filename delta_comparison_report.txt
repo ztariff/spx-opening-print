@@ -1,0 +1,68 @@
+DELTA / STRIKE OFFSET COMPARISON
+================================================================================
+
+ITM -20 (offset -20 pts):
+  Trades: 306  WR: 45.8%  PF: 1.74
+  Total P&L: $4,232,326  Annual: $1,446,078
+  Max DD: $552,272  Calmar: 2.62
+  Avg Win: $71,141  Avg Loss: $-34,502
+  Best: $276,776  Worst: $-125,580
+  Avg Premium: $123,202
+  Months +/-: 28/2
+
+ITM -10 (offset -10 pts):
+  Trades: 306  WR: 43.5%  PF: 1.75
+  Total P&L: $5,035,543  Annual: $1,720,516
+  Max DD: $623,563  Calmar: 2.76
+  Avg Win: $88,294  Avg Loss: $-38,772
+  Best: $342,151  Worst: $-142,320
+  Avg Premium: $123,439
+  Months +/-: 28/2
+
+ATM +0 (offset +0 pts):
+  Trades: 334  WR: 41.3%  PF: 1.71
+  Total P&L: $6,143,671  Annual: $2,014,341
+  Max DD: $613,218  Calmar: 3.28
+  Avg Win: $107,474  Avg Loss: $-44,325
+  Best: $489,830  Worst: $-152,685
+  Avg Premium: $124,555
+  Months +/-: 25/6
+
+OTM +10 (offset +10 pts):
+  Trades: 306  WR: 40.5%  PF: 1.77
+  Total P&L: $6,933,022  Annual: $2,368,837
+  Max DD: $751,692  Calmar: 3.15
+  Avg Win: $128,345  Avg Loss: $-49,350
+  Best: $595,700  Worst: $-170,040
+  Avg Premium: $124,039
+  Months +/-: 25/5
+
+OTM +20 (offset +20 pts):
+  Trades: 306  WR: 37.6%  PF: 1.79
+  Total P&L: $8,199,815  Annual: $2,801,667
+  Max DD: $1,010,096  Calmar: 2.77
+  Avg Win: $161,737  Avg Loss: $-54,450
+  Best: $929,472  Worst: $-177,480
+  Avg Premium: $124,196
+  Months +/-: 23/7
+
+OTM +30 (offset +30 pts):
+  Trades: 305  WR: 34.1%  PF: 1.78
+  Total P&L: $9,108,720  Annual: $3,112,217
+  Max DD: $1,417,825  Calmar: 2.20
+  Avg Win: $200,261  Avg Loss: $-58,300
+  Best: $1,540,464  Worst: $-181,760
+  Avg Premium: $124,448
+  Months +/-: 22/8
+
+OTM +50 (offset +50 pts):
+  Trades: 305  WR: 27.9%  PF: 1.48
+  Total P&L: $6,288,951  Annual: $2,148,774
+  Max DD: $1,613,634  Calmar: 1.33
+  Avg Win: $229,692  Avg Loss: $-60,158
+  Best: $1,355,420  Worst: $-182,720
+  Avg Premium: $124,616
+  Months +/-: 19/11
+
+Best by Calmar: ATM +0 (3.28)
+Best by P&L:    OTM +30 ($9,108,720)

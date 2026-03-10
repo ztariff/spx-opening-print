@@ -1,0 +1,71 @@
+================================================================================
+SPX OPENING PRINT — ENTRY METHOD COMPARISON
+================================================================================
+
+--------------------------------------------------------------------------------
+  A) WAIT & CONFIRM (enter at 9:31 close if bullish)
+--------------------------------------------------------------------------------
+  Total Trades:    387
+  Winners:         167 (43.2%)
+  Losers:          220
+  Total P&L:       $8,933,695
+  Avg P&L/Trade:   $23,084
+  Avg Pts/Trade:   +2.12
+  Avg Win:         $151,263
+  Avg Loss:        $-74,215
+  Profit Factor:   1.55
+  Best Trade:      $2,200,000
+  Worst Trade:     $-150,000
+  Max Drawdown:    $1,754,552
+
+--------------------------------------------------------------------------------
+  B) ENTER & BAIL (enter at 9:30 open, bail if bearish)
+--------------------------------------------------------------------------------
+  Total Trades:    717
+  Winners:         216 (30.1%)
+  Losers:          501
+  Total P&L:       $13,627,622
+  Avg P&L/Trade:   $19,006
+  Avg Pts/Trade:   +1.65
+  Avg Win:         $191,193
+  Avg Loss:        $-55,230
+  Profit Factor:   1.49
+  Best Trade:      $2,217,000
+  Worst Trade:     $-1,081,000
+  Max Drawdown:    $2,657,790
+
+--------------------------------------------------------------------------------
+  B) BREAKDOWN: Bullish first bar vs Bearish bail-outs
+--------------------------------------------------------------------------------
+  Bullish 1st bar days: 387
+    P&L:     $28,912,165
+    Win Rate: 55.8%
+    Avg P&L:  $74,708
+
+  Bearish 1st bar days (bailed): 330
+    P&L:      $-15,284,543
+    Win Rate:  0.0%
+    Avg Pts:   -4.98
+    Avg P&L:   $-46,317
+    Bail pts range: -54.08 to +0.00
+    Median bail:    -3.48 pts
+
+--------------------------------------------------------------------------------
+  HEAD-TO-HEAD: Days where both approaches traded
+--------------------------------------------------------------------------------
+  Shared days: 387
+  A better on 0 days, B better on 195 days
+  A total on shared days: $8,933,695
+  B total on shared days: $28,912,165
+  Difference (B - A):     $19,978,470
+
+  Extra days B trades (bearish 1st bar bail-outs): 330
+    P&L from extra days: $-15,284,543
+    Win Rate: 0.0%
+
+================================================================================
+  APPROACH A TOTAL P&L: $8,933,695  (387 trades)
+  APPROACH B TOTAL P&L: $13,627,622  (717 trades)
+
+  >>> APPROACH B WINS by $4,693,927
+================================================================================

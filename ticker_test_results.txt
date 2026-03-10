@@ -1,0 +1,46 @@
+=== 1-MIN BARS on 2020-03-16 ===
+  SPY          -> results=5
+    First bar: o=253.2 c=251.25
+  I:SPX        -> results=0
+  VIXY         -> results=5
+    First bar: o=3440 c=3440
+  UVXY         -> results=5
+    First bar: o=175025 c=190425
+
+=== DAILY BARS on 2018-01-02 ===
+  SPY          -> results=4
+    First: date=1514869200000 o=267.84
+  I:SPX        -> results=0
+  I:VIX        -> results=0
+  TLT          -> results=4
+    First: date=1514869200000 o=126.49
+
+=== FINDING WHEN I:SPX 1-MIN DATA STARTS ===
+  2018-06-15: results=0
+  2019-06-15: results=0
+  2020-06-15: results=0
+  2021-06-15: results=0
+  2022-06-15: results=0
+  2023-06-15: results=0
+
+=== FINDING WHEN I:SPX DAILY DATA STARTS ===
+  2018-01: results=0
+  2019-01: results=0
+  2020-01: results=0
+  2021-01: results=0
+  2022-01: results=0
+  2023-01: results=0
+
+=== FINDING WHEN I:VIX DAILY DATA STARTS ===
+  2018-01: results=0
+  2019-01: results=0
+  2020-01: results=0
+  2021-01: results=0
+  2022-01: results=0
+  2023-01: results=0
+
+=== VIX PROXY DAILY on 2018-01-02 ===
+  VIXY         -> results=4
+  UVXY         -> results=4
+  VXX          -> results=4
+  VIXM         -> results=4

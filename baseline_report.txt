@@ -1,0 +1,90 @@
+======================================================================
+SPX OPENING PRINT — BASELINE ANALYSIS
+======================================================================
+Trading days analyzed: 765
+Date range: 2023-02-14 to 2026-03-04
+
+----------------------------------------------------------------------
+ENTRY: 9:30 OPEN PRICE
+----------------------------------------------------------------------
+EOD Win Rate:        53.7%
+Avg EOD P&L:         +1.28 pts  (+0.0289%)
+Median EOD P&L:      +2.49 pts  (+0.0427%)
+StdDev EOD P&L:      42.25 pts
+Avg MFE (best gain): +26.45 pts
+Avg MAE (worst dd):  -28.23 pts
+Median MFE:          +20.32 pts
+Median MAE:          -18.39 pts
+
+Win Rate & Avg P&L at Checkpoints (entry = 9:30 open):
+      Hold   WinRate     Avg P&L       N
+      1min     53.2%       +0.18     765
+      2min     54.4%       +0.48     765
+      3min     55.2%       +0.56     765
+      5min     54.2%       +0.53     765
+     10min     53.6%       +0.67     765
+     15min     52.9%       +0.64     765
+     20min     52.3%       +0.36     765
+     30min     54.7%       +0.76     764
+     45min     53.1%       +0.59     764
+        1h     53.0%       +0.58     764
+     1h30m     53.0%       +0.27     764
+        2h     54.1%       +0.33     763
+        3h     54.7%       +0.99     761
+        4h     55.1%       +0.83     752
+        5h     52.5%       +1.58     752
+     6h30m      0.0%       +0.00       0
+
+----------------------------------------------------------------------
+ENTRY: FIRST 1-MIN BAR CLOSE (9:31)
+----------------------------------------------------------------------
+EOD Win Rate:        54.1%
+Avg EOD P&L:         +1.16 pts  (+0.0264%)
+Median EOD P&L:      +2.83 pts  (+0.0568%)
+StdDev EOD P&L:      42.30 pts
+Avg MFE (best gain): +26.33 pts
+Avg MAE (worst dd):  -28.35 pts
+Median MFE:          +19.67 pts
+Median MAE:          -18.85 pts
+
+Win Rate & Avg P&L at Checkpoints (entry = 9:31 close):
+      Hold   WinRate     Avg P&L       N
+      1min     50.1%       +0.06     765
+      2min     52.8%       +0.35     765
+      3min     54.8%       +0.44     765
+      5min     54.9%       +0.41     765
+     10min     55.6%       +0.55     765
+     15min     52.4%       +0.52     765
+     20min     52.8%       +0.24     765
+     30min     53.1%       +0.63     764
+     45min     52.5%       +0.46     764
+        1h     53.4%       +0.45     764
+     1h30m     52.7%       +0.13     764
+        2h     53.9%       +0.22     763
+        3h     54.5%       +0.87     761
+        4h     54.4%       +0.73     752
+        5h     53.6%       +1.47     752
+     6h30m      0.0%       +0.00       0
+
+----------------------------------------------------------------------
+MFE / MAE DISTRIBUTION (9:30 Open Entry)
+----------------------------------------------------------------------
+% of days where MFE reached at least X points:
+  MFE >=   5 pts:    85.8%
+  MFE >=  10 pts:    71.5%
+  MFE >=  15 pts:    61.6%
+  MFE >=  20 pts:    51.2%
+  MFE >=  30 pts:    33.3%
+  MFE >=  50 pts:    12.3%
+  MFE >=  75 pts:     3.7%
+  MFE >= 100 pts:     1.6%
+
+% of days where MAE reached at least X points:
+  MAE <=   -5 pts:    81.4%
+  MAE <=  -10 pts:    67.3%
+  MAE <=  -15 pts:    57.1%
+  MAE <=  -20 pts:    48.0%
+  MAE <=  -30 pts:    33.5%
+  MAE <=  -50 pts:    17.1%
+  MAE <=  -75 pts:     7.2%
+  MAE <= -100 pts:     3.0%

@@ -63,11 +63,11 @@ def get_max_premium(score):
     elif score < 85: return 200000
     else:            return 200000
 HYBRID_THRESHOLD = 25
-VIX_FILTER = 16  # Skip days where VIX open < this level
+VIX_FILTER = 16   # Skip days where VIX open < this level
+VIX_CAP    = 30   # Skip days where VIX open > this level (panic markets)
+BULLISH_ONLY = True  # Only trade when first bar is bullish (skip bail trades)
 
-# Rate limit: Polygon free tier = 5 req/min. Paid tiers are higher.
-# We'll do 4 req/sec with backoff on 429s.
-REQUEST_DELAY = 0.3  # seconds between requests
+REQUEST_DELAY = 0.05  # seconds between requests
 
 
 # ── Cache helpers ─────────────────────────────────────────────────────
@@ -115,22 +115,56 @@ def api_get(url, max_retries=3):
     return None
 
 
-def find_0dte_call(date_str, target_strike):
-    """Find the ATM 0DTE SPX call option ticker for a given date.
+def find_nearest_expiry(date_str):
+    """Find the nearest SPX option expiration date >= trade date.
+
+    After Sept 19, 2022: daily 0DTE expirations on all trading days.
+    Before that: SPXW weeklies expired Mon/Wed/Fri only.
+    Even earlier (pre-2016): Fri only, but CBOE added M/W/F around 2016.
+
+    Returns (expiry_date_str, dte) where dte is days to expiration (0=same day).
+    """
+    dt = datetime.strptime(date_str, "%Y-%m-%d")
+    daily_0dte_start = datetime(2022, 9, 19)
+
+    if dt >= daily_0dte_start:
+        return date_str, 0
+
+    # Pre-Sept 2022: M/W/F expirations
+    # Monday=0, Tuesday=1, Wednesday=2, Thursday=3, Friday=4
+    dow = dt.weekday()
+
+    if dow in (0, 2, 4):  # Mon, Wed, Fri — 0DTE available
+        return date_str, 0
+    elif dow == 1:  # Tuesday — nearest is Wednesday (1DTE)
+        expiry = dt + timedelta(days=1)
+        return expiry.strftime("%Y-%m-%d"), 1
+    elif dow == 3:  # Thursday — nearest is Friday (1DTE)
+        expiry = dt + timedelta(days=1)
+        return expiry.strftime("%Y-%m-%d"), 1
+    else:
+        # Weekend — shouldn't happen for trading days
+        return date_str, 0
+
+
+def find_option_call(date_str, target_strike):
+    """Find the nearest-expiry ATM SPX call option for a given trade date.
     Constructs the ticker directly and verifies bars exist.
     Tries SPXW first (weekly/0DTE), then SPX.
-    Returns (ticker, strike) or (None, None) if not available."""
-    cache_key = f"contracts_v2_{date_str}"
+    Returns (ticker, strike, expiry_date, dte) or (None, None, None, None)."""
+    cache_key = f"contracts_v3_{date_str}_{round(target_strike / 5) * 5}"
     cached = load_cache(cache_key)
     if cached is not None:
         if cached == "none":
-            return None, None
-        return cached["ticker"], cached["strike"]
+            return None, None, None, None
+        return cached["ticker"], cached["strike"], cached["expiry"], cached["dte"]
+
+    expiry_date, dte = find_nearest_expiry(date_str)
 
     # Round strike to nearest $5
     strike = round(target_strike / 5) * 5
-    dt = datetime.strptime(date_str, "%Y-%m-%d")
-    date_code = dt.strftime("%y%m%d")  # YYMMDD
+    exp_dt = datetime.strptime(expiry_date, "%Y-%m-%d")
+    date_code = exp_dt.strftime("%y%m%d")  # YYMMDD of EXPIRATION, not trade date
 
     # Try multiple strikes near ATM (in case exact ATM has no liquidity)
     strike_offsets = [0, 5, -5, 10, -10]
@@ -138,11 +172,10 @@ def find_0dte_call(date_str, target_strike):
     for underlying in ["SPXW", "SPX"]:
         for offset in strike_offsets:
             test_strike = strike + offset
-            # Polygon options ticker format: O:{underlying}{YYMMDD}C{strike*1000:08d}
             strike_code = f"{int(test_strike * 1000):08d}"
             ticker = f"O:{underlying}{date_code}C{strike_code}"
 
-            # Try to fetch just 1 bar to verify this ticker exists
+            # Verify ticker exists by fetching bars on the TRADE date
             url = (f"{BASE_URL}/v2/aggs/ticker/{ticker}"
                    f"/range/1/minute/{date_str}/{date_str}"
                    f"?adjusted=true&sort=asc&limit=3"
@@ -151,11 +184,13 @@ def find_0dte_call(date_str, target_strike):
             time.sleep(REQUEST_DELAY)
             data = api_get(url)
             if data and data.get("resultsCount", 0) > 0:
-                save_cache(cache_key, {"ticker": ticker, "strike": test_strike})
-                return ticker, test_strike
+                result = {"ticker": ticker, "strike": test_strike,
+                          "expiry": expiry_date, "dte": dte}
+                save_cache(cache_key, result)
+                return ticker, test_strike, expiry_date, dte
 
     save_cache(cache_key, "none")
-    return None, None
+    return None, None, None, None
 
 
 def get_option_entry_price(ticker, date_str):
@@ -684,11 +719,17 @@ def main():
             vix_daily, spx_daily, spx_dates, tlt_daily, tlt_dates
         )
         if result:
-            # Apply Approach C filter
-            if result["score"] < HYBRID_THRESHOLD and not result["first_bar_bullish"]:
+            # Bullish-only mode: skip all bearish first bars
+            if BULLISH_ONLY and not result["first_bar_bullish"]:
+                continue
+            # Apply Approach C filter (only active when BULLISH_ONLY is False)
+            if not BULLISH_ONLY and result["score"] < HYBRID_THRESHOLD and not result["first_bar_bullish"]:
                 continue  # Approach A would skip this day
-            # VIX filter: skip low-VIX days
+            # VIX floor: skip low-VIX days
             if VIX_FILTER and result.get("vix") and result["vix"] < VIX_FILTER:
+                continue
+            # VIX cap: skip panic-VIX days
+            if VIX_CAP and result.get("vix") and result["vix"] > VIX_CAP:
                 continue
             trade_days.append((d, result))
 
@@ -696,7 +737,7 @@ def main():
 
     # Phase 2: For each trade day, find 0DTE option and get prices
     print("\nPhase 2: Fetching 0DTE option data from Polygon...")
-    print("(This will take a while due to API rate limits)\n")
+    print()
 
     options_trades = []
     linear_trades = []  # For comparison
@@ -709,9 +750,9 @@ def main():
         if (i + 1) % 25 == 0 or i == 0:
             print(f"  Processing {i+1}/{len(trade_days)}: {d}...")
 
-        # Find ATM 0DTE call
+        # Find nearest-expiry ATM call
         target_strike = round(sig["entry_open"] / 5) * 5  # Round to nearest $5 strike
-        ticker, strike = find_0dte_call(d, target_strike)
+        ticker, strike, expiry_date, dte = find_option_call(d, target_strike)
 
         if not ticker:
             skipped_no_0dte += 1
@@ -785,6 +826,8 @@ def main():
             "signals": sig["signals"],
             "strike": strike,
             "option_ticker": ticker,
+            "expiry_date": expiry_date,
+            "dte": dte,
             "entry_open": sig["entry_open"],
             "first_bar_bullish": sig["first_bar_bullish"],
             "pt": sig["pt"], "sl": sig["sl"], "ts": sig["ts"],
@@ -864,15 +907,18 @@ def main():
 
     report = []
     report.append("=" * 80)
-    report.append("SPX OPENING PRINT — 0DTE OPTIONS BACKTEST")
+    report.append("SPX OPENING PRINT — OPTIONS BACKTEST")
     report.append("=" * 80)
     n_10s = sum(1 for t in options_trades if t.get("used_10s_entry"))
-    report.append(f"  Entry: Buy ATM 0DTE SPX call at 9:30:10 (10-second bars)")
+    n_0dte = sum(1 for t in options_trades if t.get("dte", 0) == 0)
+    n_1dte = sum(1 for t in options_trades if t.get("dte", 0) == 1)
+    report.append(f"  Entry: Buy ATM nearest-expiry SPX call at 9:30:10 (10-second bars)")
     report.append(f"  Trades with 10s entry price: {n_10s}/{len(options_trades)} ({n_10s/len(options_trades)*100:.0f}%)")
     report.append(f"  Fallback: 1st 1-min bar close when 10s data unavailable")
-    report.append(f"  Max loss per trade = premium paid (no bail needed)")
-    report.append(f"  Approach C hybrid (threshold={HYBRID_THRESHOLD})")
-    report.append(f"  VIX filter: skip days with VIX open < {VIX_FILTER}")
+    report.append(f"  0DTE trades: {n_0dte}  |  1DTE trades: {n_1dte}")
+    report.append(f"  Max loss per trade = premium paid")
+    report.append(f"  Bullish only: {BULLISH_ONLY}  |  Approach C hybrid (threshold={HYBRID_THRESHOLD})")
+    report.append(f"  VIX filter: {VIX_FILTER} <= VIX <= {VIX_CAP}")
     report.append(f"  Date range: {options_trades[0]['date']} to {options_trades[-1]['date']}")
     report.append("")
 

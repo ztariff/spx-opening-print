@@ -1,0 +1,564 @@
+================================================================================
+TEST 1: I:SPX on recent date (2026-03-03) - we know this data exists in our CSV
+================================================================================
+
+  [I:SPX 1-min 2026-03-03]
+  URL: https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/minute/2026-03-03/2026-03-03?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:SPX
+  status: OK
+  resultsCount: N/A
+  queryCount: 5
+  request_id: 3f9a1773e4e291e9a5bb93c9d3aa9663
+  First result: {"o": 6800.26, "c": 6775.05, "h": 6800.26, "l": 6766.01, "t": 1772548200000}
+  Full response:
+{
+  "ticker": "I:SPX",
+  "queryCount": 5,
+  "results": [
+    {
+      "o": 6800.26,
+      "c": 6775.05,
+      "h": 6800.26,
+      "l": 6766.01,
+      "t": 1772548200000
+    },
+    {
+      "o": 6775.47,
+      "c": 6776.18,
+      "h": 6778.74,
+      "l": 6772.45,
+      "t": 1772548260000
+    },
+    {
+      "o": 6776.26,
+      "c": 6773.51,
+      "h": 6778.33,
+      "l": 6772.56,
+      "t": 1772548320000
+    },
+    {
+      "o": 6773.84,
+      "c": 6771.26,
+      "h": 6774.9800000000005,
+      "l": 6769.85,
+      "t": 1772548380000
+    },
+    {
+      "o": 6771.43,
+      "c": 6759.52,
+      "h": 6771.71,
+      "l": 6759.31,
+      "t": 1772548440000
+    }
+  ],
+  "status": "OK",
+  "request_id": "3f9a1773e4e291e9a5bb93c9d3aa9663",
+  "count": 5,
+  "next_url": "https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/minute/1772548500000/2026-03-03?cursor=bGltaXQ9NSZzb3J0PWFzYw"
+}
+
+  [I:SPX daily 2026-03-03]
+  URL: https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/day/2026-03-01/2026-03-05?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:SPX
+  status: OK
+  resultsCount: N/A
+  queryCount: 4
+  request_id: ea36bf3e4be39bef9b776c4a2f1554b9
+  First result: {"o": 6824.360000000001, "c": 6881.62, "h": 6901.01, "l": 6796.85, "t": 1772431200000}
+  Full response:
+{
+  "ticker": "I:SPX",
+  "queryCount": 4,
+  "results": [
+    {
+      "o": 6824.360000000001,
+      "c": 6881.62,
+      "h": 6901.01,
+      "l": 6796.85,
+      "t": 1772431200000
+    },
+    {
+      "o": 6800.26,
+      "c": 6816.63,
+      "h": 6840.05,
+      "l": 6710.42,
+      "t": 1772517600000
+    },
+    {
+      "o": 6831.6900000000005,
+      "c": 6869.5,
+      "h": 6885.9400000000005,
+      "l": 6811.64,
+      "t": 1772604000000
+    },
+    {
+      "o": 6851.08,
+      "c": 6830.71,
+      "h": 6870.43,
+      "l": 6770.78,
+      "t": 1772690400000
+    }
+  ],
+  "status": "OK",
+  "request_id": "ea36bf3e4be39bef9b776c4a2f1554b9",
+  "count": 4
+}
+
+================================================================================
+TEST 2: SPY on same date (control test)
+================================================================================
+
+  [SPY 1-min 2026-03-03]
+  URL: https://api.polygon.io/v2/aggs/ticker/SPY/range/1/minute/2026-03-03/2026-03-03?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: SPY
+  status: OK
+  resultsCount: 5
+  queryCount: 5
+  request_id: f5eac89c596b1ec26019ea41013d3f30
+  First result: {"v": 163507, "vw": 677.3236, "o": 677.74, "c": 676.25, "h": 679.72, "l": 675.6, "t": 1772528400000, "n": 797}
+  Full response:
+{
+  "ticker": "SPY",
+  "queryCount": 5,
+  "resultsCount": 5,
+  "adjusted": true,
+  "results": [
+    {
+      "v": 163507,
+      "vw": 677.3236,
+      "o": 677.74,
+      "c": 676.25,
+      "h": 679.72,
+      "l": 675.6,
+      "t": 1772528400000,
+      "n": 797
+    },
+    {
+      "v": 30541,
+      "vw": 676.2525,
+      "o": 676.2,
+      "c": 676.2,
+      "h": 676.51,
+      "l": 676.09,
+      "t": 1772528460000,
+      "n": 358
+    },
+    {
+      "v": 38384,
+      "vw": 676.2704,
+      "o": 676.2,
+      "c": 676.2,
+      "h": 676.5,
+      "l": 676.15,
+      "t": 1772528520000,
+      "n": 401
+    },
+    {
+      "v": 15279,
+      "vw": 676.2185,
+      "o": 676.2,
+      "c": 676.45,
+      "h": 676.45,
+      "l": 676.19,
+      "t": 1772528580000,
+      "n": 121
+    },
+    {
+      "v": 35722,
+      "vw": 676.4541,
+      "o": 676.45,
+      "c": 676.31,
+      "h": 676.6,
+      "l": 676.31,
+      "t": 1772528640000,
+      "n": 220
+    }
+  ],
+  "status": "OK",
+  "request_id": "f5eac89c596b1ec26019ea41013d3f30",
+  "count": 5,
+  "next_url": "https://api.polygon.io/v2/aggs/ticker/SPY/range/1/minute/1772528700000/2026-03-03?cursor=bGltaXQ9NSZzb3J0PWFzYw"
+}
+
+================================================================================
+TEST 3: Different URL encodings for SPX index
+================================================================================
+
+  [I%3ASPX (URL-encoded colon)]
+  URL: https://api.polygon.io/v2/aggs/ticker/I%3ASPX/range/1/day/2026-03-01/2026-03-05?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:SPX
+  status: OK
+  resultsCount: N/A
+  queryCount: 4
+  request_id: 5a2ccdeb826fde5e2fb542d5261396fd
+  First result: {"o": 6824.360000000001, "c": 6881.62, "h": 6901.01, "l": 6796.85, "t": 1772431200000}
+  Full response:
+{
+  "ticker": "I:SPX",
+  "queryCount": 4,
+  "results": [
+    {
+      "o": 6824.360000000001,
+      "c": 6881.62,
+      "h": 6901.01,
+      "l": 6796.85,
+      "t": 1772431200000
+    },
+    {
+      "o": 6800.26,
+      "c": 6816.63,
+      "h": 6840.05,
+      "l": 6710.42,
+      "t": 1772517600000
+    },
+    {
+      "o": 6831.6900000000005,
+      "c": 6869.5,
+      "h": 6885.9400000000005,
+      "l": 6811.64,
+      "t": 1772604000000
+    },
+    {
+      "o": 6851.08,
+      "c": 6830.71,
+      "h": 6870.43,
+      "l": 6770.78,
+      "t": 1772690400000
+    }
+  ],
+  "status": "OK",
+  "request_id": "5a2ccdeb826fde5e2fb542d5261396fd",
+  "count": 4
+}
+
+  [SPX (no prefix)]
+  URL: https://api.polygon.io/v2/aggs/ticker/SPX/range/1/day/2026-03-01/2026-03-05?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: SPX
+  status: OK
+  resultsCount: 0
+  queryCount: 0
+  request_id: 670d7e87b73ca7cbe63aa91c1ea4c6f4
+  Full response:
+{
+  "ticker": "SPX",
+  "queryCount": 0,
+  "resultsCount": 0,
+  "adjusted": true,
+  "status": "OK",
+  "request_id": "670d7e87b73ca7cbe63aa91c1ea4c6f4"
+}
+
+  [$SPX.X]
+  URL: https://api.polygon.io/v2/aggs/ticker/$SPX.X/range/1/day/2026-03-01/2026-03-05?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: $SPX.X
+  status: OK
+  resultsCount: 0
+  queryCount: 0
+  request_id: e7ea79de7dd42195cea473b9f9cdf62b
+  Full response:
+{
+  "ticker": "$SPX.X",
+  "queryCount": 0,
+  "resultsCount": 0,
+  "adjusted": true,
+  "status": "OK",
+  "request_id": "e7ea79de7dd42195cea473b9f9cdf62b"
+}
+
+================================================================================
+TEST 4: VIX ticker variants
+================================================================================
+
+  [I:VIX daily 2026-03-01 to 2026-03-05]
+  URL: https://api.polygon.io/v2/aggs/ticker/I:VIX/range/1/day/2026-03-01/2026-03-05?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:VIX
+  status: OK
+  resultsCount: N/A
+  queryCount: 4
+  request_id: 29a07c9b6fa3dc0873c137741215d67e
+  First result: {"o": 24.66, "c": 21.44, "h": 25.240000000000002, "l": 20.37, "t": 1772431200000}
+  Full response:
+{
+  "ticker": "I:VIX",
+  "queryCount": 4,
+  "results": [
+    {
+      "o": 24.66,
+      "c": 21.44,
+      "h": 25.240000000000002,
+      "l": 20.37,
+      "t": 1772431200000
+    },
+    {
+      "o": 24.57,
+      "c": 23.57,
+      "h": 28.150000000000002,
+      "l": 22.18,
+      "t": 1772517600000
+    },
+    {
+      "o": 24.39,
+      "c": 21.150000000000002,
+      "h": 24.87,
+      "l": 20.400000000000002,
+      "t": 1772604000000
+    },
+    {
+      "o": 22.11,
+      "c": 23.75,
+      "h": 25.84,
+      "l": 20.55,
+      "t": 1772690400000
+    }
+  ],
+  "status": "OK",
+  "request_id": "29a07c9b6fa3dc0873c137741215d67e",
+  "count": 4
+}
+
+  [I%3AVIX (URL-encoded)]
+  URL: https://api.polygon.io/v2/aggs/ticker/I%3AVIX/range/1/day/2026-03-01/2026-03-05?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:VIX
+  status: OK
+  resultsCount: N/A
+  queryCount: 4
+  request_id: 05a84e4a407c39e1fb84b32ea71a72a3
+  First result: {"o": 24.66, "c": 21.44, "h": 25.240000000000002, "l": 20.37, "t": 1772431200000}
+  Full response:
+{
+  "ticker": "I:VIX",
+  "queryCount": 4,
+  "results": [
+    {
+      "o": 24.66,
+      "c": 21.44,
+      "h": 25.240000000000002,
+      "l": 20.37,
+      "t": 1772431200000
+    },
+    {
+      "o": 24.57,
+      "c": 23.57,
+      "h": 28.150000000000002,
+      "l": 22.18,
+      "t": 1772517600000
+    },
+    {
+      "o": 24.39,
+      "c": 21.150000000000002,
+      "h": 24.87,
+      "l": 20.400000000000002,
+      "t": 1772604000000
+    },
+    {
+      "o": 22.11,
+      "c": 23.75,
+      "h": 25.84,
+      "l": 20.55,
+      "t": 1772690400000
+    }
+  ],
+  "status": "OK",
+  "request_id": "05a84e4a407c39e1fb84b32ea71a72a3",
+  "count": 4
+}
+
+  [VIX (no prefix)]
+  URL: https://api.polygon.io/v2/aggs/ticker/VIX/range/1/day/2026-03-01/2026-03-05?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: VIX
+  status: OK
+  resultsCount: 0
+  queryCount: 0
+  request_id: 15b7f11665751e91bcc225f427c7b069
+  Full response:
+{
+  "ticker": "VIX",
+  "queryCount": 0,
+  "resultsCount": 0,
+  "adjusted": true,
+  "status": "OK",
+  "request_id": "15b7f11665751e91bcc225f427c7b069"
+}
+
+================================================================================
+TEST 5: Check Polygon subscription info
+================================================================================
+
+  [Ticker details for I:SPX]
+  URL: https://api.polygon.io/v3/reference/tickers/I:SPX?apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: None
+  status: OK
+  resultsCount: N/A
+  queryCount: N/A
+  request_id: 5e5501a7b27974ae097978c4db459284
+  ERROR: 0
+  Raw response: {"request_id":"5e5501a7b27974ae097978c4db459284","results":{"ticker":"I:SPX","name":"Standard & Poor's 500","market":"indices","locale":"us","active":true,"source_feed":"CboeGlobalIndicesMain"},"status":"OK"}
+
+  [Ticker details for I:VIX]
+  URL: https://api.polygon.io/v3/reference/tickers/I:VIX?apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: None
+  status: OK
+  resultsCount: N/A
+  queryCount: N/A
+  request_id: 8df9d95812cb04abe9c3cf775c5936a2
+  ERROR: 0
+  Raw response: {"request_id":"8df9d95812cb04abe9c3cf775c5936a2","results":{"ticker":"I:VIX","name":"Cboe Volatility Index","market":"indices","locale":"us","active":true,"source_feed":"CboeGlobalIndicesMain"},"status":"OK"}
+
+  [Search for 'SPX' tickers]
+  URL: https://api.polygon.io/v3/reference/tickers?search=SPX&type=index&limit=10&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: None
+  status: OK
+  resultsCount: N/A
+  queryCount: N/A
+  request_id: bd7206193a9f7c723c35f8224e36dcaa
+  Full response:
+{
+  "results": [],
+  "status": "OK",
+  "request_id": "bd7206193a9f7c723c35f8224e36dcaa"
+}
+
+================================================================================
+TEST 6: Snapshot endpoints
+================================================================================
+
+  [Index snapshot I:SPX]
+  URL: https://api.polygon.io/v3/snapshot/indices/I:SPX?apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 404
+  ERROR: Extra data: line 1 column 5 (char 4)
+  Raw response: 404 page not found
+
+================================================================================
+TEST 7: I:SPX for 2023-02-14 (first date in our existing CSV)
+================================================================================
+
+  [I:SPX 1-min 2023-02-14]
+  URL: https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/minute/2023-02-14/2023-02-14?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:SPX
+  status: OK
+  resultsCount: N/A
+  queryCount: 5
+  request_id: 07d4073e706b7fd07418795443457142
+  First result: {"o": 4138.09, "c": 4138.4, "h": 4138.4800000000005, "l": 4138.09, "t": 1676398920000}
+  Full response:
+{
+  "ticker": "I:SPX",
+  "queryCount": 5,
+  "results": [
+    {
+      "o": 4138.09,
+      "c": 4138.4,
+      "h": 4138.4800000000005,
+      "l": 4138.09,
+      "t": 1676398920000
+    },
+    {
+      "o": 4138.38,
+      "c": 4136.34,
+      "h": 4138.38,
+      "l": 4136.33,
+      "t": 1676398980000
+    },
+    {
+      "o": 4136.36,
+      "c": 4135.05,
+      "h": 4136.46,
+      "l": 4133.59,
+      "t": 1676399040000
+    },
+    {
+      "o": 4135.26,
+      "c": 4134.53,
+      "h": 4135.4800000000005,
+      "l": 4134.47,
+      "t": 1676399100000
+    },
+    {
+      "o": 4134.52,
+      "c": 4133.7300000000005,
+      "h": 4134.67,
+      "l": 4133.7,
+      "t": 1676399160000
+    }
+  ],
+  "status": "OK",
+  "request_id": "07d4073e706b7fd07418795443457142",
+  "count": 5,
+  "next_url": "https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/minute/1676399220000/2023-02-14?cursor=bGltaXQ9NSZzb3J0PWFzYw"
+}
+
+  [I:SPX daily 2023-02-14]
+  URL: https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/day/2023-02-14/2023-02-14?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:SPX
+  status: OK
+  resultsCount: N/A
+  queryCount: 1
+  request_id: 7ca3b010617b634b760de00ef54fc768
+  First result: {"o": 4138.09, "c": 4136.13, "h": 4145.96, "l": 4122.47, "t": 1676354400000}
+  Full response:
+{
+  "ticker": "I:SPX",
+  "queryCount": 1,
+  "results": [
+    {
+      "o": 4138.09,
+      "c": 4136.13,
+      "h": 4145.96,
+      "l": 4122.47,
+      "t": 1676354400000
+    }
+  ],
+  "status": "OK",
+  "request_id": "7ca3b010617b634b760de00ef54fc768",
+  "count": 1
+}
+
+================================================================================
+TEST 8: I:SPX for historical date 2020-03-16
+================================================================================
+
+  [I:SPX 1-min 2020-03-16]
+  URL: https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/minute/2020-03-16/2020-03-16?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:SPX
+  status: OK
+  resultsCount: N/A
+  queryCount: 0
+  request_id: 3b4260b1ecdfc09e8b441274df288658
+  Full response:
+{
+  "ticker": "I:SPX",
+  "queryCount": 0,
+  "status": "OK",
+  "request_id": "3b4260b1ecdfc09e8b441274df288658"
+}
+
+  [I:SPX daily 2020-03-16]
+  URL: https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/day/2020-03-16/2020-03-16?adjusted=true&sort=asc&limit=5&apiKey=cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF
+  HTTP Status: 200
+  ticker: I:SPX
+  status: OK
+  resultsCount: N/A
+  queryCount: 0
+  request_id: 1fd5474677a1b48c8982f0bdf3146062
+  Full response:
+{
+  "ticker": "I:SPX",
+  "queryCount": 0,
+  "status": "OK",
+  "request_id": "1fd5474677a1b48c8982f0bdf3146062"
+}

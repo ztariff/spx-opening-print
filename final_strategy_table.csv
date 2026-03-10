@@ -1,0 +1,41 @@
+rank,setup,n_days,eod_winrate,eod_avg_pnl,best_avg_pnl,best_pf,best_pt,best_sl,best_ts,best_wr,best_total_pnl,avg_hold_min
+1,bullish_1st_bar + 3+_down_streak (no Thu/no bear),32,75.0,28.49,20.68,4.58,50,20,390,65.6,661.8,226.6
+2,bullish_1st_bar + prev_close_near_low + 2nd_week,20,80.0,20.15,17.05,3.84,50,20,390,70.0,341.0,257.1
+3,gap_up + prev_close_near_low + 2nd_week,22,77.3,19.57,16.91,3.66,50,20,390,68.2,372.0,268.0
+4,bullish_1st_bar + 3+_down_streak,37,64.9,19.61,16.53,4.3,50,20,240,70.3,611.4,164
+5,bullish_1st_bar + gap_up + 3+_down_streak,31,64.5,17.54,16.31,4.06,50,20,240,67.7,505.6,164.9
+6,bullish_1st_bar + gap_up + lower_20d_range,29,69.0,16.41,15.68,2.89,50,20,390,58.6,454.7,179.9
+7,bullish_1st_bar + lower_20d_range (no Thu/no bear),31,67.7,14.67,15.63,2.86,50,20,390,58.1,484.7,178.6
+8,gap_up + lower_20d_range,33,66.7,14.18,14.75,2.74,50,20,390,57.6,486.7,181.5
+9,prev_close_near_low + 2nd_week,33,78.8,32.88,13.89,2.91,50,20,390,63.6,458.3,238.7
+10,bullish_1st_bar + lower_20d_range,35,62.9,12.05,13.56,2.48,50,20,390,54.3,474.7,172.9
+11,bullish_1st_bar + gap_up + prev_big_down,24,66.7,13.36,12.08,10.66,50,2,120,37.5,289.8,57.0
+12,monday + gap_up + prev_close_near_low,16,81.2,8.94,11.94,3.75,30,20,390,75.0,191.1,234.3
+13,lower_20d_range + wide_prev_range,23,78.3,39.7,11.82,2.13,50,20,390,47.8,271.8,106.5
+14,bullish_1st_bar + prev_big_down (no Thu/no bear),23,73.9,20.15,11.76,4.07,50,8,240,52.2,270.6,118.2
+15,prev_big_down + 2nd_week,15,86.7,60.58,11.65,2.25,50,20,390,53.3,174.7,150.5
+16,bullish_1st_bar + 3+_down_streak + prev_close_near_low,17,52.9,11.23,11.07,2.34,50,20,390,47.1,188.1,228.5
+17,bullish_1st_bar + prev_close_near_low + wide_prev_range,22,77.3,17.72,10.88,2.33,50,20,390,59.1,239.4,215.4
+18,bullish_1st_bar + prev_big_down + wide_prev_range,23,69.6,19.13,10.62,3.44,20,20,390,78.3,244.4,74.1
+19,bullish_1st_bar + wide_prev_range (no Thu/no bear),45,68.9,9.83,10.24,3.56,20,15,390,73.3,460.9,51.1
+20,monday + 2nd_week,36,63.9,11.14,10.07,2.86,50,15,390,52.8,362.5,269.9
+21,gap_up + 3+_down_streak,42,57.1,9.1,9.86,3.96,50,5,240,33.3,414.0,77.1
+22,gap_up + prev_big_down + wide_prev_range,21,66.7,12.62,9.84,8.38,50,2,120,33.3,206.7,50.1
+23,bullish_1st_bar + gap_up + wide_prev_range,44,63.6,3.02,9.67,4.54,15,20,390,86.4,425.3,47.6
+24,bullish_1st_bar + prev_big_down,32,62.5,13.05,9.51,2.9,20,20,390,75.0,304.4,91.9
+25,bullish_1st_bar + monday + 2nd_week,20,65.0,12.85,9.49,2.79,50,15,390,55.0,189.8,283.9
+26,bullish_1st_bar + monday + prev_close_near_low,19,78.9,4.84,9.47,4.64,15,20,390,84.2,179.8,110.4
+27,gap_up + prev_close_near_low + wide_prev_range,22,77.3,18.76,9.41,2.03,50,20,390,54.5,207.0,183.3
+28,gap_up + prev_big_down,30,60.0,9.61,9.26,7.61,50,2,120,30.0,277.8,45.8
+29,bullish_1st_bar + wide_prev_range,53,64.2,7.51,9.25,4.06,15,20,390,84.9,490.3,45.0
+30,bullish_1st_bar + prev_big_down + prev_close_near_low,27,63.0,9.72,9.05,2.75,20,20,390,74.1,244.4,96.6
+31,bullish_1st_bar + lower_20d_range + prev_close_near_low,16,50.0,-4.48,8.65,2.96,50,20,30,68.8,138.4,28
+32,bullish_1st_bar + prev_close_near_low (no Thu/no bear),73,68.5,7.96,8.39,2.08,50,20,390,60.3,612.7,253.1
+33,bullish_1st_bar + gap_up + prev_close_near_low,75,68.0,8.17,8.1,2.02,50,20,390,58.7,607.4,255.2
+34,lower_20d_range,68,61.8,17.24,7.89,1.71,50,20,390,44.1,536.3,131.2
+35,bullish_1st_bar + monday,89,65.2,8.13,7.87,3.53,15,20,390,79.8,700.4,127.7
+36,bullish_1st_bar + monday (no Thu/no bear),89,65.2,8.13,7.87,3.53,15,20,390,79.8,700.4,127.7
+37,monday + 3+_down_streak,17,70.6,16.77,7.72,2.61,30,20,240,70.6,131.2,146.6
+38,bullish_1st_bar + monday + gap_up,65,66.2,8.29,7.7,3.35,15,20,390,80.0,500.4,134.2
+39,bullish_1st_bar + gap_up (no Thu/no bear),248,64.5,6.91,7.66,2.02,50,20,390,57.3,1899.5,273.5
+40,gap_up + wide_prev_range,57,61.4,4.99,7.5,2.1,50,15,120,50.9,427.3,71.3

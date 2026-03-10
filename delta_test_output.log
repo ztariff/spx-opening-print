@@ -1,0 +1,4 @@
+Loaded 334 ATM trades (VIX >= 16 filtered)
+Testing offsets: [-20, -10, 0, 10, 20, 30, 50]
+
+  Day 25/334: -20:0 | -10:0 | +0:25 | +10:0 | +20:0 | +30:0 | +50:0
