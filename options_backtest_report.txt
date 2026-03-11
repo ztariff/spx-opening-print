@@ -19,6 +19,9 @@ OPTIONS-BASED RESULTS
   Avg Win: $67,792  |  Avg Loss: $-32,410
   Best: $734,976  |  Worst: $-151,335
   Max Drawdown: $318,832
+  Profit Factor: 2.16
+  Calmar Ratio: 19.15
+  Sharpe Ratio (ann.): 1.41
   Avg Premium per Trade: $96,125
   Avg Contracts per Trade: 59
 

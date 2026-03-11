@@ -4,6 +4,8 @@
     "day_of_week": "Friday",
     "score": 56,
     "risk": 169000,
+    "base_risk": 169000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Wide prior range",
@@ -40,6 +42,8 @@
     "day_of_week": "Tuesday",
     "score": 41,
     "risk": 129000,
+    "base_risk": 129000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 20.5",
@@ -75,6 +79,8 @@
     "day_of_week": "Thursday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -112,6 +118,8 @@
     "day_of_week": "Friday",
     "score": 78,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+14.7 pts)",
@@ -148,6 +156,8 @@
     "day_of_week": "Wednesday",
     "score": 60,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+13.0 pts)",
@@ -185,6 +195,8 @@
     "day_of_week": "Thursday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -222,6 +234,8 @@
     "day_of_week": "Friday",
     "score": 93,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-1.4%)",
@@ -260,6 +274,8 @@
     "day_of_week": "Monday",
     "score": 53,
     "risk": 157000,
+    "base_risk": 157000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -296,6 +312,8 @@
     "day_of_week": "Wednesday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 20.1",
@@ -329,6 +347,8 @@
     "day_of_week": "Thursday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -363,6 +383,8 @@
     "day_of_week": "Friday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+16.2 pts)",
@@ -396,6 +418,8 @@
     "day_of_week": "Wednesday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+11.2 pts)",
@@ -432,6 +456,8 @@
     "day_of_week": "Friday",
     "score": 53,
     "risk": 157000,
+    "base_risk": 157000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "3+ down day streak (-4)",
@@ -466,6 +492,8 @@
     "day_of_week": "Friday",
     "score": 5,
     "risk": 33000,
+    "base_risk": 33000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.2"
@@ -497,6 +525,8 @@
     "day_of_week": "Wednesday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+14.0 pts)",
@@ -531,6 +561,8 @@
     "day_of_week": "Tuesday",
     "score": 73,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+6.3 pts)",
@@ -568,6 +600,8 @@
     "day_of_week": "Tuesday",
     "score": 13,
     "risk": 52000,
+    "base_risk": 52000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.8",
@@ -601,6 +635,8 @@
     "day_of_week": "Wednesday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+10.8 pts)",
@@ -637,6 +673,8 @@
     "day_of_week": "Tuesday",
     "score": 26,
     "risk": 87000,
+    "base_risk": 87000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+1.3 pts)",
@@ -671,6 +709,8 @@
     "day_of_week": "Thursday",
     "score": 13,
     "risk": 59000,
+    "base_risk": 59000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -706,6 +746,8 @@
     "day_of_week": "Friday",
     "score": 26,
     "risk": 87000,
+    "base_risk": 87000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.8",
@@ -740,6 +782,8 @@
     "day_of_week": "Monday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -774,6 +818,8 @@
     "day_of_week": "Monday",
     "score": 43,
     "risk": 134000,
+    "base_risk": 134000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -809,6 +855,8 @@
     "day_of_week": "Tuesday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+19.6 pts)",
@@ -842,6 +890,8 @@
     "day_of_week": "Wednesday",
     "score": 71,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Wide prior range",
@@ -880,6 +930,8 @@
     "day_of_week": "Friday",
     "score": 73,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 18.8",
@@ -916,6 +968,8 @@
     "day_of_week": "Wednesday",
     "score": 13,
     "risk": 52000,
+    "base_risk": 52000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.3",
@@ -949,6 +1003,8 @@
     "day_of_week": "Thursday",
     "score": 23,
     "risk": 79000,
+    "base_risk": 79000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -984,6 +1040,8 @@
     "day_of_week": "Thursday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -1018,6 +1076,8 @@
     "day_of_week": "Monday",
     "score": 41,
     "risk": 129000,
+    "base_risk": 129000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -1053,6 +1113,8 @@
     "day_of_week": "Tuesday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+9.1 pts)",
@@ -1087,6 +1149,8 @@
     "day_of_week": "Friday",
     "score": 35,
     "risk": 94000,
+    "base_risk": 94000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+30.3 pts)",
@@ -1120,6 +1184,8 @@
     "day_of_week": "Tuesday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+15.4 pts)",
@@ -1153,6 +1219,8 @@
     "day_of_week": "Thursday",
     "score": -12,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -1186,6 +1254,8 @@
     "day_of_week": "Monday",
     "score": 83,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -1224,6 +1294,8 @@
     "day_of_week": "Tuesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+39.3 pts)",
@@ -1256,6 +1328,8 @@
     "day_of_week": "Wednesday",
     "score": 5,
     "risk": 38000,
+    "base_risk": 38000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+31.9 pts)",
@@ -1288,6 +1362,8 @@
     "day_of_week": "Friday",
     "score": 8,
     "risk": 43000,
+    "base_risk": 43000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 17.3",
@@ -1320,6 +1396,8 @@
     "day_of_week": "Wednesday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+38.0 pts)",
@@ -1357,6 +1435,8 @@
     "day_of_week": "Monday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -1393,6 +1473,8 @@
     "day_of_week": "Thursday",
     "score": 16,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -1429,6 +1511,8 @@
     "day_of_week": "Monday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -1466,6 +1550,8 @@
     "day_of_week": "Wednesday",
     "score": 35,
     "risk": 106000,
+    "base_risk": 106000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+35.2 pts)",
@@ -1502,6 +1588,8 @@
     "day_of_week": "Thursday",
     "score": 3,
     "risk": 39000,
+    "base_risk": 39000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -1537,6 +1625,8 @@
     "day_of_week": "Tuesday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 24.9",
@@ -1570,6 +1660,8 @@
     "day_of_week": "Wednesday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+9.2 pts)",
@@ -1605,6 +1697,8 @@
     "day_of_week": "Tuesday",
     "score": 40,
     "risk": 127000,
+    "base_risk": 127000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 24.0",
@@ -1639,6 +1733,8 @@
     "day_of_week": "Thursday",
     "score": -15,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -1673,6 +1769,8 @@
     "day_of_week": "Monday",
     "score": 30,
     "risk": 96000,
+    "base_risk": 96000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -1708,6 +1806,8 @@
     "day_of_week": "Tuesday",
     "score": 30,
     "risk": 96000,
+    "base_risk": 96000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+13.0 pts)",
@@ -1743,6 +1843,8 @@
     "day_of_week": "Wednesday",
     "score": 30,
     "risk": 96000,
+    "base_risk": 96000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+26.2 pts)",
@@ -1779,6 +1881,8 @@
     "day_of_week": "Friday",
     "score": 93,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+19.0 pts)",
@@ -1818,6 +1922,8 @@
     "day_of_week": "Monday",
     "score": 93,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -1857,6 +1963,8 @@
     "day_of_week": "Tuesday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+27.0 pts)",
@@ -1894,6 +2002,8 @@
     "day_of_week": "Monday",
     "score": 40,
     "risk": 127000,
+    "base_risk": 127000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -1929,6 +2039,8 @@
     "day_of_week": "Tuesday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+1.8 pts)",
@@ -1962,6 +2074,8 @@
     "day_of_week": "Wednesday",
     "score": 35,
     "risk": 106000,
+    "base_risk": 106000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+31.8 pts)",
@@ -1997,6 +2111,8 @@
     "day_of_week": "Friday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+18.3 pts)",
@@ -2030,6 +2146,8 @@
     "day_of_week": "Friday",
     "score": 25,
     "risk": 85000,
+    "base_risk": 85000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+14.5 pts)",
@@ -2064,6 +2182,8 @@
     "day_of_week": "Monday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -2099,6 +2219,8 @@
     "day_of_week": "Monday",
     "score": 18,
     "risk": 69000,
+    "base_risk": 69000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -2134,6 +2256,8 @@
     "day_of_week": "Tuesday",
     "score": 55,
     "risk": 167000,
+    "base_risk": 167000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-2.6%)",
@@ -2170,6 +2294,8 @@
     "day_of_week": "Friday",
     "score": 65,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+19.9 pts)",
@@ -2206,6 +2332,8 @@
     "day_of_week": "Monday",
     "score": 15,
     "risk": 63000,
+    "base_risk": 63000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -2240,6 +2368,8 @@
     "day_of_week": "Tuesday",
     "score": 55,
     "risk": 167000,
+    "base_risk": 167000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+35.7 pts)",
@@ -2276,6 +2406,8 @@
     "day_of_week": "Thursday",
     "score": -20,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -2310,6 +2442,8 @@
     "day_of_week": "Friday",
     "score": 35,
     "risk": 106000,
+    "base_risk": 106000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+6.5 pts)",
@@ -2345,6 +2479,8 @@
     "day_of_week": "Tuesday",
     "score": 5,
     "risk": 43000,
+    "base_risk": 43000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 21.6",
@@ -2379,6 +2515,8 @@
     "day_of_week": "Thursday",
     "score": 13,
     "risk": 59000,
+    "base_risk": 59000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -2415,6 +2553,8 @@
     "day_of_week": "Friday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 22.5",
@@ -2449,6 +2589,8 @@
     "day_of_week": "Tuesday",
     "score": 63,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+27.9 pts)",
@@ -2486,6 +2628,8 @@
     "day_of_week": "Thursday",
     "score": 10,
     "risk": 53000,
+    "base_risk": 53000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -2522,6 +2666,8 @@
     "day_of_week": "Friday",
     "score": 15,
     "risk": 56000,
+    "base_risk": 56000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 22.1",
@@ -2554,6 +2700,8 @@
     "day_of_week": "Wednesday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+10.6 pts)",
@@ -2589,6 +2737,8 @@
     "day_of_week": "Tuesday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+16.7 pts)",
@@ -2623,6 +2773,8 @@
     "day_of_week": "Wednesday",
     "score": 40,
     "risk": 127000,
+    "base_risk": 127000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+8.6 pts)",
@@ -2657,6 +2809,8 @@
     "day_of_week": "Tuesday",
     "score": 69,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-1.7%)",
@@ -2696,6 +2850,8 @@
     "day_of_week": "Wednesday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 25.5",
@@ -2732,6 +2888,8 @@
     "day_of_week": "Thursday",
     "score": 5,
     "risk": 43000,
+    "base_risk": 43000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -2767,6 +2925,8 @@
     "day_of_week": "Friday",
     "score": 15,
     "risk": 63000,
+    "base_risk": 63000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+15.3 pts)",
@@ -2801,6 +2961,8 @@
     "day_of_week": "Tuesday",
     "score": 40,
     "risk": 127000,
+    "base_risk": 127000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+1.5 pts)",
@@ -2835,6 +2997,8 @@
     "day_of_week": "Wednesday",
     "score": 30,
     "risk": 85000,
+    "base_risk": 85000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 23.1",
@@ -2868,6 +3032,8 @@
     "day_of_week": "Friday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 23.5",
@@ -2901,6 +3067,8 @@
     "day_of_week": "Tuesday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+26.6 pts)",
@@ -2935,6 +3103,8 @@
     "day_of_week": "Friday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 22.2",
@@ -2968,6 +3138,8 @@
     "day_of_week": "Monday",
     "score": 43,
     "risk": 134000,
+    "base_risk": 134000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -3003,6 +3175,8 @@
     "day_of_week": "Tuesday",
     "score": 20,
     "risk": 73000,
+    "base_risk": 73000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+34.7 pts)",
@@ -3037,6 +3211,8 @@
     "day_of_week": "Thursday",
     "score": 0,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -3071,6 +3247,8 @@
     "day_of_week": "Monday",
     "score": 35,
     "risk": 106000,
+    "base_risk": 106000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -3105,6 +3283,8 @@
     "day_of_week": "Wednesday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+18.7 pts)",
@@ -3138,6 +3318,8 @@
     "day_of_week": "Friday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 21.6",
@@ -3171,6 +3353,8 @@
     "day_of_week": "Wednesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 22.0",
@@ -3203,6 +3387,8 @@
     "day_of_week": "Wednesday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Wide prior range",
@@ -3238,6 +3424,8 @@
     "day_of_week": "Monday",
     "score": 61,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -3276,6 +3464,8 @@
     "day_of_week": "Tuesday",
     "score": 25,
     "risk": 85000,
+    "base_risk": 85000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+3.0 pts)",
@@ -3310,6 +3500,8 @@
     "day_of_week": "Wednesday",
     "score": 26,
     "risk": 87000,
+    "base_risk": 87000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 22.8",
@@ -3344,6 +3536,8 @@
     "day_of_week": "Thursday",
     "score": 51,
     "risk": 153000,
+    "base_risk": 153000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -3383,6 +3577,8 @@
     "day_of_week": "Tuesday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+41.1 pts)",
@@ -3419,6 +3615,8 @@
     "day_of_week": "Thursday",
     "score": 8,
     "risk": 49000,
+    "base_risk": 49000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -3454,6 +3652,8 @@
     "day_of_week": "Monday",
     "score": 35,
     "risk": 106000,
+    "base_risk": 106000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -3488,6 +3688,8 @@
     "day_of_week": "Thursday",
     "score": -5,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -3521,6 +3723,8 @@
     "day_of_week": "Monday",
     "score": 43,
     "risk": 134000,
+    "base_risk": 134000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -3556,6 +3760,8 @@
     "day_of_week": "Wednesday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+14.9 pts)",
@@ -3590,6 +3796,8 @@
     "day_of_week": "Friday",
     "score": 43,
     "risk": 134000,
+    "base_risk": 134000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+12.8 pts)",
@@ -3625,6 +3833,8 @@
     "day_of_week": "Monday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -3660,6 +3870,8 @@
     "day_of_week": "Tuesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 20.8",
@@ -3692,6 +3904,8 @@
     "day_of_week": "Wednesday",
     "score": 5,
     "risk": 38000,
+    "base_risk": 38000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+5.6 pts)",
@@ -3724,6 +3938,8 @@
     "day_of_week": "Monday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -3758,6 +3974,8 @@
     "day_of_week": "Tuesday",
     "score": -5,
     "risk": 25000,
+    "base_risk": 25000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 18.1"
@@ -3789,6 +4007,8 @@
     "day_of_week": "Wednesday",
     "score": -5,
     "risk": 25000,
+    "base_risk": 25000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 18.0"
@@ -3820,6 +4040,8 @@
     "day_of_week": "Friday",
     "score": 31,
     "risk": 98000,
+    "base_risk": 98000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+5.5 pts)",
@@ -3855,6 +4077,8 @@
     "day_of_week": "Wednesday",
     "score": -5,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+3.2 pts)",
@@ -3888,6 +4112,8 @@
     "day_of_week": "Thursday",
     "score": -5,
     "risk": 32000,
+    "base_risk": 32000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -3923,6 +4149,8 @@
     "day_of_week": "Tuesday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "3+ down day streak (-5)",
@@ -3957,6 +4185,8 @@
     "day_of_week": "Wednesday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Large gap down (-30.4 pts)",
@@ -3993,6 +4223,8 @@
     "day_of_week": "Thursday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4033,6 +4265,8 @@
     "day_of_week": "Friday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+29.6 pts)",
@@ -4069,6 +4303,8 @@
     "day_of_week": "Monday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -4102,6 +4338,8 @@
     "day_of_week": "Tuesday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+2.6 pts)",
@@ -4136,6 +4374,8 @@
     "day_of_week": "Thursday",
     "score": 31,
     "risk": 98000,
+    "base_risk": 98000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4174,6 +4414,8 @@
     "day_of_week": "Friday",
     "score": 53,
     "risk": 157000,
+    "base_risk": 157000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+16.2 pts)",
@@ -4209,6 +4451,8 @@
     "day_of_week": "Wednesday",
     "score": 25,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+6.2 pts)",
@@ -4242,6 +4486,8 @@
     "day_of_week": "Thursday",
     "score": -15,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4275,6 +4521,8 @@
     "day_of_week": "Tuesday",
     "score": 13,
     "risk": 52000,
+    "base_risk": 52000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+25.4 pts)",
@@ -4308,6 +4556,8 @@
     "day_of_week": "Friday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+19.3 pts)",
@@ -4340,6 +4590,8 @@
     "day_of_week": "Thursday",
     "score": -12,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4374,6 +4626,8 @@
     "day_of_week": "Wednesday",
     "score": 25,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+1.5 pts)",
@@ -4407,6 +4661,8 @@
     "day_of_week": "Friday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+8.1 pts)",
@@ -4439,6 +4695,8 @@
     "day_of_week": "Monday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -4472,6 +4730,8 @@
     "day_of_week": "Wednesday",
     "score": 3,
     "risk": 34000,
+    "base_risk": 34000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.2",
@@ -4504,6 +4764,8 @@
     "day_of_week": "Wednesday",
     "score": 5,
     "risk": 38000,
+    "base_risk": 38000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+7.6 pts)",
@@ -4536,6 +4798,8 @@
     "day_of_week": "Wednesday",
     "score": 18,
     "risk": 69000,
+    "base_risk": 69000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+13.1 pts)",
@@ -4570,6 +4834,8 @@
     "day_of_week": "Thursday",
     "score": 5,
     "risk": 38000,
+    "base_risk": 38000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4604,6 +4870,8 @@
     "day_of_week": "Monday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -4636,6 +4904,8 @@
     "day_of_week": "Thursday",
     "score": 13,
     "risk": 59000,
+    "base_risk": 59000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4671,6 +4941,8 @@
     "day_of_week": "Friday",
     "score": 13,
     "risk": 52000,
+    "base_risk": 52000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 19.7",
@@ -4704,6 +4976,8 @@
     "day_of_week": "Tuesday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+8.6 pts)",
@@ -4739,6 +5013,8 @@
     "day_of_week": "Friday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+3.4 pts)",
@@ -4772,6 +5048,8 @@
     "day_of_week": "Thursday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4808,6 +5086,8 @@
     "day_of_week": "Monday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -4841,6 +5121,8 @@
     "day_of_week": "Thursday",
     "score": -25,
     "risk": 25000,
+    "base_risk": 25000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4873,6 +5155,8 @@
     "day_of_week": "Friday",
     "score": 30,
     "risk": 85000,
+    "base_risk": 85000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+8.5 pts)",
@@ -4906,6 +5190,8 @@
     "day_of_week": "Monday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -4939,6 +5225,8 @@
     "day_of_week": "Thursday",
     "score": -7,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -4973,6 +5261,8 @@
     "day_of_week": "Friday",
     "score": 33,
     "risk": 90000,
+    "base_risk": 90000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "3+ down day streak (-3)",
@@ -5006,6 +5296,8 @@
     "day_of_week": "Friday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+20.8 pts)",
@@ -5040,6 +5332,8 @@
     "day_of_week": "Monday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -5076,6 +5370,8 @@
     "day_of_week": "Wednesday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+4.4 pts)",
@@ -5112,6 +5408,8 @@
     "day_of_week": "Monday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -5145,6 +5443,8 @@
     "day_of_week": "Tuesday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 20.2",
@@ -5179,6 +5479,8 @@
     "day_of_week": "Friday",
     "score": 31,
     "risk": 98000,
+    "base_risk": 98000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Large gap down (-70.3 pts)",
@@ -5215,6 +5517,8 @@
     "day_of_week": "Monday",
     "score": 83,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -5254,6 +5558,8 @@
     "day_of_week": "Tuesday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+56.3 pts)",
@@ -5289,6 +5595,8 @@
     "day_of_week": "Friday",
     "score": 50,
     "risk": 150000,
+    "base_risk": 150000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+29.0 pts)",
@@ -5323,6 +5631,8 @@
     "day_of_week": "Monday",
     "score": 15,
     "risk": 56000,
+    "base_risk": 56000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -5355,6 +5665,8 @@
     "day_of_week": "Tuesday",
     "score": 36,
     "risk": 109000,
+    "base_risk": 109000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Large gap down (-35.2 pts)",
@@ -5391,6 +5703,8 @@
     "day_of_week": "Wednesday",
     "score": 68,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+0.3 pts)",
@@ -5427,6 +5741,8 @@
     "day_of_week": "Friday",
     "score": 51,
     "risk": 153000,
+    "base_risk": 153000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Large gap down (-48.8 pts)",
@@ -5465,6 +5781,8 @@
     "day_of_week": "Wednesday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 21.0",
@@ -5498,6 +5816,8 @@
     "day_of_week": "Monday",
     "score": 25,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -5531,6 +5851,8 @@
     "day_of_week": "Wednesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+0.9 pts)",
@@ -5563,6 +5885,8 @@
     "day_of_week": "Thursday",
     "score": -10,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -5596,6 +5920,8 @@
     "day_of_week": "Friday",
     "score": 5,
     "risk": 33000,
+    "base_risk": 33000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 17.6"
@@ -5627,6 +5953,8 @@
     "day_of_week": "Monday",
     "score": 25,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -5660,6 +5988,8 @@
     "day_of_week": "Tuesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+14.6 pts)",
@@ -5692,6 +6022,8 @@
     "day_of_week": "Wednesday",
     "score": 0,
     "risk": 25000,
+    "base_risk": 25000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 17.1"
@@ -5723,6 +6055,8 @@
     "day_of_week": "Thursday",
     "score": 51,
     "risk": 153000,
+    "base_risk": 153000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -5762,6 +6096,8 @@
     "day_of_week": "Monday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -5798,6 +6134,8 @@
     "day_of_week": "Tuesday",
     "score": 41,
     "risk": 129000,
+    "base_risk": 129000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+14.3 pts)",
@@ -5833,6 +6171,8 @@
     "day_of_week": "Wednesday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 23.0",
@@ -5866,6 +6206,8 @@
     "day_of_week": "Thursday",
     "score": 21,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -5902,6 +6244,8 @@
     "day_of_week": "Friday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+7.5 pts)",
@@ -5936,6 +6280,8 @@
     "day_of_week": "Wednesday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Large gap down (-42.1 pts)",
@@ -5974,6 +6320,8 @@
     "day_of_week": "Thursday",
     "score": 36,
     "risk": 109000,
+    "base_risk": 109000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -6011,6 +6359,8 @@
     "day_of_week": "Monday",
     "score": 41,
     "risk": 129000,
+    "base_risk": 129000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -6048,6 +6398,8 @@
     "day_of_week": "Wednesday",
     "score": 76,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+19.2 pts)",
@@ -6086,6 +6438,8 @@
     "day_of_week": "Thursday",
     "score": 31,
     "risk": 98000,
+    "base_risk": 98000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -6123,6 +6477,8 @@
     "day_of_week": "Tuesday",
     "score": 36,
     "risk": 109000,
+    "base_risk": 109000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 23.9",
@@ -6158,6 +6514,8 @@
     "day_of_week": "Wednesday",
     "score": 91,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+34.5 pts)",
@@ -6196,6 +6554,8 @@
     "day_of_week": "Thursday",
     "score": 34,
     "risk": 104000,
+    "base_risk": 104000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -6234,6 +6594,8 @@
     "day_of_week": "Friday",
     "score": 51,
     "risk": 153000,
+    "base_risk": 153000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+15.7 pts)",
@@ -6270,6 +6632,8 @@
     "day_of_week": "Tuesday",
     "score": 36,
     "risk": 109000,
+    "base_risk": 109000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 24.1",
@@ -6305,6 +6669,8 @@
     "day_of_week": "Wednesday",
     "score": 71,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "3+ down day streak (-3)",
@@ -6341,6 +6707,8 @@
     "day_of_week": "Tuesday",
     "score": 74,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+12.2 pts)",
@@ -6379,6 +6747,8 @@
     "day_of_week": "Monday",
     "score": 56,
     "risk": 169000,
+    "base_risk": 169000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -6415,6 +6785,8 @@
     "day_of_week": "Monday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -6451,6 +6823,8 @@
     "day_of_week": "Thursday",
     "score": 31,
     "risk": 98000,
+    "base_risk": 98000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -6489,6 +6863,8 @@
     "day_of_week": "Monday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -6524,6 +6900,8 @@
     "day_of_week": "Tuesday",
     "score": 31,
     "risk": 98000,
+    "base_risk": 98000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+59.7 pts)",
@@ -6560,6 +6938,8 @@
     "day_of_week": "Wednesday",
     "score": 56,
     "risk": 169000,
+    "base_risk": 169000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Wide prior range",
@@ -6596,6 +6976,8 @@
     "day_of_week": "Thursday",
     "score": 36,
     "risk": 109000,
+    "base_risk": 109000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -6634,6 +7016,8 @@
     "day_of_week": "Monday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -6669,6 +7053,8 @@
     "day_of_week": "Wednesday",
     "score": 29,
     "risk": 94000,
+    "base_risk": 94000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 21.5",
@@ -6705,6 +7091,8 @@
     "day_of_week": "Wednesday",
     "score": 54,
     "risk": 160000,
+    "base_risk": 160000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+2.4 pts)",
@@ -6742,6 +7130,8 @@
     "day_of_week": "Friday",
     "score": 21,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Large gap down (-51.3 pts)",
@@ -6779,6 +7169,8 @@
     "day_of_week": "Monday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -6815,6 +7207,8 @@
     "day_of_week": "Tuesday",
     "score": 71,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-1.1%)",
@@ -6853,6 +7247,8 @@
     "day_of_week": "Wednesday",
     "score": 71,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-1.4%)",
@@ -6891,6 +7287,8 @@
     "day_of_week": "Friday",
     "score": 61,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 22.6",
@@ -6927,6 +7325,8 @@
     "day_of_week": "Monday",
     "score": 89,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -6966,6 +7366,8 @@
     "day_of_week": "Wednesday",
     "score": 56,
     "risk": 169000,
+    "base_risk": 169000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-2.0%)",
@@ -7003,6 +7405,8 @@
     "day_of_week": "Thursday",
     "score": 26,
     "risk": 87000,
+    "base_risk": 87000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -7042,6 +7446,8 @@
     "day_of_week": "Wednesday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+16.0 pts)",
@@ -7076,6 +7482,8 @@
     "day_of_week": "Thursday",
     "score": 13,
     "risk": 59000,
+    "base_risk": 59000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -7111,6 +7519,8 @@
     "day_of_week": "Friday",
     "score": 3,
     "risk": 39000,
+    "base_risk": 39000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Large gap down (-33.2 pts)",
@@ -7145,6 +7555,8 @@
     "day_of_week": "Tuesday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+0.1 pts)",
@@ -7178,6 +7590,8 @@
     "day_of_week": "Wednesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+12.5 pts)",
@@ -7210,6 +7624,8 @@
     "day_of_week": "Thursday",
     "score": -5,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -7244,6 +7660,8 @@
     "day_of_week": "Tuesday",
     "score": 30,
     "risk": 96000,
+    "base_risk": 96000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+5.0 pts)",
@@ -7278,6 +7696,8 @@
     "day_of_week": "Wednesday",
     "score": 0,
     "risk": 25000,
+    "base_risk": 25000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 19.6"
@@ -7309,6 +7729,8 @@
     "day_of_week": "Thursday",
     "score": -15,
     "risk": 32000,
+    "base_risk": 32000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -7344,6 +7766,8 @@
     "day_of_week": "Friday",
     "score": -10,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Large gap down (-51.9 pts)",
@@ -7376,6 +7800,8 @@
     "day_of_week": "Monday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -7409,6 +7835,8 @@
     "day_of_week": "Friday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-1.8%)",
@@ -7445,6 +7873,8 @@
     "day_of_week": "Tuesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+9.9 pts)",
@@ -7477,6 +7907,8 @@
     "day_of_week": "Wednesday",
     "score": 68,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+4.6 pts)",
@@ -7514,6 +7946,8 @@
     "day_of_week": "Thursday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -7550,6 +7984,8 @@
     "day_of_week": "Thursday",
     "score": -10,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -7583,6 +8019,8 @@
     "day_of_week": "Friday",
     "score": 15,
     "risk": 56000,
+    "base_risk": 56000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+5.8 pts)",
@@ -7615,6 +8053,8 @@
     "day_of_week": "Wednesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+12.6 pts)",
@@ -7647,6 +8087,8 @@
     "day_of_week": "Monday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -7680,6 +8122,8 @@
     "day_of_week": "Thursday",
     "score": 41,
     "risk": 129000,
+    "base_risk": 129000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -7717,6 +8161,8 @@
     "day_of_week": "Friday",
     "score": 23,
     "risk": 79000,
+    "base_risk": 79000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Wide prior range",
@@ -7751,6 +8197,8 @@
     "day_of_week": "Monday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -7784,6 +8232,8 @@
     "day_of_week": "Wednesday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+3.2 pts)",
@@ -7821,6 +8271,8 @@
     "day_of_week": "Friday",
     "score": 108,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+24.0 pts)",
@@ -7859,6 +8311,8 @@
     "day_of_week": "Monday",
     "score": 30,
     "risk": 96000,
+    "base_risk": 96000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -7893,6 +8347,8 @@
     "day_of_week": "Wednesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+24.5 pts)",
@@ -7925,6 +8381,8 @@
     "day_of_week": "Friday",
     "score": 68,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+8.5 pts)",
@@ -7960,6 +8418,8 @@
     "day_of_week": "Monday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -7995,6 +8455,8 @@
     "day_of_week": "Wednesday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+13.0 pts)",
@@ -8030,6 +8492,8 @@
     "day_of_week": "Friday",
     "score": 15,
     "risk": 56000,
+    "base_risk": 56000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+6.3 pts)",
@@ -8062,6 +8526,8 @@
     "day_of_week": "Monday",
     "score": 15,
     "risk": 56000,
+    "base_risk": 56000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -8094,6 +8560,8 @@
     "day_of_week": "Friday",
     "score": 45,
     "risk": 139000,
+    "base_risk": 139000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+4.9 pts)",
@@ -8128,6 +8596,8 @@
     "day_of_week": "Tuesday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+21.7 pts)",
@@ -8162,6 +8632,8 @@
     "day_of_week": "Monday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -8196,6 +8668,8 @@
     "day_of_week": "Monday",
     "score": 63,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -8232,6 +8706,8 @@
     "day_of_week": "Friday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+11.9 pts)",
@@ -8269,6 +8745,8 @@
     "day_of_week": "Monday",
     "score": 73,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -8306,6 +8784,8 @@
     "day_of_week": "Friday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-1.1%)",
@@ -8341,6 +8821,8 @@
     "day_of_week": "Thursday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -8378,6 +8860,8 @@
     "day_of_week": "Friday",
     "score": 103,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+34.4 pts)",
@@ -8416,6 +8900,8 @@
     "day_of_week": "Thursday",
     "score": -7,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -8450,6 +8936,8 @@
     "day_of_week": "Thursday",
     "score": -10,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -8483,6 +8971,8 @@
     "day_of_week": "Wednesday",
     "score": 13,
     "risk": 52000,
+    "base_risk": 52000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+6.7 pts)",
@@ -8516,6 +9006,8 @@
     "day_of_week": "Thursday",
     "score": -15,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -8549,6 +9041,8 @@
     "day_of_week": "Friday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+1.0 pts)",
@@ -8583,6 +9077,8 @@
     "day_of_week": "Wednesday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Prior big down day (-1.7%)",
@@ -8619,6 +9115,8 @@
     "day_of_week": "Thursday",
     "score": 43,
     "risk": 134000,
+    "base_risk": 134000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -8656,6 +9154,8 @@
     "day_of_week": "Friday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+4.2 pts)",
@@ -8691,6 +9191,8 @@
     "day_of_week": "Friday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+6.4 pts)",
@@ -8724,6 +9226,8 @@
     "day_of_week": "Monday",
     "score": 23,
     "risk": 70000,
+    "base_risk": 70000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -8757,6 +9261,8 @@
     "day_of_week": "Tuesday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+21.7 pts)",
@@ -8790,6 +9296,8 @@
     "day_of_week": "Thursday",
     "score": -10,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -8823,6 +9331,8 @@
     "day_of_week": "Monday",
     "score": 25,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -8856,6 +9366,8 @@
     "day_of_week": "Friday",
     "score": 30,
     "risk": 85000,
+    "base_risk": 85000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+38.6 pts)",
@@ -8889,6 +9401,8 @@
     "day_of_week": "Tuesday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+22.8 pts)",
@@ -8924,6 +9438,8 @@
     "day_of_week": "Friday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 20.9",
@@ -8956,6 +9472,8 @@
     "day_of_week": "Monday",
     "score": 35,
     "risk": 106000,
+    "base_risk": 106000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -8990,6 +9508,8 @@
     "day_of_week": "Monday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9023,6 +9543,8 @@
     "day_of_week": "Friday",
     "score": 28,
     "risk": 92000,
+    "base_risk": 92000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+17.5 pts)",
@@ -9057,6 +9579,8 @@
     "day_of_week": "Monday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9092,6 +9616,8 @@
     "day_of_week": "Friday",
     "score": 86,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+19.9 pts)",
@@ -9130,6 +9656,8 @@
     "day_of_week": "Wednesday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+81.8 pts)",
@@ -9163,6 +9691,8 @@
     "day_of_week": "Monday",
     "score": 68,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9200,6 +9730,8 @@
     "day_of_week": "Monday",
     "score": 41,
     "risk": 129000,
+    "base_risk": 129000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9235,6 +9767,8 @@
     "day_of_week": "Tuesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+16.8 pts)",
@@ -9267,6 +9801,8 @@
     "day_of_week": "Tuesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+17.1 pts)",
@@ -9299,6 +9835,8 @@
     "day_of_week": "Wednesday",
     "score": 16,
     "risk": 57000,
+    "base_risk": 57000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 17.5",
@@ -9332,6 +9870,8 @@
     "day_of_week": "Monday",
     "score": 25,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9365,6 +9905,8 @@
     "day_of_week": "Thursday",
     "score": -10,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -9398,6 +9940,8 @@
     "day_of_week": "Monday",
     "score": 56,
     "risk": 169000,
+    "base_risk": 169000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9435,6 +9979,8 @@
     "day_of_week": "Friday",
     "score": 66,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+43.6 pts)",
@@ -9471,6 +10017,8 @@
     "day_of_week": "Wednesday",
     "score": 46,
     "risk": 141000,
+    "base_risk": 141000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+8.7 pts)",
@@ -9507,6 +10055,8 @@
     "day_of_week": "Tuesday",
     "score": 41,
     "risk": 129000,
+    "base_risk": 129000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+49.9 pts)",
@@ -9542,6 +10092,8 @@
     "day_of_week": "Tuesday",
     "score": 0,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+1.2 pts)",
@@ -9575,6 +10127,8 @@
     "day_of_week": "Wednesday",
     "score": 0,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+8.4 pts)",
@@ -9608,6 +10162,8 @@
     "day_of_week": "Thursday",
     "score": -12,
     "risk": 32000,
+    "base_risk": 32000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -9643,6 +10199,8 @@
     "day_of_week": "Friday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+47.4 pts)",
@@ -9678,6 +10236,8 @@
     "day_of_week": "Monday",
     "score": 23,
     "risk": 79000,
+    "base_risk": 79000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9713,6 +10273,8 @@
     "day_of_week": "Tuesday",
     "score": 8,
     "risk": 49000,
+    "base_risk": 49000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+5.7 pts)",
@@ -9747,6 +10309,8 @@
     "day_of_week": "Monday",
     "score": 35,
     "risk": 106000,
+    "base_risk": 106000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9782,6 +10346,8 @@
     "day_of_week": "Tuesday",
     "score": 5,
     "risk": 38000,
+    "base_risk": 38000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 20.5",
@@ -9815,6 +10381,8 @@
     "day_of_week": "Friday",
     "score": 43,
     "risk": 134000,
+    "base_risk": 134000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+19.3 pts)",
@@ -9850,6 +10418,8 @@
     "day_of_week": "Tuesday",
     "score": 0,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+36.5 pts)",
@@ -9883,6 +10453,8 @@
     "day_of_week": "Wednesday",
     "score": 20,
     "risk": 73000,
+    "base_risk": 73000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+11.0 pts)",
@@ -9917,6 +10489,8 @@
     "day_of_week": "Thursday",
     "score": -12,
     "risk": 32000,
+    "base_risk": 32000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -9952,6 +10526,8 @@
     "day_of_week": "Monday",
     "score": 23,
     "risk": 79000,
+    "base_risk": 79000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -9987,6 +10563,8 @@
     "day_of_week": "Wednesday",
     "score": -2,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.8",
@@ -10020,6 +10598,8 @@
     "day_of_week": "Monday",
     "score": 25,
     "risk": 75000,
+    "base_risk": 75000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -10053,6 +10633,8 @@
     "day_of_week": "Wednesday",
     "score": 30,
     "risk": 85000,
+    "base_risk": 85000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+17.8 pts)",
@@ -10086,6 +10668,8 @@
     "day_of_week": "Monday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -10121,6 +10705,8 @@
     "day_of_week": "Thursday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -10155,6 +10741,8 @@
     "day_of_week": "Friday",
     "score": 15,
     "risk": 56000,
+    "base_risk": 56000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+14.1 pts)",
@@ -10187,6 +10775,8 @@
     "day_of_week": "Tuesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+20.7 pts)",
@@ -10219,6 +10809,8 @@
     "day_of_week": "Friday",
     "score": 61,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+14.4 pts)",
@@ -10255,6 +10847,8 @@
     "day_of_week": "Wednesday",
     "score": 3,
     "risk": 34000,
+    "base_risk": 34000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.4",
@@ -10287,6 +10881,8 @@
     "day_of_week": "Friday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+11.2 pts)",
@@ -10322,6 +10918,8 @@
     "day_of_week": "Friday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+6.3 pts)",
@@ -10356,6 +10954,8 @@
     "day_of_week": "Monday",
     "score": 20,
     "risk": 65000,
+    "base_risk": 65000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -10389,6 +10989,8 @@
     "day_of_week": "Wednesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+9.6 pts)",
@@ -10422,6 +11024,8 @@
     "day_of_week": "Thursday",
     "score": -15,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -10455,6 +11059,8 @@
     "day_of_week": "Friday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+5.6 pts)",
@@ -10487,6 +11093,8 @@
     "day_of_week": "Monday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -10523,6 +11131,8 @@
     "day_of_week": "Thursday",
     "score": 13,
     "risk": 59000,
+    "base_risk": 59000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -10559,6 +11169,8 @@
     "day_of_week": "Monday",
     "score": 63,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -10595,6 +11207,8 @@
     "day_of_week": "Thursday",
     "score": 13,
     "risk": 59000,
+    "base_risk": 59000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -10630,6 +11244,8 @@
     "day_of_week": "Friday",
     "score": 38,
     "risk": 113000,
+    "base_risk": 113000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+33.9 pts)",
@@ -10664,6 +11280,8 @@
     "day_of_week": "Wednesday",
     "score": 53,
     "risk": 157000,
+    "base_risk": 157000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "3+ down day streak (-6)",
@@ -10699,6 +11317,8 @@
     "day_of_week": "Monday",
     "score": 58,
     "risk": 174000,
+    "base_risk": 174000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -10735,6 +11355,8 @@
     "day_of_week": "Tuesday",
     "score": -5,
     "risk": 25000,
+    "base_risk": 25000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 17.9"
@@ -10766,6 +11388,8 @@
     "day_of_week": "Wednesday",
     "score": 40,
     "risk": 127000,
+    "base_risk": 127000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+27.4 pts)",
@@ -10801,6 +11425,8 @@
     "day_of_week": "Friday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+10.8 pts)",
@@ -10833,6 +11459,8 @@
     "day_of_week": "Tuesday",
     "score": 5,
     "risk": 38000,
+    "base_risk": 38000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+16.3 pts)",
@@ -10865,6 +11493,8 @@
     "day_of_week": "Tuesday",
     "score": 0,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.7",
@@ -10897,6 +11527,8 @@
     "day_of_week": "Wednesday",
     "score": 0,
     "risk": 29000,
+    "base_risk": 29000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.9",
@@ -10929,6 +11561,8 @@
     "day_of_week": "Tuesday",
     "score": 13,
     "risk": 52000,
+    "base_risk": 52000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 17.3",
@@ -10962,6 +11596,8 @@
     "day_of_week": "Thursday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -10999,6 +11635,8 @@
     "day_of_week": "Friday",
     "score": 73,
     "risk": 200000,
+    "base_risk": 200000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+18.3 pts)",
@@ -11035,6 +11673,8 @@
     "day_of_week": "Wednesday",
     "score": 13,
     "risk": 52000,
+    "base_risk": 52000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "VIX at open: 16.3",
@@ -11068,6 +11708,8 @@
     "day_of_week": "Thursday",
     "score": 23,
     "risk": 79000,
+    "base_risk": 79000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -11104,6 +11746,8 @@
     "day_of_week": "Monday",
     "score": 33,
     "risk": 102000,
+    "base_risk": 102000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -11138,6 +11782,8 @@
     "day_of_week": "Tuesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+15.8 pts)",
@@ -11170,6 +11816,8 @@
     "day_of_week": "Thursday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -11204,6 +11852,8 @@
     "day_of_week": "Friday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Wide prior range",
@@ -11236,6 +11886,8 @@
     "day_of_week": "Monday",
     "score": 68,
     "risk": 175000,
+    "base_risk": 175000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -11271,6 +11923,8 @@
     "day_of_week": "Tuesday",
     "score": 30,
     "risk": 85000,
+    "base_risk": 85000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+9.2 pts)",
@@ -11304,6 +11958,8 @@
     "day_of_week": "Wednesday",
     "score": 10,
     "risk": 47000,
+    "base_risk": 47000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+36.5 pts)",
@@ -11336,6 +11992,8 @@
     "day_of_week": "Thursday",
     "score": 18,
     "risk": 69000,
+    "base_risk": 69000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Thursday (negative)",
@@ -11371,6 +12029,8 @@
     "day_of_week": "Monday",
     "score": 48,
     "risk": 146000,
+    "base_risk": 146000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Monday",
@@ -11406,6 +12066,8 @@
     "day_of_week": "Wednesday",
     "score": 18,
     "risk": 61000,
+    "base_risk": 61000,
+    "size_mult": 1.0,
     "signals": [
       "Bullish 1st bar",
       "Gap up (+24.1 pts)",

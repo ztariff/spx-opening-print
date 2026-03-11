@@ -30,7 +30,7 @@ import time
 import urllib.request
 import urllib.error
 from collections import defaultdict
-from statistics import mean
+from statistics import mean, stdev
 from datetime import datetime, timedelta
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -68,6 +68,17 @@ VIX_CAP    = 30   # Skip days where VIX open > this level (panic markets)
 BULLISH_ONLY = True  # Only trade when first bar is bullish (skip bail trades)
 SMA50_FILTER = True  # Only trade when SPX is above 50-day SMA
 RSI_FILTER = (35, 70)  # Only trade when RSI14 is within this band (None to disable)
+
+# ── Dynamic position sizing ──────────────────────────────────────────
+# Combined approach: reduce size when in drawdown, boost when on a hot streak
+DYNAMIC_SIZING = False
+DD_THRESHOLD   = 100000  # If drawdown exceeds this, cut size
+DD_MULTIPLIER  = 0.5     # Size multiplier when in drawdown
+MOMENTUM_WINDOW = 15     # Look at last N trades to determine momentum
+MOMENTUM_MULT  = 1.3     # Size multiplier when recent P&L is positive
+# Logic: DD > threshold -> DD_MULTIPLIER
+#        else if last N trades net positive -> MOMENTUM_MULT
+#        else -> 1.0x (baseline)
 
 REQUEST_DELAY = 0.05  # seconds between requests
 
@@ -784,6 +795,11 @@ def main():
     skipped_no_entry = 0
     processed = 0
 
+    # Dynamic sizing state
+    ds_equity = 0       # Running cumulative P&L
+    ds_peak = 0         # Peak equity (for drawdown calc)
+    ds_recent_pnls = [] # Rolling window of recent trade P&Ls
+
     for i, (d, sig) in enumerate(trade_days):
         if (i + 1) % 25 == 0 or i == 0:
             print(f"  Processing {i+1}/{len(trade_days)}: {d}...")
@@ -808,11 +824,23 @@ def main():
         # Get SPX bars for this day
         spx_bars = spx_intraday.get(d, [])
 
+        # Dynamic position sizing
+        ds_mult = 1.0
+        if DYNAMIC_SIZING:
+            ds_dd = ds_peak - ds_equity
+            if ds_dd > DD_THRESHOLD:
+                ds_mult = DD_MULTIPLIER
+            elif len(ds_recent_pnls) >= MOMENTUM_WINDOW:
+                if sum(ds_recent_pnls[-MOMENTUM_WINDOW:]) > 0:
+                    ds_mult = MOMENTUM_MULT
+        adjusted_risk = round(sig["risk"] * ds_mult / 1000) * 1000
+        adjusted_risk = max(MIN_RISK, adjusted_risk)
+
         # Simulate options trade
         opt_result = simulate_options_trade(
             opt_bars, spx_bars,
             sig["entry_open"], sig["pt"], sig["sl"], sig["ts"],
-            sig["score"], sig["first_bar_bullish"], sig["risk"],
+            sig["score"], sig["first_bar_bullish"], adjusted_risk,
             entry_10s_price=entry_10s
         )
 
@@ -821,7 +849,7 @@ def main():
             continue
 
         # Also compute the linear (non-options) P&L for comparison
-        dollars_per_point = sig["risk"] / sig["sl"]
+        dollars_per_point = adjusted_risk / sig["sl"]
         if sig["score"] >= HYBRID_THRESHOLD:
             if sig["first_bar_bullish"]:
                 # Simulate from bar 1
@@ -860,7 +888,9 @@ def main():
             "date": d,
             "day_of_week": sig["dow"],
             "score": sig["score"],
-            "risk": sig["risk"],
+            "risk": adjusted_risk,
+            "base_risk": sig["risk"],
+            "size_mult": ds_mult,
             "signals": sig["signals"],
             "strike": strike,
             "option_ticker": ticker,
@@ -886,6 +916,13 @@ def main():
         }
         options_trades.append(trade_record)
         processed += 1
+
+        # Update dynamic sizing state
+        if DYNAMIC_SIZING:
+            ds_equity += opt_result["pnl_dollars"]
+            if ds_equity > ds_peak:
+                ds_peak = ds_equity
+            ds_recent_pnls.append(opt_result["pnl_dollars"])
 
     print(f"\n{'='*70}")
     print(f"Processing complete!")
@@ -958,6 +995,17 @@ def main():
     report.append(f"  Bullish only: {BULLISH_ONLY}  |  Approach C hybrid (threshold={HYBRID_THRESHOLD})")
     report.append(f"  VIX filter: {VIX_FILTER} <= VIX <= {VIX_CAP}")
     report.append(f"  SMA50 filter: {SMA50_FILTER}  |  RSI14 filter: {RSI_FILTER}")
+    if DYNAMIC_SIZING:
+        report.append(f"  Dynamic sizing: DD>{DD_THRESHOLD/1000:.0f}k→{DD_MULTIPLIER}x | "
+                      f"last {MOMENTUM_WINDOW} trades hot→{MOMENTUM_MULT}x")
+        ds_counts = {"0.5x": 0, "1.0x": 0, "1.3x": 0}
+        for t in options_trades:
+            m = t.get("size_mult", 1.0)
+            if m < 0.9: ds_counts["0.5x"] += 1
+            elif m > 1.1: ds_counts["1.3x"] += 1
+            else: ds_counts["1.0x"] += 1
+        report.append(f"  Size distribution: {ds_counts['0.5x']} trades at {DD_MULTIPLIER}x, "
+                      f"{ds_counts['1.0x']} at 1.0x, {ds_counts['1.3x']} at {MOMENTUM_MULT}x")
     report.append(f"  Date range: {options_trades[0]['date']} to {options_trades[-1]['date']}")
     report.append("")
 
@@ -969,6 +1017,21 @@ def main():
     report.append(f"  Avg Win: ${opt_avg_win:,.0f}  |  Avg Loss: ${opt_avg_loss:,.0f}")
     report.append(f"  Best: ${opt_best:,.0f}  |  Worst: ${opt_worst:,.0f}")
     report.append(f"  Max Drawdown: ${opt_max_dd:,.0f}")
+    # Profit factor
+    gross_wins = sum(t["opt_pnl"] for t in options_trades if t["opt_pnl"] > 0)
+    gross_losses = sum(abs(t["opt_pnl"]) for t in options_trades if t["opt_pnl"] <= 0)
+    opt_pf = gross_wins / gross_losses if gross_losses > 0 else 999
+    report.append(f"  Profit Factor: {opt_pf:.2f}")
+    # Calmar ratio
+    opt_calmar = opt_total_pnl / opt_max_dd if opt_max_dd > 0 else 999
+    report.append(f"  Calmar Ratio: {opt_calmar:.2f}")
+    # Sharpe ratio (annualized, assuming ~250 trading days)
+    opt_pnl_list = [t["opt_pnl"] for t in options_trades]
+    if len(opt_pnl_list) > 1:
+        trades_per_year = len(opt_pnl_list) / ((datetime.strptime(options_trades[-1]["date"], "%Y-%m-%d") -
+                          datetime.strptime(options_trades[0]["date"], "%Y-%m-%d")).days / 365.25)
+        opt_sharpe = (mean(opt_pnl_list) / stdev(opt_pnl_list)) * (trades_per_year ** 0.5)
+        report.append(f"  Sharpe Ratio (ann.): {opt_sharpe:.2f}")
     report.append(f"  Avg Premium per Trade: ${opt_avg_premium:,.0f}")
     report.append(f"  Avg Contracts per Trade: {opt_avg_contracts:.0f}")
     report.append("")
