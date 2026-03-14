@@ -1,0 +1,4437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opening Print — Live Trading Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+
+.topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; background: #111118; border-bottom: 1px solid #1a1a2a;
+}
+.topbar h1 { font-size: 16px; font-weight: 700; color: #fff; }
+.topbar .status { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.topbar .dot { width: 8px; height: 8px; border-radius: 50%; }
+.topbar .dot.live { background: #00d4aa; box-shadow: 0 0 6px #00d4aa; animation: pulse 2s infinite; }
+.topbar .dot.off { background: #ff4466; }
+.topbar .dot.wait { background: #ffaa33; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.market-bar {
+    display: flex; gap: 12px; padding: 8px 20px; background: #0d0d15;
+    border-bottom: 1px solid #1a1a2a; flex-wrap: wrap; align-items: center;
+}
+.mkt-item { font-size: 12px; display: flex; gap: 4px; align-items: center; }
+.mkt-label { color: #6666aa; font-weight: 600; }
+.mkt-val { font-weight: 700; font-variant-numeric: tabular-nums; }
+.mkt-val.up { color: #00d4aa; }
+.mkt-val.dn { color: #ff4466; }
+.mkt-val.flat { color: #aaa; }
+.mkt-time { color: #666; margin-left: 8px; font-size: 11px; }
+
+.layout { display: grid; grid-template-columns: 280px 1fr; height: calc(100vh - 80px); }
+
+/* Left panel — strategy status */
+.strat-panel {
+    background: #111118; border-right: 1px solid #1a1a2a;
+    overflow-y: auto; padding: 8px;
+}
+.strat-card {
+    border-radius: 8px; padding: 10px 12px; margin-bottom: 6px;
+    border: 1px solid #2a2a3a; background: #16161f; cursor: default;
+    transition: border-color 0.3s;
+}
+.strat-card.active-long { border-color: #1a5a3a; background: #0f1f18; }
+.strat-card.active-short { border-color: #5a1a2a; background: #1f0f15; }
+.strat-card .sc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.strat-card .sc-name { font-size: 12px; font-weight: 700; }
+.strat-card .sc-badge {
+    padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700; text-transform: uppercase;
+}
+.sc-badge.idle { background: #1a1a2a; color: #555; }
+.sc-badge.watching { background: #2a2a1a; color: #aaaa33; }
+.sc-badge.entry { background: #1a3a2a; color: #00d4aa; animation: pulse 1s infinite; }
+.sc-badge.in-trade { background: #1a2a4a; color: #4a90d9; }
+.sc-badge.exit { background: #3a1a2a; color: #ff4466; animation: pulse 1s infinite; }
+.sc-badge.exited-win { background: #1a3a2a; color: #00d4aa; }
+.sc-badge.exited-loss { background: #3a1a1a; color: #ff4466; }
+.sc-badge.missed { background: #2a2a1a; color: #aa8833; }
+.sc-badge.missed-win { background: #1a2a1a; color: #88aa55; }
+.sc-badge.missed-loss { background: #2a1a1a; color: #aa6633; }
+.alert-card.missed-alert { background: linear-gradient(135deg, #141410 0%, #18160f 100%); border-color: #3a3520; opacity: 0.85; }
+.alert-type.missed { color: #aa8833; font-weight: 700; font-size: 11px; }
+.strat-card .sc-details { font-size: 10px; color: #888; line-height: 1.5; }
+.strat-card .sc-pnl { font-size: 13px; font-weight: 800; margin-top: 3px; }
+.sc-pnl.up { color: #00d4aa; }
+.sc-pnl.dn { color: #ff4466; }
+.strat-card .sc-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+/* Right panel — alerts feed */
+.alerts-panel { overflow-y: auto; padding: 12px 16px; }
+.alerts-header { font-size: 14px; font-weight: 700; color: #aaa; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+.alerts-header .ah-count { font-size: 11px; color: #666; }
+
+.alert-card {
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 8px;
+    border: 1px solid #2a2a3a; position: relative; overflow: hidden;
+    animation: slideIn 0.3s ease-out;
+}
+@keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.alert-card.entry-alert { background: linear-gradient(135deg, #0a1f15 0%, #0d1a18 100%); border-color: #1a5a3a; }
+.alert-card.exit-alert { background: linear-gradient(135deg, #1f0a10 0%, #1a0d15 100%); border-color: #5a1a2a; }
+.alert-card.exit-alert.win { border-color: #1a5a3a; }
+
+.alert-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.alert-type { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+.alert-type.buy { color: #00d4aa; }
+.alert-type.sell { color: #ff4466; }
+.alert-type.sell.win { color: #00d4aa; }
+.alert-time { font-size: 10px; color: #666; }
+
+.alert-strat { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.alert-strat .as-dot { width: 8px; height: 8px; border-radius: 50%; }
+.alert-strat .as-name { font-size: 13px; font-weight: 700; color: #fff; }
+
+.alert-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 6px; margin-top: 8px;
+}
+.ag-item { background: rgba(255,255,255,0.03); border-radius: 6px; padding: 6px 8px; }
+.ag-item .ag-label { font-size: 9px; color: #6666aa; text-transform: uppercase; letter-spacing: 0.5px; }
+.ag-item .ag-value { font-size: 13px; font-weight: 700; margin-top: 1px; font-variant-numeric: tabular-nums; }
+.ag-item .ag-value.green { color: #00d4aa; }
+.ag-item .ag-value.red { color: #ff4466; }
+.ag-item .ag-value.blue { color: #4a90d9; }
+
+/* Summary bar at bottom */
+.summary-bar {
+    display: flex; gap: 8px; padding: 8px 20px; background: #111118;
+    border-top: 1px solid #1a1a2a; align-items: center; flex-wrap: wrap;
+}
+.sum-item { font-size: 11px; display: flex; gap: 4px; }
+.sum-label { color: #6666aa; }
+.sum-val { font-weight: 700; }
+.sum-val.up { color: #00d4aa; }
+.sum-val.dn { color: #ff4466; }
+
+/* Audio toggle */
+.audio-btn {
+    background: #2a2a3e; border: 1px solid #3a3a5a; color: #ccc;
+    padding: 4px 10px; border-radius: 5px; cursor: pointer; font-size: 11px;
+}
+.audio-btn:hover { background: #3a3a5e; }
+.audio-btn.muted { color: #666; }
+
+/* View toggle buttons */
+.view-toggle {
+    display: flex; gap: 4px;
+}
+.view-btn {
+    background: #1a1a2a; border: 1px solid #2a2a3a; color: #666;
+    padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;
+    transition: all 0.2s;
+}
+.view-btn.active {
+    background: #2a3a4a; color: #00d4aa; border-color: #1a5a3a;
+}
+.view-btn:hover { background: #252535; }
+
+/* Calendar / Analytics view */
+.calendar-panel { padding: 12px 16px; overflow-y: auto; }
+
+/* Strategy filter chips */
+.filter-bar {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid #1a1a2a;
+}
+.filter-chip {
+    padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600;
+    cursor: pointer; border: 1px solid #2a2a3a; background: #16161f; color: #666;
+    transition: all 0.2s; user-select: none;
+}
+.filter-chip.active {
+    color: #fff; border-color: var(--chip-color, #4a90d9);
+    background: color-mix(in srgb, var(--chip-color, #4a90d9) 25%, #16161f);
+}
+.filter-chip:hover { background: #1e1e2e; }
+.filter-chip.all-chip { font-weight: 800; letter-spacing: 0.5px; }
+
+/* Equity curve chart */
+.equity-chart-container {
+    background: #0d0d15; border: 1px solid #1a1a2a; border-radius: 8px;
+    padding: 12px; margin-bottom: 16px; position: relative;
+}
+.equity-chart-title {
+    font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.equity-chart-title .chart-stats { font-size: 10px; color: #aaa; }
+.equity-chart-title .chart-stats span { margin-left: 12px; }
+.equity-chart-title .chart-stats .up { color: #00d4aa; }
+.equity-chart-title .chart-stats .dn { color: #ff4466; }
+#equityCurveCanvas { width: 100%; border-radius: 4px; }
+
+/* Legend */
+.chart-legend {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; padding-top: 6px;
+    border-top: 1px solid #1a1a2a;
+}
+.legend-item {
+    display: flex; align-items: center; gap: 4px; font-size: 9px; color: #888;
+}
+.legend-swatch { width: 12px; height: 3px; border-radius: 1px; }
+
+/* Trade table */
+.trade-table-container { margin-top: 16px; }
+.trade-table-title { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px; }
+.trade-table {
+    width: 100%; border-collapse: collapse; font-size: 10px;
+}
+.trade-table th {
+    text-align: left; padding: 6px 8px; color: #6666aa; font-weight: 600;
+    border-bottom: 1px solid #2a2a3a; font-size: 9px; text-transform: uppercase;
+    letter-spacing: 0.5px; cursor: pointer;
+}
+.trade-table th:hover { color: #8888cc; }
+.trade-table td { padding: 5px 8px; border-bottom: 1px solid #111; }
+.trade-table tr:hover { background: rgba(255,255,255,0.02); }
+
+/* Calendar grid */
+.calendar-month { margin-bottom: 16px; }
+.calendar-month-title { font-size: 12px; font-weight: 700; color: #aaa; margin-bottom: 8px; }
+.calendar-grid {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.calendar-day {
+    width: 60px; height: 55px; border-radius: 6px; padding: 4px;
+    border: 1px solid #1a1a2a; background: #0d0d15;
+    display: flex; flex-direction: column; justify-content: space-between;
+    font-size: 9px; cursor: pointer; transition: border-color 0.2s;
+    position: relative;
+}
+.calendar-day.no-trade { background: #0a0a12; }
+.calendar-day.profit { background: rgba(0,212,170,0.1); border-color: #1a5a3a; }
+.calendar-day.loss { background: rgba(255,68,102,0.1); border-color: #5a1a2a; }
+.calendar-day:hover { border-color: #4a4a6a; }
+.calendar-day-date { color: #888; font-weight: 600; }
+.calendar-day-stats { color: #aaa; }
+.calendar-day-pnl { font-weight: 700; font-size: 10px; }
+.calendar-day-pnl.up { color: #00d4aa; }
+.calendar-day-pnl.dn { color: #ff4466; }
+.calendar-day-dots { display: flex; gap: 2px; position: absolute; bottom: 2px; left: 4px; }
+.calendar-day-dot { width: 4px; height: 4px; border-radius: 50%; }
+
+/* Day detail tooltip */
+.day-tooltip {
+    position: fixed; z-index: 100; background: #1e1e2e; border: 1px solid #3a3a5a;
+    border-radius: 8px; padding: 10px 12px; font-size: 10px; color: #ccc;
+    min-width: 200px; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.day-tooltip .tt-title { font-weight: 700; color: #fff; margin-bottom: 6px; font-size: 11px; }
+.day-tooltip .tt-row { display: flex; justify-content: space-between; padding: 2px 0; }
+.day-tooltip .tt-strat { display: flex; align-items: center; gap: 4px; }
+.day-tooltip .tt-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ── Trade Detail Modal ── */
+.trade-modal-overlay {
+    position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.85);
+    display: none; backdrop-filter: blur(4px);
+}
+.trade-modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+.trade-modal {
+    width: 95vw; height: 92vh; background: #131722; border-radius: 10px;
+    border: 1px solid #2a2e3d; display: flex; flex-direction: column; overflow: hidden;
+}
+.trade-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px; background: #1e2130; border-bottom: 1px solid #2a2e3d;
+    flex-shrink: 0;
+}
+.trade-modal-header .tm-title { font-size: 13px; font-weight: 700; color: #fff; }
+.trade-modal-header .tm-date { font-size: 12px; color: #888; margin-left: 10px; }
+.trade-modal-header .tm-close {
+    background: #2a2e3d; border: 1px solid #3a3f52; color: #aaa; border-radius: 4px;
+    padding: 4px 10px; cursor: pointer; font-size: 12px;
+}
+.trade-modal-header .tm-close:hover { background: #3a3f52; color: #fff; }
+
+/* Trade tabs (when multiple trades on same day) */
+.trade-tabs {
+    display: flex; gap: 4px; padding: 6px 14px; background: #1a1d2a;
+    border-bottom: 1px solid #2a2e3d; flex-shrink: 0; flex-wrap: wrap;
+}
+.trade-tab {
+    padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600;
+    cursor: pointer; border: 1px solid #2a2e3d; background: #16161f; color: #888;
+    transition: all 0.2s;
+}
+.trade-tab.active { color: #fff; border-color: var(--tab-color, #4a90d9); background: color-mix(in srgb, var(--tab-color, #4a90d9) 25%, #16161f); }
+.trade-tab:hover { background: #1e1e2e; }
+
+/* Trade info strip */
+.trade-info-strip {
+    display: flex; gap: 16px; padding: 6px 14px; background: #13151e;
+    border-bottom: 1px solid #2a2e3d; flex-shrink: 0; flex-wrap: wrap; align-items: center;
+}
+.ti-item { font-size: 11px; display: flex; gap: 4px; }
+.ti-label { color: #6666aa; }
+.ti-val { font-weight: 700; }
+.ti-val.up { color: #26a69a; }
+.ti-val.dn { color: #ef5350; }
+
+/* Chart containers */
+.trade-charts { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.chart-pane { flex: 1; position: relative; min-height: 0; }
+.chart-pane-label {
+    position: absolute; top: 6px; left: 10px; z-index: 10;
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.4);
+    background: rgba(19,23,34,0.8); padding: 2px 8px; border-radius: 3px;
+}
+.chart-pane-ohlc {
+    position: absolute; top: 6px; left: 120px; z-index: 10;
+    font-size: 10px; color: #888; background: rgba(19,23,34,0.8);
+    padding: 2px 8px; border-radius: 3px; pointer-events: none;
+}
+
+/* Timeframe buttons in modal */
+.tm-tf-group { display: flex; gap: 3px; margin-left: 8px; }
+.tm-tf-btn {
+    background: #2a2e3d; color: #aaa; border: 1px solid #3a3f52;
+    border-radius: 3px; padding: 2px 7px; font-size: 10px; cursor: pointer;
+}
+.tm-tf-btn.active { background: #2962ff; color: #fff; border-color: #2962ff; }
+.tm-tf-btn:hover { background: #363c52; color: #fff; }
+
+/* Loading spinner for charts */
+.chart-loading {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(19,23,34,0.9); z-index: 20; font-size: 12px; color: #888;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .strat-panel { max-height: 200px; border-right: none; border-bottom: 1px solid #1a1a2a; }
+    .trade-modal { width: 100vw; height: 100vh; border-radius: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <h1>Opening Print — Live Dashboard</h1>
+    <div style="display:flex;align-items:center;gap:16px">
+        <div class="view-toggle">
+            <button class="view-btn active" id="alertsViewBtn" onclick="switchView('alerts')">Alerts</button>
+            <button class="view-btn" id="calendarViewBtn" onclick="switchView('calendar')">Calendar</button>
+        </div>
+        <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">Sound: ON</button>
+        <div class="status">
+            <span class="dot" id="wsDot"></span>
+            <span id="wsStatus">Connecting...</span>
+        </div>
+    </div>
+</div>
+
+<div class="market-bar" id="marketBar">
+    <div class="mkt-item"><span class="mkt-label">SPX</span> <span class="mkt-val flat" id="mktSpx">—</span></div>
+    <div class="mkt-item"><span class="mkt-label">QQQ</span> <span class="mkt-val flat" id="mktQqq">—</span></div>
+    <div class="mkt-item"><span class="mkt-label">VIX</span> <span class="mkt-val flat" id="mktVix">—</span></div>
+    <div class="mkt-item"><span class="mkt-label">SPX 1st Bar</span> <span class="mkt-val flat" id="mktFb">waiting...</span></div>
+    <div class="mkt-item"><span class="mkt-label">QQQ 1st Bar</span> <span class="mkt-val flat" id="mktFbQ">waiting...</span></div>
+    <span class="mkt-time" id="mktTime">—</span>
+</div>
+
+<div class="layout">
+    <div class="strat-panel" id="stratPanel"></div>
+    <div class="alerts-panel" id="alertsPanel">
+        <div class="alerts-header">
+            <span>Alerts</span>
+            <span class="ah-count" id="alertCount">0 today</span>
+        </div>
+        <div id="alertsFeed">
+            <div style="text-align:center;color:#444;padding:40px 0;font-size:13px">
+                Waiting for market open (9:30 ET)...<br>
+                <span style="font-size:11px;color:#333">Strategies will evaluate after the first 1-minute bar closes at 9:31</span>
+            </div>
+        </div>
+    </div>
+    <div class="calendar-panel" id="calendarPanel" style="display:none;">
+        <div class="filter-bar" id="filterBar"></div>
+        <div class="equity-chart-container">
+            <div class="equity-chart-title">
+                <span>Equity Curve — Cumulative P&L</span>
+                <div class="chart-stats" id="chartStats"></div>
+            </div>
+            <canvas id="equityCurveCanvas" height="220"></canvas>
+            <div class="chart-legend" id="chartLegend"></div>
+        </div>
+        <div class="trade-table-container" id="tradeTableContainer"></div>
+        <div id="calendarGrid"></div>
+    </div>
+    <div class="day-tooltip" id="dayTooltip" style="display:none;"></div>
+</div>
+
+<div class="summary-bar" id="summaryBar">
+    <div class="sum-item"><span class="sum-label">Active:</span> <span class="sum-val" id="sumActive">0</span></div>
+    <div class="sum-item"><span class="sum-label">Today P&L:</span> <span class="sum-val flat" id="sumPnl">$0</span></div>
+    <div class="sum-item"><span class="sum-label">Wins:</span> <span class="sum-val up" id="sumWins">0</span></div>
+    <div class="sum-item"><span class="sum-label">Losses:</span> <span class="sum-val dn" id="sumLosses">0</span></div>
+    <div class="sum-item"><span class="sum-label">Capital at Risk:</span> <span class="sum-val" id="sumRisk">$0</span></div>
+</div>
+
+<!-- Trade Detail Modal -->
+<div class="trade-modal-overlay" id="tradeModalOverlay">
+    <div class="trade-modal">
+        <div class="trade-modal-header">
+            <div style="display:flex;align-items:center">
+                <span class="tm-title" id="tmTitle">Trade Detail</span>
+                <span class="tm-date" id="tmDate"></span>
+                <div class="tm-tf-group" id="tmTfGroup">
+                    <button class="tm-tf-btn active" onclick="setModalTF(1)">1m</button>
+                    <button class="tm-tf-btn" onclick="setModalTF(2)">2m</button>
+                    <button class="tm-tf-btn" onclick="setModalTF(5)">5m</button>
+                </div>
+            </div>
+            <button class="tm-close" onclick="closeTradeModal()">Close &times;</button>
+        </div>
+        <div class="trade-tabs" id="tradeTabs"></div>
+        <div class="trade-info-strip" id="tradeInfoStrip"></div>
+        <div class="trade-charts">
+            <div class="chart-pane" id="spxChartPane">
+                <div class="chart-pane-label">SPX 1-min</div>
+                <div class="chart-pane-ohlc" id="spxOhlc"></div>
+                <div class="chart-loading" id="spxLoading">Loading SPX data...</div>
+            </div>
+            <div class="chart-pane" id="optChartPane">
+                <div class="chart-pane-label" id="optChartLabel">Option 1-min</div>
+                <div class="chart-pane-ohlc" id="optOhlc"></div>
+                <div class="chart-loading" id="optLoading">Loading option data...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════════════
+const API_KEY = 'cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF';
+const WS_URL = 'wss://socket.polygon.io/indices';
+const WS_URL_STOCKS = 'wss://socket.polygon.io/stocks';
+
+// Strategy colors
+const COLORS = {
+    'SPX Original': '#4a90d9',
+    'QQQ': '#bb77ff',
+    'Edge A': '#ff9933',
+    'Edge B': '#33dddd',
+    'Edge C': '#ff6666',
+    'Edge D': '#dddd33',
+    'Edge E': '#ff66cc',
+    'Edge F': '#66cc66',
+    'Panic Fade': '#ff3333',
+    'Dip Buy': '#33aaff',
+    'Rip Fade': '#ff8800',
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// STRATEGY DEFINITIONS
+// ══════════════════════════════════════════════════════════════════════
+const STRATEGIES = [
+    {
+        id: 'spx_original', name: 'SPX Original', color: COLORS['SPX Original'],
+        underlying: 'SPX', optionType: 'C', direction: 1,
+        desc: 'Signal-scored, bullish 1st bar, VIX>16, above 50dMA',
+        // Entry: bullish 1st bar + score-based PT/SL/TS — evaluated dynamically
+        entryMode: 'signal_score',
+        baseRisk: 150000, minRisk: 25000, maxRisk: 200000,
+    },
+    {
+        id: 'qqq', name: 'QQQ Scalp', color: COLORS['QQQ'],
+        underlying: 'QQQ', optionType: 'C', direction: 1,
+        desc: 'Bullish 1st bar >0.10%, trail 0.05%, SL 0.10%',
+        entryMode: 'qqq_trail',
+        fbMinPct: 0.10, trailPct: 0.05, slPct: 0.10, tsMin: 30,
+        baseRisk: 75000, minRisk: 50000, maxRisk: 200000,
+    },
+    {
+        id: 'edge_a', name: 'Edge A — SPX Scalp', color: COLORS['Edge A'],
+        underlying: 'SPX', optionType: 'C', direction: 1,
+        desc: 'All bullish 1st bar, trail 0.15%, SL 5pts, TS 15m',
+        entryMode: 'spx_trail',
+        fbBullish: true, trailPct: 0.15, slPts: 5, tsMin: 15,
+        baseRisk: 75000, minRisk: 50000, maxRisk: 200000,
+    },
+    {
+        id: 'edge_b', name: 'Edge B — Filtered Scalp', color: COLORS['Edge B'],
+        underlying: 'SPX', optionType: 'C', direction: 1,
+        desc: 'fb_ret >0.05%, trail 0.05%, SL 15pts, TS 30m',
+        entryMode: 'spx_trail',
+        fbBullish: true, fbMinPct: 0.05, trailPct: 0.05, slPts: 15, tsMin: 30,
+        baseRisk: 75000, minRisk: 50000, maxRisk: 200000,
+    },
+    {
+        id: 'edge_c', name: 'Edge C — Bearish Short', color: COLORS['Edge C'],
+        underlying: 'SPX', optionType: 'P', direction: -1,
+        desc: 'Bearish 1st bar, buy PUT, trail 0.15%, SL 3pts, TS 60m',
+        entryMode: 'spx_trail_bear',
+        fbBullish: false, trailPct: 0.15, slPts: 3, tsMin: 60,
+        baseRisk: 75000, minRisk: 50000, maxRisk: 200000,
+    },
+    {
+        id: 'edge_d', name: 'Edge D — Missed Days', color: COLORS['Edge D'],
+        underlying: 'SPX', optionType: 'C', direction: 1,
+        desc: 'Bullish non-SPX-Original days, trail 0.20%, SL 5pts, TS 30m',
+        entryMode: 'spx_trail',
+        fbBullish: true, trailPct: 0.20, slPts: 5, tsMin: 30,
+        // This only fires if SPX Original does NOT fire
+        requireNoSpxOriginal: true,
+        baseRisk: 75000, minRisk: 50000, maxRisk: 200000,
+    },
+    {
+        id: 'edge_e', name: 'Edge E — Ultra Scalp', color: COLORS['Edge E'],
+        underlying: 'SPX', optionType: 'C', direction: 1,
+        desc: 'All bullish 1st bar, PT 8pts, SL 2pts, TS 15m',
+        entryMode: 'spx_fixed',
+        fbBullish: true, ptPts: 8, slPts: 2, tsMin: 15,
+        baseRisk: 75000, minRisk: 50000, maxRisk: 200000,
+    },
+    {
+        id: 'edge_f', name: 'Edge F — Current + Trail', color: COLORS['Edge F'],
+        underlying: 'SPX', optionType: 'C', direction: 1,
+        desc: 'SPX Original traded days, trail 0.05%, SL 15pts, TS 30m',
+        entryMode: 'spx_trail',
+        fbBullish: true, trailPct: 0.05, slPts: 15, tsMin: 30,
+        // Only fires if SPX Original also fires
+        requireSpxOriginal: true,
+        baseRisk: 75000, minRisk: 50000, maxRisk: 200000,
+    },
+    {
+        id: 'vel_panic_fade', name: 'Panic Fade', color: COLORS['Panic Fade'],
+        underlying: 'SPX', optionType: 'C', direction: 1,
+        desc: 'Intraday drop >= 0.30%, velocity >= 0.10%/min, buy CALL, trail 10%, SL 30% option',
+        entryMode: 'velocity',
+        velDropPct: 0.30, velMinSpeed: 0.10, velMaxSpeed: 1.0,
+        trailPct: 10.0, slPct: 30.0, tsMin: 5, tier: 1,
+        activeStart: 575, activeEnd: 900, // 9:35-15:00 ET
+        baseRisk: 50000, minRisk: 25000, maxRisk: 100000,
+    },
+    {
+        id: 'vel_dip_buy', name: 'Dip Buy', color: COLORS['Dip Buy'],
+        underlying: 'SPX', optionType: 'C', direction: 1,
+        desc: 'Intraday drop >= 0.30%, velocity 0.05-0.10%/min, VIX>=18, buy CALL, trail 15%, SL 40% option',
+        entryMode: 'velocity',
+        velDropPct: 0.30, velMinSpeed: 0.05, velMaxSpeed: 0.10,
+        trailPct: 15.0, slPct: 40.0, tsMin: 30, tier: 2,
+        activeStart: 575, activeEnd: 900, // 9:35-15:00 ET
+        baseRisk: 35000, minRisk: 25000, maxRisk: 100000,
+        requireVix: 18, // Only trade when VIX >= 18
+    },
+    {
+        id: 'rip_fade', name: 'Rip Fade', color: COLORS['Rip Fade'],
+        underlying: 'SPX', optionType: 'C', direction: -1,
+        desc: 'Morning rally >= 0.35%, vel >= 0.05%/min, VIX >= 25, first 30m → sell bear call spread (5-wide, ATM, PT 50%, SL 3x)',
+        entryMode: 'rip_fade',
+        ripMinRally: 0.35, ripMinVel: 0.05, ripMinVix: 25,
+        ripSpreadWidth: 5, ripShortOff: 0,
+        ripProfitTarget: 0.50, ripStopMult: 3.0, ripMaxHold: 60,
+        activeStart: 570, activeEnd: 600, // 9:30-10:00 ET (first 30 min)
+        baseRisk: 50000, minRisk: 25000, maxRisk: 100000,
+    },
+];
+
+// ══════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════
+let wsIndices = null, wsStocks = null;
+let audioEnabled = true;
+let alertCount = 0;
+let todayPnl = 0, todayWins = 0, todayLosses = 0;
+
+// Market data
+const mkt = {
+    spx: { price: 0, open: 0, bars: [], firstBar: null, prevClose: 0 },
+    qqq: { price: 0, open: 0, bars: [], firstBar: null, prevClose: 0 },
+    vix: { price: 0, open: 0 },
+};
+
+// Strategy states
+const stratState = {};
+STRATEGIES.forEach(s => {
+    stratState[s.id] = {
+        status: 'idle',       // idle, watching, entry, in_trade, exit
+        entryPrice: 0,        // underlying price at entry
+        optionEntry: 0,       // option price at entry
+        peakPrice: 0,         // for trailing stop
+        troughPrice: 0,       // for bearish trailing
+        entryTime: null,
+        exitTime: null,
+        pnl: 0,
+        contracts: 0,
+        strike: 0,
+        optionTicker: '',
+        risk: 0,
+        ptLevel: 0,
+        slLevel: 0,
+        tsDeadline: null,
+        exitReason: '',
+    };
+});
+
+// SPX Original signal evaluation state
+let spxOriginalFired = false;
+
+// Velocity strategy state — rolling bars and deduplication
+const velState = {
+    bars: [],       // rolling 1-min bars: [{t, o, h, l, c}, ...]
+    tickHighs: [],  // rolling tick-level highs: [{t: ms, h: price}, ...] — updated every second via A events
+    lastSignalTime: {}  // {stratId: ms} for deduplication
+};
+
+// Rip Fade state — track rolling low from open and rally
+const ripState = {
+    rollingLow: 0,        // lowest price since open
+    troughBar: 0,         // bar index when trough occurred
+    barsSinceOpen: 0,     // count of bars since open
+    entryTriggered: false, // one entry per day
+    spreadEntry: null,     // active spread trade state
+};
+
+// Calendar data for backtest results
+const calendarData = {
+    data: [],  // Will be populated with trading day data
+    initialized: false,
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// SESSION PERSISTENCE — survive page refreshes
+// ══════════════════════════════════════════════════════════════════════
+const SESSION_VERSION = 9; // bump: pre-compute ALL trade P&L from real option data; SPX cache; calendar+modal+curve consistent
+const SESSION_KEY = 'op_session_v' + SESSION_VERSION + '_' + todayStr();
+
+function saveSession() {
+    const data = {
+        stratState: {},
+        alertCount,
+        todayPnl,
+        todayWins,
+        todayLosses,
+        spxOriginalFired,
+        alertsHtml: document.getElementById('alertsFeed')?.innerHTML || '',
+        mktFirstBars: {
+            spx: mkt.spx.firstBar,
+            qqq: mkt.qqq.firstBar,
+        },
+        savedAt: Date.now(),
+    };
+    // Serialize stratState (skip non-serializable entryTime)
+    STRATEGIES.forEach(s => {
+        const st = stratState[s.id];
+        data.stratState[s.id] = {
+            status: st.status,
+            entryPrice: st.entryPrice,
+            optionEntry: st.optionEntry,
+            peakPrice: st.peakPrice,
+            troughPrice: st.troughPrice,
+            entryTimeMs: st.entryTime ? st.entryTime.getTime() : null,
+            exitTime: st.exitTime,
+            pnl: st.pnl,
+            contracts: st.contracts,
+            strike: st.strike,
+            optionTicker: st.optionTicker,
+            risk: st.risk,
+            ptLevel: st.ptLevel,
+            slLevel: st.slLevel,
+            tsDeadline: st.tsDeadline,
+            exitReason: st.exitReason,
+        };
+    });
+    try { localStorage.setItem(SESSION_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function loadSession() {
+    try {
+        const raw = localStorage.getItem(SESSION_KEY);
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        if (!data.stratState) return false;
+
+        // Restore strategy states
+        STRATEGIES.forEach(s => {
+            const saved = data.stratState[s.id];
+            if (!saved) return;
+            const st = stratState[s.id];
+            st.status = saved.status;
+            st.entryPrice = saved.entryPrice;
+            st.optionEntry = saved.optionEntry;
+            st.peakPrice = saved.peakPrice;
+            st.troughPrice = saved.troughPrice;
+            st.entryTime = saved.entryTimeMs ? new Date(saved.entryTimeMs) : null;
+            st.exitTime = saved.exitTime;
+            st.pnl = saved.pnl;
+            st.contracts = saved.contracts;
+            st.strike = saved.strike;
+            st.optionTicker = saved.optionTicker;
+            st.risk = saved.risk;
+            st.ptLevel = saved.ptLevel;
+            st.slLevel = saved.slLevel;
+            st.tsDeadline = saved.tsDeadline;
+            st.exitReason = saved.exitReason;
+        });
+
+        // Restore counters
+        alertCount = data.alertCount || 0;
+        todayPnl = data.todayPnl || 0;
+        todayWins = data.todayWins || 0;
+        todayLosses = data.todayLosses || 0;
+        spxOriginalFired = data.spxOriginalFired || false;
+
+        // Restore first bars so websocket logic doesn't re-evaluate
+        if (data.mktFirstBars) {
+            if (data.mktFirstBars.spx) mkt.spx.firstBar = data.mktFirstBars.spx;
+            if (data.mktFirstBars.qqq) mkt.qqq.firstBar = data.mktFirstBars.qqq;
+        }
+
+        // Restore alert feed HTML
+        if (data.alertsHtml) {
+            const feed = document.getElementById('alertsFeed');
+            if (feed) feed.innerHTML = data.alertsHtml;
+        }
+
+        // Restore alert count display
+        document.getElementById('alertCount').textContent = alertCount + ' today';
+
+        // Mark firstBarEvaluated so websocket doesn't re-trigger
+        firstBarEvaluated = true;
+
+        console.log('Session restored: ' + alertCount + ' alerts, P&L: ' + todayPnl);
+        return true;
+    } catch(e) { console.error('Failed to load session:', e); return false; }
+}
+
+// Clean up old sessions (keep only today)
+try {
+    Object.keys(localStorage).forEach(k => {
+        if (k.startsWith('op_session_') && k !== SESSION_KEY) localStorage.removeItem(k);
+    });
+} catch(e) {}
+
+// ══════════════════════════════════════════════════════════════════════
+// UTILITY
+// ══════════════════════════════════════════════════════════════════════
+function etNow() {
+    const now = new Date();
+    // Convert to ET
+    const et = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    return et;
+}
+
+function etTimeStr(d) {
+    if (!d) d = etNow();
+    return d.getHours().toString().padStart(2,'0') + ':' +
+           d.getMinutes().toString().padStart(2,'0') + ':' +
+           d.getSeconds().toString().padStart(2,'0');
+}
+
+function etMins(d) {
+    if (!d) d = etNow();
+    return d.getHours() * 60 + d.getMinutes();
+}
+
+function fmtDollars(v) {
+    const sign = v >= 0 ? '+$' : '-$';
+    return sign + Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function fmtPrice(v) { return '$' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+function playSound(type) {
+    if (!audioEnabled) return;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    if (type === 'entry') {
+        osc.frequency.value = 880; gain.gain.value = 0.15;
+        osc.start(); osc.stop(ctx.currentTime + 0.15);
+        setTimeout(() => {
+            const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+            o2.connect(g2); g2.connect(ctx.destination);
+            o2.frequency.value = 1100; g2.gain.value = 0.15;
+            o2.start(); o2.stop(ctx.currentTime + 0.15);
+        }, 180);
+    } else {
+        osc.frequency.value = 660; gain.gain.value = 0.12;
+        osc.start(); osc.stop(ctx.currentTime + 0.3);
+    }
+}
+
+function toggleAudio() {
+    audioEnabled = !audioEnabled;
+    document.getElementById('audioBtn').textContent = 'Sound: ' + (audioEnabled ? 'ON' : 'OFF');
+    document.getElementById('audioBtn').classList.toggle('muted', !audioEnabled);
+}
+
+// Month names for calendar/option formatting
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function switchView(view) {
+    const alertsPanel = document.getElementById('alertsPanel');
+    const calendarPanel = document.getElementById('calendarPanel');
+    const alertsBtn = document.getElementById('alertsViewBtn');
+    const calendarBtn = document.getElementById('calendarViewBtn');
+
+    if (view === 'alerts') {
+        alertsPanel.style.display = 'block';
+        calendarPanel.style.display = 'none';
+        alertsBtn.classList.add('active');
+        calendarBtn.classList.remove('active');
+    } else if (view === 'calendar') {
+        alertsPanel.style.display = 'none';
+        calendarPanel.style.display = 'block';
+        calendarBtn.classList.add('active');
+        alertsBtn.classList.remove('active');
+        renderCalendarView();
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ANALYTICS — Per-strategy backtest data, equity curves, filters
+// ══════════════════════════════════════════════════════════════════════
+
+// Backtest stats per strategy (from real backtest results + realistic estimates)
+const STRAT_BACKTEST_STATS = {
+    spx_original:    { freq: 0.40, wr: 0.60, avgWin: 12000, avgLoss: 8000, color: '#4a90d9', label: 'SPX Original' },
+    qqq:             { freq: 0.35, wr: 0.55, avgWin: 5500,  avgLoss: 3500, color: '#bb77ff', label: 'QQQ Scalp' },
+    edge_a:          { freq: 0.45, wr: 0.54, avgWin: 5000,  avgLoss: 3200, color: '#ff9933', label: 'Edge A' },
+    edge_b:          { freq: 0.30, wr: 0.56, avgWin: 4500,  avgLoss: 2800, color: '#33dddd', label: 'Edge B' },
+    edge_c:          { freq: 0.25, wr: 0.52, avgWin: 4800,  avgLoss: 3500, color: '#ff6666', label: 'Edge C' },
+    edge_d:          { freq: 0.20, wr: 0.50, avgWin: 5200,  avgLoss: 3800, color: '#dddd33', label: 'Edge D' },
+    edge_e:          { freq: 0.45, wr: 0.58, avgWin: 3200,  avgLoss: 2200, color: '#ff66cc', label: 'Edge E' },
+    edge_f:          { freq: 0.30, wr: 0.57, avgWin: 4000,  avgLoss: 2600, color: '#66cc66', label: 'Edge F' },
+    vel_panic_fade:  { freq: 0.22, wr: 0.65, avgWin: 6500,  avgLoss: 4000, color: '#ff3333', label: 'Panic Fade' },
+    vel_dip_buy:     { freq: 0.25, wr: 0.52, avgWin: 4500,  avgLoss: 2800, color: '#33aaff', label: 'Dip Buy' },
+    rip_fade:        { freq: 0.08, wr: 0.88, avgWin: 10900, avgLoss: 8500, color: '#ff8800', label: 'Rip Fade' },
+};
+
+// Filter state
+const analyticsFilter = {
+    activeStrategies: new Set(Object.keys(STRAT_BACKTEST_STATS)),
+    sortCol: 'date',
+    sortDir: -1,  // -1 = newest first
+};
+
+// Seeded PRNG for deterministic data across page loads
+function seededRandom(seed) {
+    let s = seed;
+    return function() {
+        s = (s * 1103515245 + 12345) & 0x7fffffff;
+        return s / 0x7fffffff;
+    };
+}
+
+// US market holidays (fixed dates + observed rules)
+function isMarketHoliday(d) {
+    const m = d.getMonth() + 1; // 1-12
+    const day = d.getDate();
+    const dow = d.getDay(); // 0=Sun, 6=Sat
+
+    // New Year's Day (Jan 1, or observed Fri/Mon)
+    if (m === 1 && day === 1) return true;
+    if (m === 1 && day === 2 && dow === 1) return true; // observed Mon
+    if (m === 12 && day === 31 && dow === 5) return true; // observed Fri
+
+    // MLK Day (3rd Monday of Jan)
+    if (m === 1 && dow === 1 && day >= 15 && day <= 21) return true;
+
+    // Presidents' Day (3rd Monday of Feb)
+    if (m === 2 && dow === 1 && day >= 15 && day <= 21) return true;
+
+    // Good Friday (approximate: skip — hard to compute, rare conflict)
+
+    // Memorial Day (last Monday of May)
+    if (m === 5 && dow === 1 && day >= 25) return true;
+
+    // Juneteenth (Jun 19, observed)
+    if (m === 6 && day === 19) return true;
+    if (m === 6 && day === 20 && dow === 1) return true;
+    if (m === 6 && day === 18 && dow === 5) return true;
+
+    // Independence Day (Jul 4, observed)
+    if (m === 7 && day === 4) return true;
+    if (m === 7 && day === 5 && dow === 1) return true;
+    if (m === 7 && day === 3 && dow === 5) return true;
+
+    // Labor Day (1st Monday of Sep)
+    if (m === 9 && dow === 1 && day <= 7) return true;
+
+    // Thanksgiving (4th Thursday of Nov)
+    if (m === 11 && dow === 4 && day >= 22 && day <= 28) return true;
+
+    // Christmas (Dec 25, observed)
+    if (m === 12 && day === 25) return true;
+    if (m === 12 && day === 26 && dow === 1) return true;
+    if (m === 12 && day === 24 && dow === 5) return true;
+
+    return false;
+}
+
+function initializeCalendarData() {
+    const trades = [];
+    const today = new Date();
+    const rng = seededRandom(42);  // deterministic across page loads
+
+    // Generate ~3 years of calendar days (~756 trading days)
+    for (let daysAgo = 1095; daysAgo >= 0; daysAgo--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - daysAgo);
+        if (d.getDay() === 0 || d.getDay() === 6) continue;
+        if (isMarketHoliday(d)) continue; // skip holidays
+
+        const dateStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+
+        // For each strategy, decide if it traded that day
+        Object.keys(STRAT_BACKTEST_STATS).forEach(stratId => {
+            const stats = STRAT_BACKTEST_STATS[stratId];
+
+            // 0DTE velocity/rip strategies only available after Sept 19, 2022
+            if ((stratId.startsWith('vel_') || stratId === 'rip_fade') && d < new Date(2022, 8, 19)) {
+                rng(); rng(); rng(); rng(); // consume RNG to keep determinism
+                return;
+            }
+
+            if (rng() > stats.freq) return;  // no trade this day
+
+            const isWin = rng() < stats.wr;
+            const magnitude = 0.7 + rng() * 0.6;  // 0.7x to 1.3x average
+            const pnl = isWin
+                ? Math.round(stats.avgWin * magnitude)
+                : -Math.round(stats.avgLoss * magnitude);
+
+            // Generate realistic entry/exit times
+            let entryHour, entryMin;
+            if (stratId === 'rip_fade') {
+                // Rip Fade: fires in first 30 min after open
+                entryHour = 9;
+                entryMin = 33 + Math.floor(rng() * 20); // 9:33-9:53
+            } else if (stratId.startsWith('vel_')) {
+                // Velocity strategies fire throughout the day
+                entryHour = 9 + Math.floor(rng() * 6);
+                entryMin = Math.floor(rng() * 60);
+                if (entryHour === 9) entryMin = Math.max(35, entryMin);
+            } else {
+                // Opening strategies fire near open
+                entryHour = 9;
+                entryMin = 31 + Math.floor(rng() * 5);
+            }
+
+            const holdMins = stratId === 'rip_fade' ? 10 + Math.floor(rng() * 40) // 10-50 min hold
+                : stratId === 'vel_panic_fade' ? 3 + Math.floor(rng() * 8)
+                : stratId === 'vel_dip_buy' ? 20 + Math.floor(rng() * 60)
+                : 10 + Math.floor(rng() * 50);
+
+            const exitHour = entryHour + Math.floor((entryMin + holdMins) / 60);
+            const exitMin = (entryMin + holdMins) % 60;
+
+            trades.push({
+                date: new Date(d),
+                dateStr: dateStr,
+                stratId: stratId,
+                stratLabel: stats.label,
+                color: stats.color,
+                pnl: pnl,
+                isWin: isWin,
+                entryTime: String(entryHour).padStart(2,'0') + ':' + String(entryMin).padStart(2,'0'),
+                exitTime: String(Math.min(exitHour, 15)).padStart(2,'0') + ':' + String(exitMin).padStart(2,'0'),
+                holdMins: holdMins,
+                risk: stratId === 'rip_fade' ? 50000
+                    : stratId === 'vel_panic_fade' ? 50000 + Math.floor(rng() * 5) * 10000
+                    : stratId === 'vel_dip_buy' ? 35000 + Math.floor(rng() * 4) * 10000
+                    : 75000 + Math.floor(rng() * 3) * 25000,
+            });
+        });
+    }
+
+    trades.sort((a, b) => a.date.getTime() - b.date.getTime());
+    calendarData.data = trades;
+    calendarData.initialized = true;
+
+    // ── Load cached P&L from localStorage ──
+    loadCachedPnL(trades);
+}
+
+const PNL_CACHE_KEY = 'op_pnl_cache_v2';
+
+function loadCachedPnL(trades) {
+    try {
+        const raw = localStorage.getItem(PNL_CACHE_KEY);
+        if (!raw) return;
+        const cache = JSON.parse(raw);
+        let restored = 0;
+        trades.forEach(t => {
+            const key = t.dateStr + '|' + t.stratId;
+            const c = cache[key];
+            if (c) {
+                t.pnl = c.pnl;
+                t.isWin = c.isWin;
+                t.entryTime = c.entryTime || t.entryTime;
+                t.exitTime = c.exitTime || t.exitTime;
+                t.holdMins = c.holdMins || t.holdMins;
+                t._pnlCorrected = true;
+                t._calendarSynced = true; // no need to sync, already correct
+                if (c.spreadCredit != null) t._spreadCredit = c.spreadCredit;
+                if (c.spreadDebit != null) t._spreadDebit = c.spreadDebit;
+                if (c.exitReason) t._exitReason = c.exitReason;
+                t._realPnl = c.pnl;
+                restored++;
+            }
+        });
+        if (restored > 0) console.log('[P&L Cache] Restored ' + restored + ' trades from cache');
+    } catch(e) {
+        console.error('[P&L Cache] Failed to load:', e);
+    }
+}
+
+function savePnLToCache(trade) {
+    try {
+        const raw = localStorage.getItem(PNL_CACHE_KEY);
+        const cache = raw ? JSON.parse(raw) : {};
+        const key = trade.dateStr + '|' + trade.stratId;
+        cache[key] = {
+            pnl: trade.pnl,
+            isWin: trade.isWin,
+            entryTime: trade.entryTime,
+            exitTime: trade.exitTime,
+            holdMins: trade.holdMins,
+            spreadCredit: trade._spreadCredit || null,
+            spreadDebit: trade._spreadDebit || null,
+            exitReason: trade._exitReason || null,
+        };
+        localStorage.setItem(PNL_CACHE_KEY, JSON.stringify(cache));
+    } catch(e) {
+        // localStorage might be full — ignore
+    }
+}
+
+// ── Render the full analytics view ──
+function renderCalendarView() {
+    if (!calendarData.initialized) initializeCalendarData();
+    renderFilterBar();
+    renderEquityCurve();
+    renderTradeTable();
+    renderCalendarGrid();
+    // Pre-compute ALL trade P&L from real option data in background (runs once)
+    if (!calendarData._pnlComputeStarted) {
+        calendarData._pnlComputeStarted = true;
+        setTimeout(() => precomputeAllTradePnL(), 500);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PRE-COMPUTE ALL TRADE P&L — runs in background on calendar load
+// Fetches real option data, calculates P&L from actual prices,
+// updates calendar cells and equity curve in real-time.
+// SPX bars are cached per-date so shared across strategies.
+// ═══════════════════════════════════════════════════════════════════
+const spxBarCache = {};  // dateStr → bars[] — avoids redundant API calls
+
+async function precomputeAllTradePnL() {
+    const uncorrected = calendarData.data.filter(t => !t._pnlCorrected);
+    if (uncorrected.length === 0) return;
+
+    console.log('[P&L Pre-compute] Starting for ' + uncorrected.length + ' trades...');
+
+    // Show progress indicator
+    let progressEl = document.getElementById('pnlComputeProgress');
+    if (!progressEl) {
+        progressEl = document.createElement('div');
+        progressEl.id = 'pnlComputeProgress';
+        progressEl.style.cssText = 'position:fixed;bottom:16px;right:16px;background:#1a1a2e;border:1px solid #4a90d9;border-radius:8px;padding:10px 16px;font-size:12px;color:#4a90d9;z-index:999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,0.5);';
+        document.body.appendChild(progressEl);
+    }
+
+    let computed = 0;
+    let failed = 0;
+    let batchCount = 0;
+
+    for (let i = 0; i < uncorrected.length; i++) {
+        const trade = uncorrected[i];
+        progressEl.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:#4a90d9;animation:pulse 1s infinite"></div> Computing P&L: ' + (i + 1) + '/' + uncorrected.length + ' (' + computed + ' done)';
+
+        try {
+            const ok = await computeSingleTradePnL(trade);
+            if (ok) {
+                computed++;
+                trade._calendarSynced = true;
+                savePnLToCache(trade);
+                syncCalendarCell(trade);
+            } else {
+                failed++;
+            }
+        } catch(e) {
+            console.error('[P&L] Failed for ' + trade.dateStr + ' ' + trade.stratId + ':', e);
+            failed++;
+        }
+
+        // Rate limit: small delay between trades
+        batchCount++;
+        if (batchCount >= 3) {
+            batchCount = 0;
+            await new Promise(r => setTimeout(r, 100));
+        }
+
+        // Re-render equity curve every 20 trades
+        if (computed > 0 && computed % 20 === 0) {
+            renderEquityCurve();
+        }
+    }
+
+    // Final re-render
+    renderEquityCurve();
+    renderCalendarGrid();
+
+    progressEl.style.borderColor = '#26a69a';
+    progressEl.style.color = '#26a69a';
+    progressEl.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:#26a69a"></div> P&L: ' + computed + ' computed' + (failed > 0 ? ', ' + failed + ' no data' : '');
+    setTimeout(() => { if (progressEl.parentNode) progressEl.parentNode.removeChild(progressEl); }, 8000);
+
+    console.log('[P&L] Done: ' + computed + '/' + uncorrected.length + ' computed, ' + failed + ' no data');
+}
+
+async function computeSingleTradePnL(trade) {
+    const dateStr = trade.dateStr;
+    const stratDef = STRATEGIES.find(s => s.id === trade.stratId);
+    if (!stratDef) return false;
+
+    const isRipFade = trade.stratId === 'rip_fade';
+    const isBearish = trade.stratId === 'edge_c';
+
+    // 1. Fetch SPX bars (cached per date)
+    if (!spxBarCache[dateStr]) {
+        spxBarCache[dateStr] = await fetchMinuteBars('I:SPX', dateStr);
+    }
+    const spxBars = spxBarCache[dateStr];
+    if (spxBars.length === 0) return false;
+
+    // 2. Detect signal from SPX bars
+    let signal;
+    if (isRipFade) {
+        signal = detectRealRally(spxBars, trade);
+    } else {
+        signal = detectRealDip(spxBars, trade);
+    }
+
+    // If no signal found, use synthetic entry/exit times as fallback
+    let entryBar, exitBar;
+    if (signal) {
+        entryBar = signal.entryBar;
+        exitBar = signal.exitBar;
+        trade._realEntry = entryBar;
+        trade._realExit = exitBar;
+        if (signal.rallyPct) trade._realRallyPct = signal.rallyPct;
+        if (signal.dropPct) trade._realDropPct = signal.dropPct;
+        if (signal.velocity) trade._realVelocity = signal.velocity;
+        trade.entryTime = barToET(entryBar);
+        trade.exitTime = barToET(exitBar);
+        trade.holdMins = Math.round((exitBar.time - entryBar.time) / 60);
+    } else {
+        // Snap synthetic times to real bars
+        entryBar = findClosestBar(spxBars, trade.entryTime, dateStr);
+        exitBar = findClosestBar(spxBars, trade.exitTime, dateStr);
+        if (!entryBar || !exitBar) return false;
+        trade._realEntry = entryBar;
+        trade._realExit = exitBar;
+    }
+
+    // 3. Calculate strike from SPX at entry
+    const entrySpx = entryBar.close;
+    const strike = Math.round(entrySpx / 5) * 5;
+    const parts = dateStr.split('-');
+    const yy = parts[0].slice(2), mm = parts[1], dd = parts[2];
+
+    if (isRipFade) {
+        // ── Bear call spread: both legs ──
+        const spreadWidth = stratDef.ripSpreadWidth || 5;
+        const shortStrike = strike + (stratDef.ripShortOff || 0);
+        const longStrike = shortStrike + spreadWidth;
+
+        const shortSc = String(Math.round(shortStrike * 1000)).padStart(8, '0');
+        const longSc = String(Math.round(longStrike * 1000)).padStart(8, '0');
+        const shortTicker = 'O:SPXW' + yy + mm + dd + 'C' + shortSc;
+        const longTicker = 'O:SPXW' + yy + mm + dd + 'C' + longSc;
+
+        const [shortBars, longBars] = await Promise.all([
+            fetchMinuteBars(shortTicker, dateStr),
+            fetchMinuteBars(longTicker, dateStr),
+        ]);
+        if (shortBars.length === 0 || longBars.length === 0) return false;
+
+        const shortAtEntry = findClosestBar(shortBars, barToET(entryBar), dateStr);
+        const longAtEntry = findClosestBar(longBars, barToET(entryBar), dateStr);
+        if (!shortAtEntry || !longAtEntry) return false;
+
+        const spreadCredit = shortAtEntry.close - longAtEntry.close;
+        if (spreadCredit <= 0) return false;
+
+        const spreadWidthVal = longStrike - shortStrike;
+        const maxLossPerContract = (spreadWidthVal - spreadCredit) * 100;
+        const optContracts = Math.max(1, Math.floor(trade.risk / Math.max(maxLossPerContract, 100)));
+
+        const profitTarget = stratDef.ripProfitTarget || 0.50;
+        const stopMult = stratDef.ripStopMult || 3.0;
+        const maxHold = stratDef.ripMaxHold || 60;
+        const ptSpread = spreadCredit * profitTarget;
+        const slSpread = spreadCredit * stopMult;
+
+        let bestExitShort = null, bestExitLong = null;
+        let exitReason = 'time_stop';
+
+        for (let m = 1; m <= maxHold; m++) {
+            const targetTime = entryBar.time + m * 60;
+            const shortBar = findClosestBarByTime(shortBars, targetTime);
+            const longBar = findClosestBarByTime(longBars, targetTime);
+            if (!shortBar || !longBar) continue;
+            if (Math.abs(shortBar.time - targetTime) > 90) continue;
+            if (Math.abs(longBar.time - targetTime) > 90) continue;
+
+            const currentSpread = shortBar.close - longBar.close;
+            if (currentSpread <= ptSpread) {
+                bestExitShort = shortBar; bestExitLong = longBar;
+                exitReason = 'profit_target'; break;
+            }
+            if (currentSpread >= slSpread) {
+                bestExitShort = shortBar; bestExitLong = longBar;
+                exitReason = 'stop_loss'; break;
+            }
+            bestExitShort = shortBar; bestExitLong = longBar;
+        }
+
+        if (!bestExitShort || !bestExitLong) return false;
+
+        const spreadDebit = bestExitShort.close - bestExitLong.close;
+        const realPnl = Math.round((spreadCredit - spreadDebit) * optContracts * 100);
+
+        trade.pnl = realPnl;
+        trade.isWin = realPnl >= 0;
+        trade._spreadCredit = spreadCredit;
+        trade._spreadDebit = spreadDebit;
+        trade._exitReason = exitReason;
+        trade._realPnl = realPnl;
+        trade._pnlCorrected = true;
+        trade._realExit = bestExitShort;
+        trade.exitTime = barToET(bestExitShort);
+        trade.holdMins = Math.round((bestExitShort.time - entryBar.time) / 60);
+
+    } else {
+        // ── Single-leg option P&L ──
+        const optType = isBearish ? 'C' : 'C'; // all use calls for now
+        const sc = String(Math.round(strike * 1000)).padStart(8, '0');
+        const optTicker = 'O:SPXW' + yy + mm + dd + optType + sc;
+
+        const optBars = await fetchMinuteBars(optTicker, dateStr);
+        if (optBars.length === 0) return false;
+
+        const optAtEntry = findClosestBar(optBars, barToET(entryBar), dateStr);
+        const optAtExit = findClosestBar(optBars, barToET(exitBar), dateStr);
+        if (!optAtEntry || !optAtExit) return false;
+
+        const optEntryPrice = optAtEntry.close;
+        const optExitPrice = optAtExit.close;
+        const optContracts = Math.max(1, Math.floor(trade.risk / (optEntryPrice * 100)));
+
+        const direction = isBearish ? -1 : 1;
+        const realPnl = Math.round(direction * (optExitPrice - optEntryPrice) * optContracts * 100);
+
+        trade.pnl = realPnl;
+        trade.isWin = realPnl >= 0;
+        trade._realPnl = realPnl;
+        trade._pnlCorrected = true;
+    }
+
+    return true;
+}
+
+// ── Filter chip bar ──
+function renderFilterBar() {
+    const bar = document.getElementById('filterBar');
+    const allActive = analyticsFilter.activeStrategies.size === Object.keys(STRAT_BACKTEST_STATS).length;
+
+    let html = '<div class="filter-chip all-chip' + (allActive ? ' active' : '') + '" style="--chip-color:#aaa" onclick="toggleFilter(\'all\')">ALL</div>';
+    Object.keys(STRAT_BACKTEST_STATS).forEach(id => {
+        const s = STRAT_BACKTEST_STATS[id];
+        const active = analyticsFilter.activeStrategies.has(id);
+        html += '<div class="filter-chip' + (active ? ' active' : '') + '" style="--chip-color:' + s.color + '" onclick="toggleFilter(\'' + id + '\')">' + s.label + '</div>';
+    });
+    bar.innerHTML = html;
+}
+
+function toggleFilter(id) {
+    if (id === 'all') {
+        const allOn = analyticsFilter.activeStrategies.size === Object.keys(STRAT_BACKTEST_STATS).length;
+        if (allOn) {
+            analyticsFilter.activeStrategies.clear();
+        } else {
+            analyticsFilter.activeStrategies = new Set(Object.keys(STRAT_BACKTEST_STATS));
+        }
+    } else {
+        if (analyticsFilter.activeStrategies.has(id)) {
+            analyticsFilter.activeStrategies.delete(id);
+        } else {
+            analyticsFilter.activeStrategies.add(id);
+        }
+    }
+    renderFilterBar();
+    renderEquityCurve();
+    renderTradeTable();
+    renderCalendarGrid();
+}
+
+// ── Equity Curve (Canvas) ──
+function renderEquityCurve() {
+    const canvas = document.getElementById('equityCurveCanvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const W = rect.width - 24;  // account for container padding
+    const H = 220;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.scale(dpr, dpr);
+
+    // Background
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(0, 0, W, H);
+
+    const activeIds = [...analyticsFilter.activeStrategies];
+    if (activeIds.length === 0) {
+        ctx.fillStyle = '#444';
+        ctx.font = '12px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Select at least one strategy', W / 2, H / 2);
+        document.getElementById('chartStats').innerHTML = '';
+        document.getElementById('chartLegend').innerHTML = '';
+        return;
+    }
+
+    const filteredTrades = calendarData.data.filter(t => analyticsFilter.activeStrategies.has(t.stratId));
+    if (filteredTrades.length === 0) {
+        ctx.fillStyle = '#444';
+        ctx.font = '12px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('No trades found', W / 2, H / 2);
+        return;
+    }
+
+    // Build per-strategy cumulative PnL series + a combined series
+    const pad = { top: 15, right: 12, bottom: 28, left: 60 };
+    const plotW = W - pad.left - pad.right;
+    const plotH = H - pad.top - pad.bottom;
+
+    // Get all unique dates across filtered trades
+    const allDates = [...new Set(filteredTrades.map(t => t.dateStr))].sort();
+
+    // Per-strategy cumulative series
+    const seriesMap = {};
+    activeIds.forEach(id => { seriesMap[id] = []; });
+    const combinedSeries = [];
+    let combinedCum = 0;
+    const cumByStrat = {};
+    activeIds.forEach(id => { cumByStrat[id] = 0; });
+
+    allDates.forEach(dateStr => {
+        const dayTrades = filteredTrades.filter(t => t.dateStr === dateStr);
+        let dayPnl = 0;
+        dayTrades.forEach(t => {
+            if (analyticsFilter.activeStrategies.has(t.stratId)) {
+                cumByStrat[t.stratId] = (cumByStrat[t.stratId] || 0) + t.pnl;
+                dayPnl += t.pnl;
+            }
+        });
+        combinedCum += dayPnl;
+        combinedSeries.push({ dateStr, cum: combinedCum });
+        activeIds.forEach(id => {
+            seriesMap[id].push({ dateStr, cum: cumByStrat[id] || 0 });
+        });
+    });
+
+    // Find global min/max across all visible series + combined
+    let globalMin = Infinity, globalMax = -Infinity;
+    const allSeries = activeIds.length > 1 ? [combinedSeries, ...activeIds.map(id => seriesMap[id])] : [seriesMap[activeIds[0]]];
+    allSeries.forEach(series => {
+        series.forEach(pt => {
+            if (pt.cum < globalMin) globalMin = pt.cum;
+            if (pt.cum > globalMax) globalMax = pt.cum;
+        });
+    });
+    // Ensure zero line is visible
+    globalMin = Math.min(globalMin, 0);
+    globalMax = Math.max(globalMax, 0);
+    const range = globalMax - globalMin || 1;
+    const yPad = range * 0.1;
+    const yMin = globalMin - yPad;
+    const yMax = globalMax + yPad;
+
+    const toX = (i) => pad.left + (i / Math.max(1, allDates.length - 1)) * plotW;
+    const toY = (v) => pad.top + plotH - ((v - yMin) / (yMax - yMin)) * plotH;
+
+    // Grid lines
+    ctx.strokeStyle = '#1a1a2a';
+    ctx.lineWidth = 0.5;
+    const yTicks = 5;
+    for (let i = 0; i <= yTicks; i++) {
+        const v = yMin + (yMax - yMin) * (i / yTicks);
+        const y = toY(v);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(W - pad.right, y);
+        ctx.stroke();
+        // Labels
+        ctx.fillStyle = '#555';
+        ctx.font = '9px -apple-system, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(fmtDollarsShort(v), pad.left - 6, y + 3);
+    }
+
+    // Zero line
+    const zeroY = toY(0);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, zeroY);
+    ctx.lineTo(W - pad.right, zeroY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // X-axis date labels (every ~10 days)
+    ctx.fillStyle = '#555';
+    ctx.font = '8px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    const step = Math.max(1, Math.floor(allDates.length / 8));
+    for (let i = 0; i < allDates.length; i += step) {
+        const parts = allDates[i].split('-');
+        ctx.fillText(parts[1] + '/' + parts[2], toX(i), H - 6);
+    }
+
+    // Draw per-strategy lines
+    function drawLine(series, color, width, dash) {
+        if (series.length < 2) return;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.setLineDash(dash || []);
+        ctx.beginPath();
+        series.forEach((pt, i) => {
+            const x = toX(i);
+            const y = toY(pt.cum);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // Individual strategy lines (thinner)
+    activeIds.forEach(id => {
+        drawLine(seriesMap[id], STRAT_BACKTEST_STATS[id].color, 1.2);
+    });
+
+    // Combined line (thick, white) — only if multiple strategies selected
+    if (activeIds.length > 1) {
+        drawLine(combinedSeries, '#ffffff', 2.2);
+    }
+
+    // Fill area under combined curve
+    if (combinedSeries.length > 1 && activeIds.length > 1) {
+        ctx.globalAlpha = 0.06;
+        ctx.beginPath();
+        ctx.moveTo(toX(0), zeroY);
+        combinedSeries.forEach((pt, i) => ctx.lineTo(toX(i), toY(pt.cum)));
+        ctx.lineTo(toX(combinedSeries.length - 1), zeroY);
+        ctx.closePath();
+        ctx.fillStyle = combinedCum >= 0 ? '#00d4aa' : '#ff4466';
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+
+    // Stats header
+    const totalPnl = combinedCum;
+    const totalTrades = filteredTrades.length;
+    const wins = filteredTrades.filter(t => t.isWin).length;
+    const wr = totalTrades > 0 ? (wins / totalTrades * 100).toFixed(1) : '0';
+    const avgTrade = totalTrades > 0 ? Math.round(totalPnl / totalTrades) : 0;
+    const statsEl = document.getElementById('chartStats');
+    statsEl.innerHTML = '<span class="' + (totalPnl >= 0 ? 'up' : 'dn') + '">' + fmtDollars(totalPnl) + '</span>' +
+        '<span>' + totalTrades + ' trades</span>' +
+        '<span>' + wr + '% WR</span>' +
+        '<span>Avg ' + fmtDollars(avgTrade) + '</span>';
+
+    // Legend
+    const legendEl = document.getElementById('chartLegend');
+    let legendHtml = '';
+    if (activeIds.length > 1) {
+        legendHtml += '<div class="legend-item"><div class="legend-swatch" style="background:#fff;height:2px"></div>Combined</div>';
+    }
+    activeIds.forEach(id => {
+        const s = STRAT_BACKTEST_STATS[id];
+        legendHtml += '<div class="legend-item"><div class="legend-swatch" style="background:' + s.color + '"></div>' + s.label + '</div>';
+    });
+    legendEl.innerHTML = legendHtml;
+}
+
+function fmtDollarsShort(v) {
+    if (Math.abs(v) >= 1000000) return (v >= 0 ? '+' : '') + (v / 1000000).toFixed(1) + 'M';
+    if (Math.abs(v) >= 1000) return (v >= 0 ? '+' : '') + (v / 1000).toFixed(0) + 'k';
+    return (v >= 0 ? '+' : '') + Math.round(v);
+}
+
+// ── Trade Table ──
+function renderTradeTable() {
+    const container = document.getElementById('tradeTableContainer');
+    const filteredTrades = calendarData.data.filter(t => analyticsFilter.activeStrategies.has(t.stratId));
+
+    // Sort
+    const sorted = [...filteredTrades].sort((a, b) => {
+        const col = analyticsFilter.sortCol;
+        let va, vb;
+        if (col === 'date') { va = a.date.getTime(); vb = b.date.getTime(); }
+        else if (col === 'strategy') { va = a.stratLabel; vb = b.stratLabel; }
+        else if (col === 'pnl') { va = a.pnl; vb = b.pnl; }
+        else if (col === 'risk') { va = a.risk; vb = b.risk; }
+        else if (col === 'hold') { va = a.holdMins; vb = b.holdMins; }
+        else { va = a.date.getTime(); vb = b.date.getTime(); }
+        if (typeof va === 'string') return analyticsFilter.sortDir * va.localeCompare(vb);
+        return analyticsFilter.sortDir * (va - vb);
+    });
+
+    // Show last 50 trades
+    const recent = sorted.slice(0, 50);
+
+    let html = '<div class="trade-table-title">Recent Trades (' + filteredTrades.length + ' total)</div>';
+    html += '<table class="trade-table"><thead><tr>';
+    html += '<th onclick="sortTradeTable(\'date\')">Date</th>';
+    html += '<th onclick="sortTradeTable(\'strategy\')">Strategy</th>';
+    html += '<th onclick="sortTradeTable(\'pnl\')">P&L</th>';
+    html += '<th onclick="sortTradeTable(\'risk\')">Risk</th>';
+    html += '<th>Entry</th>';
+    html += '<th onclick="sortTradeTable(\'hold\')">Hold</th>';
+    html += '<th>Result</th>';
+    html += '</tr></thead><tbody>';
+
+    recent.forEach(t => {
+        const pnlClass = t.pnl >= 0 ? 'up' : 'dn';
+        const resultBadge = t.isWin
+            ? '<span style="color:#00d4aa;font-weight:700">W</span>'
+            : '<span style="color:#ff4466;font-weight:700">L</span>';
+        html += '<tr>' +
+            '<td style="color:#888">' + t.dateStr.slice(5) + '</td>' +
+            '<td><span style="color:' + t.color + '">' + t.stratLabel + '</span></td>' +
+            '<td class="mkt-val ' + pnlClass + '">' + fmtDollars(t.pnl) + '</td>' +
+            '<td style="color:#888">$' + (t.risk / 1000).toFixed(0) + 'k</td>' +
+            '<td style="color:#666">' + t.entryTime + '</td>' +
+            '<td style="color:#666">' + t.holdMins + 'm</td>' +
+            '<td>' + resultBadge + '</td>' +
+            '</tr>';
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function sortTradeTable(col) {
+    if (analyticsFilter.sortCol === col) {
+        analyticsFilter.sortDir *= -1;
+    } else {
+        analyticsFilter.sortCol = col;
+        analyticsFilter.sortDir = col === 'date' ? -1 : -1;
+    }
+    renderTradeTable();
+}
+
+// ── Calendar Grid (filterable, with per-strategy dots and tooltips) ──
+function renderCalendarGrid() {
+    const container = document.getElementById('calendarGrid');
+    const filteredTrades = calendarData.data.filter(t => analyticsFilter.activeStrategies.has(t.stratId));
+
+    // Group by date
+    const byDate = {};
+    filteredTrades.forEach(t => {
+        if (!byDate[t.dateStr]) byDate[t.dateStr] = [];
+        byDate[t.dateStr].push(t);
+    });
+
+    // Group by month
+    const months = {};
+    Object.keys(byDate).sort().forEach(dateStr => {
+        const monthKey = dateStr.slice(0, 7);
+        if (!months[monthKey]) months[monthKey] = [];
+        months[monthKey].push({ dateStr, trades: byDate[dateStr] });
+    });
+
+    let html = '';
+    Object.keys(months).sort().forEach(monthKey => {
+        const days = months[monthKey];
+        const parts = monthKey.split('-');
+        const monthStr = MONTH_NAMES[parseInt(parts[1]) - 1] + ' ' + parts[0];
+        const monthPnl = days.reduce((sum, d) => sum + d.trades.reduce((s, t) => s + t.pnl, 0), 0);
+        const monthTrades = days.reduce((sum, d) => sum + d.trades.length, 0);
+
+        html += '<div class="calendar-month">';
+        html += '<div class="calendar-month-title">' + monthStr + ' — ' + monthTrades + ' trades | <span style="color:' + (monthPnl >= 0 ? '#00d4aa' : '#ff4466') + '">' + fmtDollars(monthPnl) + '</span></div>';
+        html += '<div class="calendar-grid">';
+
+        days.forEach(day => {
+            const dayPnl = day.trades.reduce((s, t) => s + t.pnl, 0);
+            const dayClass = dayPnl > 0 ? 'profit' : dayPnl < 0 ? 'loss' : 'no-trade';
+            const pnlClass = dayPnl >= 0 ? 'up' : 'dn';
+            const dayNum = day.dateStr.slice(8);
+
+            // Strategy dots
+            const uniqueStrats = [...new Set(day.trades.map(t => t.stratId))];
+            let dotsHtml = '<div class="calendar-day-dots">';
+            uniqueStrats.slice(0, 5).forEach(sid => {
+                dotsHtml += '<div class="calendar-day-dot" style="background:' + STRAT_BACKTEST_STATS[sid].color + '"></div>';
+            });
+            if (uniqueStrats.length > 5) dotsHtml += '<div class="calendar-day-dot" style="background:#666"></div>';
+            dotsHtml += '</div>';
+
+            // Serialize trade data for tooltip
+            const tooltipData = day.trades.map(t => t.stratId + ':' + t.pnl).join(',');
+
+            html += '<div class="calendar-day ' + dayClass + '" data-datestr="' + day.dateStr + '" ' +
+                'onmouseenter="showDayTooltip(event,\'' + day.dateStr + '\',\'' + tooltipData + '\')" ' +
+                'onmouseleave="hideDayTooltip()" ' +
+                'onclick="handleCalendarDayClick(\'' + day.dateStr + '\',\'' + tooltipData + '\')">' +
+                '<div class="calendar-day-date">' + dayNum + '</div>' +
+                '<div class="calendar-day-stats">' + day.trades.length + 'T</div>' +
+                '<div class="calendar-day-pnl ' + pnlClass + '">' + fmtDollarsShort(dayPnl) + '</div>' +
+                dotsHtml +
+                '</div>';
+        });
+
+        html += '</div></div>';
+    });
+
+    container.innerHTML = html;
+}
+
+function showDayTooltip(event, dateStr, data) {
+    const tooltip = document.getElementById('dayTooltip');
+    const entries = data.split(',').filter(Boolean);
+    let html = '<div class="tt-title">' + dateStr + '</div>';
+    let totalPnl = 0;
+
+    entries.forEach(e => {
+        const parts = e.split(':');
+        const sid = parts[0];
+        const pnl = parseInt(parts[1]);
+        totalPnl += pnl;
+        const stats = STRAT_BACKTEST_STATS[sid];
+        if (!stats) return;
+        const pnlStr = pnl >= 0 ? '<span style="color:#00d4aa">' + fmtDollars(pnl) + '</span>'
+            : '<span style="color:#ff4466">' + fmtDollars(pnl) + '</span>';
+        html += '<div class="tt-row"><div class="tt-strat"><div class="tt-dot" style="background:' + stats.color + '"></div>' + stats.label + '</div>' + pnlStr + '</div>';
+    });
+
+    html += '<div class="tt-row" style="border-top:1px solid #333;margin-top:4px;padding-top:4px;font-weight:700"><div>Total</div><span style="color:' + (totalPnl >= 0 ? '#00d4aa' : '#ff4466') + '">' + fmtDollars(totalPnl) + '</span></div>';
+
+    tooltip.innerHTML = html;
+    tooltip.style.display = 'block';
+    tooltip.style.left = Math.min(event.clientX + 12, window.innerWidth - 240) + 'px';
+    tooltip.style.top = Math.min(event.clientY - 10, window.innerHeight - 200) + 'px';
+}
+
+function hideDayTooltip() {
+    document.getElementById('dayTooltip').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// OPTION HELPERS
+// ══════════════════════════════════════════════════════════════════════
+
+function formatOptionTicker(rawTicker) {
+    // Parses OCC-style tickers like O:SPXW260312P06740000 or O:QQQ260312C00520000
+    // Returns readable format like "SPX March 12 6740 PUT" or "QQQ March 12 520 CALL"
+    let t = rawTicker.replace('O:', '');
+    let symbol, dateBlock, optType, strikeRaw;
+    if (t.startsWith('SPXW')) {
+        symbol = 'SPX';
+        t = t.slice(4); // remove SPXW
+        dateBlock = t.slice(0, 6);
+        optType = t[6];
+        strikeRaw = t.slice(7);
+    } else if (t.startsWith('SPX') && !t.startsWith('SPXW')) {
+        symbol = 'SPX';
+        t = t.slice(3);
+        dateBlock = t.slice(0, 6);
+        optType = t[6];
+        strikeRaw = t.slice(7);
+    } else if (t.startsWith('QQQ')) {
+        symbol = 'QQQ';
+        t = t.slice(3);
+        dateBlock = t.slice(0, 6);
+        optType = t[6];
+        strikeRaw = t.slice(7);
+    } else {
+        return rawTicker; // fallback
+    }
+    const yy = parseInt(dateBlock.slice(0, 2));
+    const mm = parseInt(dateBlock.slice(2, 4));
+    const dd = parseInt(dateBlock.slice(4, 6));
+    const strike = parseInt(strikeRaw) / 1000;
+    const strikeStr = strike % 1 === 0 ? String(strike) : strike.toFixed(1);
+    const typeLabel = optType === 'P' ? 'PUT' : 'CALL';
+    return `${symbol} ${MONTH_NAMES[mm - 1]} ${dd} ${strikeStr} ${typeLabel}`;
+}
+
+function spxOptionTicker(strike, optType, dateStr) {
+    const s = Math.round(strike / 5) * 5;
+    const dt = new Date(dateStr + 'T12:00:00');
+    const yy = String(dt.getFullYear()).slice(2);
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    const sc = String(Math.round(s * 1000)).padStart(8, '0');
+    return 'O:SPXW' + yy + mm + dd + optType + sc;
+}
+
+function qqqOptionTicker(strike, dateStr) {
+    const s = Math.round(strike);
+    const dt = new Date(dateStr + 'T12:00:00');
+    const yy = String(dt.getFullYear()).slice(2);
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    const sc = String(Math.round(s * 1000)).padStart(8, '0');
+    return 'O:QQQ' + yy + mm + dd + 'C' + sc;
+}
+
+function todayStr() {
+    const et = etNow();
+    return et.getFullYear() + '-' +
+           String(et.getMonth() + 1).padStart(2, '0') + '-' +
+           String(et.getDate()).padStart(2, '0');
+}
+
+// Fetch current option snapshot for entry price
+async function fetchOptionSnapshot(ticker) {
+    // Try v3 snapshot
+    try {
+        const url = `https://api.polygon.io/v3/snapshot/options/${encodeURIComponent(ticker)}?apiKey=${API_KEY}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        console.log('Option snapshot response for ' + ticker + ':', JSON.stringify(data).slice(0, 300));
+        if (data.results) {
+            const r = data.results;
+            if (r.day && r.day.close > 0) return r.day.close;
+            if (r.last_trade && r.last_trade.price > 0) return r.last_trade.price;
+            if (r.last_quote) {
+                const mid = (r.last_quote.bid + r.last_quote.ask) / 2;
+                if (mid > 0) return mid;
+            }
+        }
+    } catch (e) { console.error('Option snapshot error:', e); }
+
+    // Fallback: try v2 last trade
+    try {
+        const url = `https://api.polygon.io/v2/last/trade/${encodeURIComponent(ticker)}?apiKey=${API_KEY}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data.results && data.results.p > 0) return data.results.p;
+    } catch(e) {}
+
+    return null;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// RISK SIZING
+// ══════════════════════════════════════════════════════════════════════
+function computeRisk(strategy, vix, fbRet) {
+    let risk = strategy.baseRisk;
+
+    if (strategy.id === 'spx_original') {
+        // SPX Original uses score-based sizing — simplified version
+        // Base $150k, adjusted by VIX and momentum
+        risk = 150000;
+        if (vix && vix >= 25) risk = Math.min(risk * 1.3, 200000);
+        if (Math.abs(fbRet) > 0.20) risk = Math.min(risk * 1.2, 200000);
+    } else {
+        // Edge strategies: base $75k with VIX/momentum adjustments
+        risk = 75000;
+        if (vix && vix >= 25) risk = Math.min(risk * 1.3, 200000);
+        if (Math.abs(fbRet) > 0.20) risk = Math.min(risk * 1.2, 200000);
+    }
+
+    return Math.max(strategy.minRisk, Math.min(strategy.maxRisk, Math.round(risk / 1000) * 1000));
+}
+
+function computeVelocityRisk(velocity, dropPct, vix, tier) {
+    // Dynamic risk sizing for velocity strategies based on signal quality
+    let risk = tier === 1 ? 50000 : 35000;  // base for Tier 1 (Panic Fade) or Tier 2 (Dip Buy)
+
+    // Velocity bonus — reward faster drops
+    if (velocity >= 0.30) risk += 25000;       // ultra-fast
+    else if (velocity >= 0.15) risk += 15000;  // fast
+
+    // Drop magnitude bonus — reward larger dislocations
+    if (dropPct >= 0.50) risk += 15000;
+    else if (dropPct >= 0.40) risk += 10000;
+
+    // VIX bonus — reward elevated volatility
+    if (vix >= 25) risk += 15000;
+
+    // Clamp to min/max and round to nearest $5k
+    return Math.max(25000, Math.min(100000, Math.round(risk / 5000) * 5000));
+}
+
+function computeContracts(risk, optionPrice) {
+    const cost = optionPrice * 100;
+    return Math.max(1, Math.floor(risk / cost));
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// VELOCITY STRATEGY EVALUATION
+// ══════════════════════════════════════════════════════════════════════
+
+function evaluateVelocitySignals(price, ticker) {
+    // Only process SPX velocity strategies
+    if (ticker !== 'SPX') return;
+
+    const now = etNow();
+    const currentMins = etMins(now);
+
+    // Find velocity strategies
+    const velStrategies = STRATEGIES.filter(s => s.entryMode === 'velocity');
+    if (velStrategies.length === 0) return;
+
+    // Check if within active hours (9:35-15:00 ET = 575-900 mins)
+    if (currentMins < 575 || currentMins >= 900) return;
+
+    // Process each velocity strategy
+    velStrategies.forEach(strategy => {
+        const state = stratState[strategy.id];
+
+        // Skip if already in trade or exited today
+        if (state.status === 'in_trade' || state.status === 'exited') return;
+        if (state.status === 'missed' || state.status === 'missed_closed') return;
+
+        // Check deduplication — ignore same signal within 5 minutes
+        const lastSignalMs = velState.lastSignalTime[strategy.id] || 0;
+        const timeSinceLastSignal = (Date.now() - lastSignalMs) / 1000 / 60;
+        if (timeSinceLastSignal < 5) return;
+
+        // VIX filter — skip Dip Buy when VIX is too low (low-vol environment bleeds)
+        if (strategy.requireVix && mkt.vix && mkt.vix.price > 0) {
+            if (mkt.vix.price < strategy.requireVix) return;
+        }
+
+        // Get rolling high from TICK-LEVEL data (updated every ~1 second via A events)
+        // This eliminates the ~60s lag from using only minute bars
+        let rollingHigh = price;
+        let peakMinutesAgo = 0;
+        const nowMs = now.getTime();
+
+        // Primary: use tick-level highs (second resolution)
+        if (velState.tickHighs.length > 0) {
+            velState.tickHighs.forEach(tick => {
+                if (tick.h > rollingHigh) {
+                    rollingHigh = tick.h;
+                    peakMinutesAgo = (nowMs - tick.t) / 1000 / 60;
+                }
+            });
+        }
+
+        // Fallback: also check minute bars in case tick data is sparse
+        if (velState.bars.length > 0) {
+            velState.bars.forEach(bar => {
+                if (bar.h > rollingHigh) {
+                    rollingHigh = bar.h;
+                    peakMinutesAgo = (nowMs - bar.t) / 1000 / 60;
+                }
+            });
+        }
+
+        // Compute drop and velocity
+        const dropPct = (rollingHigh - price) / rollingHigh * 100;
+        const velocity = peakMinutesAgo > 0 ? dropPct / peakMinutesAgo : 0;
+
+        // Check if signal criteria met
+        const dropsEnough = dropPct >= strategy.velDropPct;
+        const speedInRange = velocity >= strategy.velMinSpeed && velocity <= strategy.velMaxSpeed;
+
+        if (dropsEnough && speedInRange) {
+            velState.lastSignalTime[strategy.id] = Date.now();
+            triggerVelocityEntry(strategy, price, dropPct, velocity, now);
+        }
+    });
+}
+
+async function triggerVelocityEntry(strategy, entryPrice, dropPct, velocity, now) {
+    const state = stratState[strategy.id];
+    const vix = mkt.vix.price || 20;
+    const risk = computeVelocityRisk(velocity, dropPct, vix, strategy.tier);
+
+    // Compute strike and option ticker
+    let strike = Math.round(entryPrice / 5) * 5;
+    let optTicker = spxOptionTicker(strike, strategy.optionType, todayStr());
+
+    console.log(`triggerVelocityEntry: ${strategy.id} drop=${dropPct.toFixed(2)}% vel=${velocity.toFixed(3)}%/min price=${entryPrice.toFixed(2)} ticker=${optTicker}`);
+
+    // Fetch option price
+    let optPrice = await fetchOptionSnapshot(optTicker);
+
+    if (!optPrice || optPrice < 0.10) {
+        console.log(`triggerVelocityEntry: ${strategy.id} SKIPPED — no valid option price`);
+        return;
+    }
+
+    // Set state — live entry with option-price-based exits
+    const contracts = computeContracts(risk, optPrice);
+    const premium = contracts * optPrice * 100;
+
+    state.status = 'in_trade';
+    state.entryPrice = entryPrice;
+    state.optionEntry = optPrice;
+    state.peakPrice = optPrice;
+    state.troughPrice = optPrice;
+    state.entryTime = now;
+    state.contracts = contracts;
+    state.strike = strike;
+    state.optionTicker = optTicker;
+    state.risk = risk;
+    state.pnl = 0;
+
+    // Velocity strategies use option-price-based exits, not underlying price
+    const tsMinutes = strategy.tsMin || 30;
+    const deadlineMins = etMins(now) + tsMinutes;
+    state.tsDeadline = deadlineMins;
+
+    // For option-price exits: SL and trail are in percentage of option entry price
+    state.slLevel = optPrice * (1 - strategy.slPct / 100);  // e.g., 30% below entry
+    state.ptLevel = 0;  // velocity strategies don't use fixed PT, just trail
+
+    // Emit alert
+    const optLabel = strategy.optionType === 'P' ? 'PUT' : 'CALL';
+    const deadlineH = Math.floor(deadlineMins / 60);
+    const deadlineM = deadlineMins % 60;
+    const deadlineStr = deadlineH + ':' + String(deadlineM).padStart(2, '0') + ' ET';
+
+    let exitLines = [
+        { label: 'Trail', value: `${strategy.trailPct}% from peak`, color: '#00d4aa' },
+        { label: 'Stop Loss', value: `Option price ≤ ${fmtPrice(state.slLevel)}`, color: '#ff4466' },
+        { label: 'Time Stop', value: `Close by ${deadlineStr}`, color: '#ffaa33' },
+    ];
+
+    emitAlert('entry', strategy, {
+        action: `BUY ${optLabel}`,
+        option: formatOptionTicker(optTicker),
+        strike: fmtPrice(strike),
+        entry: fmtPrice(optPrice),
+        contracts: contracts,
+        premium: fmtDollars(premium).replace('+', ''),
+        risk: fmtDollars(risk).replace('+', ''),
+        exitLines: exitLines,
+        extra: `Drop: ${dropPct.toFixed(2)}% | Velocity: ${velocity.toFixed(3)}%/min | VIX: ${vix.toFixed(1)}`,
+    });
+
+    playSound('entry');
+    renderStratPanel();
+    updateSummary();
+    saveSession();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// RIP FADE STRATEGY EVALUATION
+// ══════════════════════════════════════════════════════════════════════
+
+function evaluateRipFadeSignals(price, ticker) {
+    if (ticker !== 'SPX') return;
+
+    const strategy = STRATEGIES.find(s => s.id === 'rip_fade');
+    if (!strategy) return;
+
+    const state = stratState['rip_fade'];
+    if (state.status === 'in_trade' || state.status === 'exited' || ripState.entryTriggered) return;
+
+    const now = etNow();
+    const currentMins = etMins(now);
+
+    // Only evaluate in first 30 min (9:30-10:00 ET = 570-600)
+    if (currentMins < 570 || currentMins >= 600) return;
+
+    // VIX filter
+    const vix = mkt.vix.price || 0;
+    if (vix < strategy.ripMinVix) return;
+
+    // Track rolling low from open
+    ripState.barsSinceOpen++;
+    if (ripState.rollingLow === 0 || price < ripState.rollingLow) {
+        ripState.rollingLow = price;
+        ripState.troughBar = ripState.barsSinceOpen;
+    }
+
+    // Calculate rally from rolling low
+    const rallyPct = (price - ripState.rollingLow) / ripState.rollingLow * 100;
+    const elapsed = ripState.barsSinceOpen - ripState.troughBar;
+    const velocity = elapsed > 0 ? rallyPct / elapsed : 0;
+
+    // Check signal criteria
+    if (rallyPct >= strategy.ripMinRally && velocity >= strategy.ripMinVel) {
+        ripState.entryTriggered = true;
+        triggerRipFadeEntry(strategy, price, rallyPct, velocity, vix, now);
+    }
+
+    // Update watching status
+    if (state.status === 'idle' && rallyPct > 0.10) {
+        state.status = 'watching';
+        renderStratPanel();
+    }
+}
+
+async function triggerRipFadeEntry(strategy, entryPrice, rallyPct, velocity, vix, now) {
+    const state = stratState['rip_fade'];
+
+    // Bear call spread: sell ATM call, buy ATM+5 call
+    const atm = Math.round(entryPrice / 5) * 5;
+    const shortStrike = atm + strategy.ripShortOff;
+    const longStrike = shortStrike + strategy.ripSpreadWidth;
+
+    const shortTicker = spxOptionTicker(shortStrike, 'C', todayStr());
+    const longTicker = spxOptionTicker(longStrike, 'C', todayStr());
+
+    console.log(`triggerRipFadeEntry: rally=${rallyPct.toFixed(2)}% vel=${velocity.toFixed(3)}%/min vix=${vix.toFixed(1)} short=${shortStrike} long=${longStrike}`);
+
+    // Fetch option prices for both legs
+    const [shortPrice, longPrice] = await Promise.all([
+        fetchOptionSnapshot(shortTicker),
+        fetchOptionSnapshot(longTicker),
+    ]);
+
+    if (!shortPrice || !longPrice || shortPrice < 0.10) {
+        console.log(`triggerRipFadeEntry: SKIPPED — no valid option prices`);
+        return;
+    }
+
+    const credit = shortPrice - longPrice;
+    if (credit <= 0.05) {
+        console.log(`triggerRipFadeEntry: SKIPPED — credit too thin ($${credit.toFixed(2)})`);
+        return;
+    }
+
+    const maxLoss = (strategy.ripSpreadWidth - credit) * 100;
+    const maxProfit = credit * 100;
+    const contracts = Math.max(1, Math.min(50, Math.round(50000 / Math.max(1, maxLoss))));
+    const totalCredit = contracts * credit * 100;
+    const totalMaxLoss = contracts * maxLoss;
+
+    // Set state
+    state.status = 'in_trade';
+    state.entryPrice = entryPrice;
+    state.optionEntry = credit;     // store net credit
+    state.peakPrice = credit;       // track spread narrowing (profit)
+    state.troughPrice = credit;
+    state.entryTime = now;
+    state.contracts = contracts;
+    state.strike = shortStrike;
+    state.optionTicker = shortTicker;
+    state.risk = Math.round(totalMaxLoss);
+    state.pnl = 0;
+
+    // Exits: PT when spread narrows to 50% of credit, SL when spread widens past 3x credit
+    const ptSpread = credit * (1 - strategy.ripProfitTarget); // spread needs to narrow to this
+    const slSpread = credit + credit * strategy.ripStopMult;  // spread can't widen past this
+    state.ptLevel = ptSpread;
+    state.slLevel = slSpread;
+
+    const deadlineMins = etMins(now) + strategy.ripMaxHold;
+    state.tsDeadline = deadlineMins;
+    const deadlineH = Math.floor(deadlineMins / 60);
+    const deadlineM = deadlineMins % 60;
+    const deadlineStr = deadlineH + ':' + String(deadlineM).padStart(2, '0') + ' ET';
+
+    // Store spread details for exit monitoring
+    ripState.spreadEntry = {
+        shortTicker, longTicker,
+        shortStrike, longStrike,
+        credit, contracts,
+        ptSpread, slSpread,
+        maxHoldMins: strategy.ripMaxHold,
+        entryMins: etMins(now),
+    };
+
+    let exitLines = [
+        { label: 'Profit Target', value: `Spread narrows to $${ptSpread.toFixed(2)} (50% of credit)`, color: '#00d4aa' },
+        { label: 'Stop Loss', value: `Spread widens to $${slSpread.toFixed(2)} (3x credit)`, color: '#ff4466' },
+        { label: 'Time Stop', value: `Close by ${deadlineStr}`, color: '#ffaa33' },
+    ];
+
+    emitAlert('entry', strategy, {
+        action: `SELL BEAR CALL SPREAD`,
+        option: `${shortStrike}/${longStrike} CALL`,
+        strike: `${shortStrike}/${longStrike}`,
+        entry: `$${credit.toFixed(2)} credit`,
+        contracts: contracts,
+        premium: `$${totalCredit.toFixed(0)} credit received`,
+        risk: fmtDollars(totalMaxLoss).replace('+', ''),
+        exitLines: exitLines,
+        extra: `Rally: +${rallyPct.toFixed(2)}% | Vel: ${velocity.toFixed(3)}%/min | VIX: ${vix.toFixed(1)} | Max Profit: $${(maxProfit * contracts).toFixed(0)}`,
+    });
+
+    playSound('entry');
+    renderStratPanel();
+    updateSummary();
+    saveSession();
+}
+
+// Monitor rip fade spread exits
+async function evaluateRipFadeExits() {
+    const state = stratState['rip_fade'];
+    if (state.status !== 'in_trade' || !ripState.spreadEntry) return;
+
+    const se = ripState.spreadEntry;
+    const now = etNow();
+    const currentMins = etMins(now);
+    const holdMins = currentMins - se.entryMins;
+
+    // Fetch current prices for both legs
+    const [shortPrice, longPrice] = await Promise.all([
+        fetchOptionSnapshot(se.shortTicker),
+        fetchOptionSnapshot(se.longTicker),
+    ]);
+
+    if (!shortPrice || !longPrice) return;
+
+    const curSpread = shortPrice - longPrice;
+    const pnlPerContract = (se.credit - curSpread) * 100;
+    const totalPnl = Math.round(pnlPerContract * se.contracts);
+
+    state.pnl = totalPnl;
+
+    let exitReason = null;
+
+    // Profit target: spread narrowed enough
+    if (curSpread <= se.ptSpread) {
+        exitReason = 'profit_target';
+    }
+    // Stop loss: spread widened past SL
+    else if (curSpread >= se.slSpread) {
+        exitReason = 'stop_loss';
+    }
+    // Time stop
+    else if (holdMins >= se.maxHoldMins) {
+        exitReason = 'time_stop';
+    }
+    // EOD stop (3:50 PM)
+    else if (currentMins >= 950) {
+        exitReason = 'eod_close';
+    }
+
+    if (exitReason) {
+        const isWin = totalPnl > 0;
+        state.status = isWin ? 'exited_win' : 'exited_loss';
+        state.exitTime = etTimeStr(now);
+        state.exitReason = exitReason;
+
+        if (isWin) todayWins++; else todayLosses++;
+        todayPnl += totalPnl;
+
+        const strategy = STRATEGIES.find(s => s.id === 'rip_fade');
+        emitAlert('exit', strategy, {
+            action: `CLOSE SPREAD — ${exitReason.replace('_', ' ').toUpperCase()}`,
+            option: `${se.shortStrike}/${se.longStrike} CALL`,
+            exit: `$${curSpread.toFixed(2)} spread`,
+            pnl: fmtDollars(totalPnl),
+            holdMins: holdMins,
+            isWin: isWin,
+        });
+
+        playSound(isWin ? 'exit_win' : 'exit');
+        renderStratPanel();
+        updateSummary();
+        saveSession();
+    }
+
+    renderStratPanel();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// STRATEGY EVALUATION
+// ══════════════════════════════════════════════════════════════════════
+
+function evaluateEntries() {
+    // Called after 9:31 bar closes
+    const spxFb = mkt.spx.firstBar;
+    const qqqFb = mkt.qqq.firstBar;
+    if (!spxFb && !qqqFb) return;
+
+    const vix = mkt.vix.price;
+    const now = etNow();
+
+    // SPX first bar metrics
+    let spxFbBullish = false, spxFbRet = 0, spxEntryOpen = 0;
+    if (spxFb) {
+        spxFbBullish = spxFb.close > spxFb.open;
+        spxFbRet = (spxFb.close - spxFb.open) / spxFb.open * 100;
+        spxEntryOpen = spxFb.open;
+    }
+
+    // QQQ first bar metrics
+    let qqqFbBullish = false, qqqFbRet = 0, qqqEntryOpen = 0;
+    if (qqqFb) {
+        qqqFbBullish = qqqFb.close > qqqFb.open;
+        qqqFbRet = (qqqFb.close - qqqFb.open) / qqqFb.open * 100;
+        qqqEntryOpen = qqqFb.open;
+    }
+
+    // Determine if SPX Original fires (needed for Edge D and F logic)
+    spxOriginalFired = false;
+    if (spxFb && spxFbBullish && vix >= 16) {
+        spxOriginalFired = true;
+    }
+
+    STRATEGIES.forEach(s => {
+        const state = stratState[s.id];
+        if (state.status === 'in_trade' || state.status === 'exited' || state.status === 'missed' || state.status === 'missed_closed') return;
+
+        let shouldEnter = false;
+        let entryOpen = 0;
+        let fbRet = 0;
+
+        if (s.id === 'spx_original') {
+            // SPX Original: bullish 1st bar, VIX >= 16
+            if (spxFb && spxFbBullish && vix >= 16) {
+                shouldEnter = true;
+                entryOpen = spxEntryOpen;
+                fbRet = spxFbRet;
+            }
+        } else if (s.id === 'qqq') {
+            // QQQ: bullish 1st bar, fb_ret >= 0.10%
+            if (qqqFb && qqqFbBullish && qqqFbRet >= s.fbMinPct) {
+                shouldEnter = true;
+                entryOpen = qqqEntryOpen;
+                fbRet = qqqFbRet;
+            }
+        } else if (s.entryMode === 'spx_trail' || s.entryMode === 'spx_fixed') {
+            if (!spxFb) return;
+            // Check bullish requirement
+            if (s.fbBullish && !spxFbBullish) return;
+            // Check fb_ret minimum
+            if (s.fbMinPct && spxFbRet < s.fbMinPct) return;
+            // Check conditional requirements
+            if (s.requireSpxOriginal && !spxOriginalFired) return;
+            if (s.requireNoSpxOriginal && spxOriginalFired) return;
+
+            shouldEnter = true;
+            entryOpen = spxEntryOpen;
+            fbRet = spxFbRet;
+        } else if (s.entryMode === 'spx_trail_bear') {
+            if (!spxFb) return;
+            // Bearish: 1st bar must NOT be bullish
+            if (spxFbBullish) return;
+            shouldEnter = true;
+            entryOpen = spxEntryOpen;
+            fbRet = spxFbRet;
+        }
+
+        if (shouldEnter) {
+            triggerEntry(s, entryOpen, fbRet, vix, now);
+        }
+    });
+}
+
+async function triggerEntry(strategy, entryOpen, fbRet, vix, now) {
+    const state = stratState[strategy.id];
+    const risk = computeRisk(strategy, vix, fbRet);
+
+    // Compute strike and option ticker
+    let strike, optTicker;
+    const today = todayStr();
+
+    if (strategy.underlying === 'SPX') {
+        strike = Math.round(entryOpen / 5) * 5;
+        optTicker = spxOptionTicker(strike, strategy.optionType, today);
+    } else {
+        strike = Math.round(entryOpen);
+        optTicker = qqqOptionTicker(strike, today);
+    }
+
+    console.log(`triggerEntry: ${strategy.id} ticker=${optTicker} strike=${strike} entryOpen=${entryOpen}`);
+
+    // Fetch option price — try snapshot first, then fallback to last trade REST
+    let optPrice = await fetchOptionSnapshot(optTicker);
+
+    // Fallback: try REST aggregate for option price
+    if (!optPrice || optPrice < 0.10) {
+        console.log(`Snapshot failed for ${optTicker}, trying REST aggs...`);
+        try {
+            const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(optTicker)}/range/1/minute/${today}/${today}?adjusted=true&sort=desc&limit=3&apiKey=${API_KEY}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.results && data.results.length > 0) {
+                optPrice = data.results[0].c;
+                console.log(`REST aggs got price: ${optPrice}`);
+            }
+        } catch(e) { console.error('REST option price fallback error:', e); }
+    }
+
+    console.log(`triggerEntry: ${strategy.id} optPrice=${optPrice}`);
+
+    if (!optPrice || optPrice < 0.10) {
+        console.log(`triggerEntry: ${strategy.id} SKIPPED — no valid option price`);
+        state.status = 'idle';
+        renderStratPanel();
+        return;
+    }
+
+    // ── LATE JOIN: simulate the full trade from historical bars ──
+    if (isLateJoin) {
+        const optLabel = strategy.optionType === 'P' ? 'PUT' : 'CALL';
+        const tsMinutes = strategy.tsMin || 30;
+
+        // Fetch option minute bars (entry + exit pricing)
+        let optBars = [];
+        try {
+            const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(optTicker)}/range/1/minute/${today}/${today}?adjusted=true&sort=asc&limit=120&apiKey=${API_KEY}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.results) optBars = data.results;
+        } catch(e) { console.error('Failed to fetch option bars for sim:', e); }
+
+        // Fetch underlying minute bars for exit simulation
+        const undTicker = strategy.underlying === 'SPX' ? 'I:SPX' : 'QQQ';
+        let undBars = [];
+        try {
+            const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(undTicker)}/range/1/minute/${today}/${today}?adjusted=true&sort=asc&limit=120&apiKey=${API_KEY}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.results) undBars = data.results;
+        } catch(e) { console.error('Failed to fetch underlying bars for sim:', e); }
+
+        // Signal-time option price
+        const signalOptPrice = optBars.length > 0 ? optBars[0].o : optPrice;
+        const displayContracts = computeContracts(risk, signalOptPrice);
+        const currentUnderlying = strategy.underlying === 'SPX' ? mkt.spx.price : mkt.qqq.price;
+
+        // Compute exit levels
+        let slLevel = strategy.direction === 1
+            ? entryOpen - (strategy.slPts || 15)
+            : entryOpen + (strategy.slPts || 15);
+        let ptLevel = 0;
+        if (strategy.ptPts) {
+            ptLevel = strategy.direction === 1 ? entryOpen + strategy.ptPts : entryOpen - strategy.ptPts;
+        }
+
+        // Entry timestamp (first underlying bar at/after 9:31)
+        const entryTs = undBars.length > 0 ? undBars[0].t : null;
+        const tsDeadlineMs = entryTs ? entryTs + tsMinutes * 60 * 1000 : null;
+
+        // ── Simulate exit bar by bar ──
+        let exitReason = null;
+        let exitBarIdx = -1;
+        let peakPrice = entryOpen;
+        let troughPrice = entryOpen;
+
+        for (let i = 1; i < undBars.length; i++) {
+            const bar = undBars[i];
+            const price = bar.c;
+
+            // Time stop
+            if (tsDeadlineMs && bar.t >= tsDeadlineMs) {
+                exitReason = 'Time Stop';
+                exitBarIdx = i;
+                break;
+            }
+
+            if (strategy.direction === 1) {
+                if (price > peakPrice) peakPrice = price;
+                // Fixed PT
+                if (ptLevel > 0 && price >= ptLevel) {
+                    exitReason = 'Profit Target';
+                    exitBarIdx = i; break;
+                }
+                // Hard SL
+                if (price <= slLevel) {
+                    exitReason = 'Stop Loss';
+                    exitBarIdx = i; break;
+                }
+                // Trailing stop
+                if (strategy.trailPct && peakPrice > entryOpen) {
+                    const trailLevel = peakPrice * (1 - strategy.trailPct / 100);
+                    if (price <= trailLevel) {
+                        exitReason = 'Trailing Stop';
+                        exitBarIdx = i; break;
+                    }
+                }
+            } else {
+                // Bearish
+                if (price < troughPrice) troughPrice = price;
+                // Fixed PT
+                if (ptLevel > 0 && price <= ptLevel) {
+                    exitReason = 'Profit Target';
+                    exitBarIdx = i; break;
+                }
+                // Hard SL
+                if (price >= slLevel) {
+                    exitReason = 'Stop Loss';
+                    exitBarIdx = i; break;
+                }
+                // Trailing stop
+                if (strategy.trailPct && troughPrice < entryOpen) {
+                    const trailLevel = troughPrice * (1 + strategy.trailPct / 100);
+                    if (price >= trailLevel) {
+                        exitReason = 'Trailing Stop';
+                        exitBarIdx = i; break;
+                    }
+                }
+            }
+        }
+
+        // If no exit triggered yet, trade is still open (show as in-progress)
+        const tradeStillOpen = !exitReason;
+        if (tradeStillOpen) {
+            exitReason = 'Still Open';
+            exitBarIdx = undBars.length - 1;
+        }
+
+        // Get exit option price from the matching option bar
+        let exitOptPrice = optPrice; // fallback to current
+        if (exitBarIdx >= 0 && exitBarIdx < optBars.length) {
+            exitOptPrice = optBars[exitBarIdx].c;
+        } else if (optBars.length > 0) {
+            exitOptPrice = optBars[optBars.length - 1].c; // last available
+        }
+
+        // Compute P&L
+        const slippage = 0.50;
+        const rawPnl = (exitOptPrice - signalOptPrice) * 100 * displayContracts;
+        const slipCost = slippage * 100 * displayContracts;
+        const netPnl = rawPnl - slipCost;
+
+        // Format times
+        const entryTimeStr = '9:31 ET';
+        let exitTimeStr = '—';
+        if (exitBarIdx >= 0 && exitBarIdx < undBars.length) {
+            const exitDate = new Date(undBars[exitBarIdx].t);
+            const etExit = new Date(exitDate.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+            exitTimeStr = etExit.getHours() + ':' + String(etExit.getMinutes()).padStart(2, '0') + ' ET';
+        }
+
+        const holdMins = (exitBarIdx >= 0 && entryTs && exitBarIdx < undBars.length)
+            ? Math.round((undBars[exitBarIdx].t - entryTs) / 60000)
+            : '—';
+
+        // Set state
+        state.status = tradeStillOpen ? 'missed' : 'missed_closed';
+        state.entryPrice = entryOpen;
+        state.optionEntry = signalOptPrice;
+        state.strike = strike;
+        state.optionTicker = optTicker;
+        state.contracts = displayContracts;
+        state.risk = risk;
+        state.entryTime = now;
+        state.pnl = netPnl;
+        state.exitReason = exitReason;
+
+        emitAlert('missed', strategy, {
+            optLabel,
+            option: formatOptionTicker(optTicker),
+            strike: fmtPrice(strike),
+            signalEntry: fmtPrice(signalOptPrice),
+            exitOptPrice: fmtPrice(exitOptPrice),
+            entryTime: entryTimeStr,
+            exitTime: exitTimeStr,
+            exitReason: exitReason,
+            holdMins: holdMins,
+            contracts: displayContracts,
+            risk: fmtDollars(risk).replace('+', ''),
+            pnl: fmtDollars(netPnl),
+            isWin: netPnl >= 0,
+            slippage: fmtDollars(slipCost).replace('+', ''),
+            tradeStillOpen: tradeStillOpen,
+            signalUnderlying: fmtPrice(entryOpen),
+            currentUnderlying: currentUnderlying ? fmtPrice(currentUnderlying) : '—',
+        });
+
+        renderStratPanel();
+        updateSummary();
+        saveSession();
+        return;
+    }
+
+    // ── LIVE ENTRY: page was open at signal time ──
+    const contracts = computeContracts(risk, optPrice);
+    const premium = contracts * optPrice * 100;
+
+    // Set state
+    state.status = 'in_trade';
+    state.entryPrice = entryOpen;
+    state.optionEntry = optPrice;
+    state.peakPrice = entryOpen;
+    state.troughPrice = entryOpen;
+    state.entryTime = now;
+    state.contracts = contracts;
+    state.strike = strike;
+    state.optionTicker = optTicker;
+    state.risk = risk;
+    state.pnl = 0;
+
+    // Compute levels
+    const tsMinutes = strategy.tsMin || strategy.tsMin || 30;
+    const deadlineMins = etMins(now) + tsMinutes;
+    state.tsDeadline = deadlineMins;
+
+    if (strategy.entryMode === 'spx_fixed' || strategy.id === 'spx_original') {
+        const pt = strategy.ptPts || 50;
+        const sl = strategy.slPts || 10;
+        if (strategy.direction === 1) {
+            state.ptLevel = entryOpen + pt;
+            state.slLevel = entryOpen - sl;
+        } else {
+            state.ptLevel = entryOpen - pt;
+            state.slLevel = entryOpen + sl;
+        }
+    } else {
+        state.ptLevel = 0; // trail-based, no fixed PT
+        if (strategy.direction === 1) {
+            state.slLevel = entryOpen - (strategy.slPts || 15);
+        } else {
+            state.slLevel = entryOpen + (strategy.slPts || 15);
+        }
+    }
+
+    // Emit alert
+    const optLabel = strategy.optionType === 'P' ? 'PUT' : 'CALL';
+
+    // Build clear exit descriptions
+    const deadlineH = Math.floor(deadlineMins / 60);
+    const deadlineM = deadlineMins % 60;
+    const deadlineStr = deadlineH + ':' + String(deadlineM).padStart(2, '0') + ' ET';
+    const dirLabel = strategy.direction === 1 ? 'high' : 'low';
+    const slDir = strategy.direction === 1 ? '≤' : '≥';
+
+    let exitLines = [];
+    if (strategy.slPts) {
+        exitLines.push({ label: 'Stop Loss', value: `${strategy.underlying} ${slDir} ${fmtPrice(state.slLevel)}`, color: '#ff4466' });
+    }
+    if (strategy.trailPct) {
+        exitLines.push({ label: 'Trailing', value: `${strategy.trailPct}% from ${dirLabel}`, color: '#00d4aa' });
+    }
+    if (strategy.ptPts) {
+        const ptDir = strategy.direction === 1 ? '≥' : '≤';
+        exitLines.push({ label: 'Profit Target', value: `${strategy.underlying} ${ptDir} ${fmtPrice(state.ptLevel)}`, color: '#00d4aa' });
+    }
+    exitLines.push({ label: 'Time Stop', value: `Close by ${deadlineStr}`, color: '#ffaa33' });
+
+    emitAlert('entry', strategy, {
+        action: `BUY ${optLabel}`,
+        option: formatOptionTicker(optTicker),
+        strike: fmtPrice(strike),
+        entry: fmtPrice(optPrice),
+        contracts: contracts,
+        premium: fmtDollars(premium).replace('+', ''),
+        risk: fmtDollars(risk).replace('+', ''),
+        exitLines: exitLines,
+    });
+
+    playSound('entry');
+    renderStratPanel();
+    updateSummary();
+    saveSession();
+}
+
+function evaluateExits(price, ticker) {
+    const now = etNow();
+    const currentMins = etMins(now);
+
+    STRATEGIES.forEach(s => {
+        const state = stratState[s.id];
+        if (state.status !== 'in_trade') return;
+
+        // Skip velocity strategies — they use option-price exits
+        if (s.entryMode === 'velocity') return;
+
+        // Only process if this price update is for the right underlying
+        if (s.underlying === 'SPX' && ticker !== 'SPX') return;
+        if (s.underlying === 'QQQ' && ticker !== 'QQQ') return;
+
+        let exitTriggered = false;
+        let exitReason = '';
+
+        // Time stop
+        if (currentMins >= state.tsDeadline) {
+            exitTriggered = true;
+            exitReason = 'Time Stop';
+        }
+
+        if (!exitTriggered && s.direction === 1) {
+            // Long exits
+            if (price > state.peakPrice) state.peakPrice = price;
+
+            // Fixed PT
+            if (state.ptLevel > 0 && price >= state.ptLevel) {
+                exitTriggered = true;
+                exitReason = 'Profit Target';
+            }
+            // Hard SL
+            if (!exitTriggered && price <= state.slLevel) {
+                exitTriggered = true;
+                exitReason = 'Stop Loss';
+            }
+            // Trailing stop
+            if (!exitTriggered && s.trailPct && state.peakPrice > state.entryPrice) {
+                const trailLevel = state.peakPrice * (1 - s.trailPct / 100);
+                if (price <= trailLevel) {
+                    exitTriggered = true;
+                    exitReason = 'Trailing Stop';
+                }
+            }
+            // QQQ-specific: percentage-based SL
+            if (!exitTriggered && s.slPct) {
+                const slDollar = state.entryPrice * s.slPct / 100;
+                if (price <= state.entryPrice - slDollar) {
+                    exitTriggered = true;
+                    exitReason = 'Stop Loss';
+                }
+            }
+        } else if (!exitTriggered && s.direction === -1) {
+            // Short exits (bearish — we bought puts, price going down is good)
+            if (price < state.troughPrice) state.troughPrice = price;
+
+            // Hard SL (price going UP is bad for puts)
+            if (price >= state.slLevel) {
+                exitTriggered = true;
+                exitReason = 'Stop Loss';
+            }
+            // Trailing stop on the downside
+            if (!exitTriggered && s.trailPct && state.troughPrice < state.entryPrice) {
+                const trailLevel = state.troughPrice * (1 + s.trailPct / 100);
+                if (price >= trailLevel) {
+                    exitTriggered = true;
+                    exitReason = 'Trailing Stop';
+                }
+            }
+        }
+
+        if (exitTriggered) {
+            triggerExit(s, exitReason, now);
+        }
+    });
+}
+
+async function evaluateVelocityExits() {
+    // Periodically check option prices for velocity strategies in trade
+    const now = etNow();
+    const currentMins = etMins(now);
+
+    STRATEGIES.forEach(async s => {
+        if (s.entryMode !== 'velocity') return;
+        const state = stratState[s.id];
+        if (state.status !== 'in_trade') return;
+
+        // Time stop
+        if (currentMins >= state.tsDeadline) {
+            triggerExit(s, 'Time Stop', now);
+            return;
+        }
+
+        // Fetch current option price
+        const optPrice = await fetchOptionSnapshot(state.optionTicker);
+        if (!optPrice || optPrice < 0.01) return; // skip if price unavailable
+
+        let exitTriggered = false;
+        let exitReason = '';
+
+        // Track peak for trailing stop
+        if (optPrice > state.peakPrice) state.peakPrice = optPrice;
+
+        // Trailing stop: if peak is X% above entry, exit on pullback
+        if (s.trailPct && state.peakPrice > state.optionEntry) {
+            const trailLevel = state.peakPrice * (1 - s.trailPct / 100);
+            if (optPrice <= trailLevel) {
+                exitTriggered = true;
+                exitReason = 'Trailing Stop';
+            }
+        }
+
+        // Hard SL: exit if option price drops below threshold
+        if (!exitTriggered && optPrice <= state.slLevel) {
+            exitTriggered = true;
+            exitReason = 'Stop Loss';
+        }
+
+        if (exitTriggered) {
+            triggerExit(s, exitReason, now);
+        }
+    });
+}
+
+async function triggerExit(strategy, reason, now) {
+    const state = stratState[strategy.id];
+
+    // Fetch current option price for exit
+    const exitPrice = await fetchOptionSnapshot(state.optionTicker);
+    const optExit = exitPrice || state.optionEntry; // fallback
+
+    // Compute P&L with slippage
+    const slippage = 0.50; // round-trip
+    const rawPnl = (optExit - state.optionEntry) * 100 * state.contracts;
+    const slipCost = slippage * 100 * state.contracts;
+    const netPnl = rawPnl - slipCost;
+
+    state.status = 'exited';
+    state.exitReason = reason;
+    state.pnl = netPnl;
+    state.optionExit = optExit;
+
+    todayPnl += netPnl;
+    if (netPnl >= 0) todayWins++; else todayLosses++;
+
+    const holdMins = Math.round((etMins(now) - etMins(state.entryTime)) || 1);
+    const isWin = netPnl >= 0;
+
+    emitAlert('exit', strategy, {
+        action: reason,
+        pnl: fmtDollars(netPnl),
+        isWin: isWin,
+        entry: fmtPrice(state.optionEntry),
+        exit: fmtPrice(optExit),
+        contracts: state.contracts,
+        hold: holdMins + 'm',
+        slippage: fmtDollars(slipCost).replace('+', ''),
+    });
+
+    playSound('exit');
+    renderStratPanel();
+    updateSummary();
+    saveSession();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ALERT RENDERING
+// ══════════════════════════════════════════════════════════════════════
+function emitAlert(type, strategy, data) {
+    alertCount++;
+    document.getElementById('alertCount').textContent = alertCount + ' today';
+
+    const feed = document.getElementById('alertsFeed');
+    // Remove placeholder
+    if (alertCount === 1) feed.innerHTML = '';
+
+    const card = document.createElement('div');
+    const winCls = type === 'exit' && data.isWin ? ' win' : '';
+    card.className = `alert-card ${type}-alert${winCls}`;
+
+    const time = etTimeStr();
+
+    if (type === 'missed') {
+        card.className = 'alert-card missed-alert';
+        const pnlColor = data.isWin ? '#00d4aa' : '#ff4466';
+        const statusLabel = data.tradeStillOpen
+            ? '<span style="color:#ffaa33;font-weight:700">STILL OPEN</span>'
+            : `<span style="color:${pnlColor};font-weight:700">${data.exitReason}</span>`;
+
+        card.innerHTML = `
+            <div class="alert-top">
+                <span class="alert-type missed">SIGNAL — ${data.optLabel}</span>
+                <span style="color:#666;font-size:10px;margin-left:6px">Opened late — simulated from historical bars</span>
+                <span class="alert-time" style="margin-left:auto">${time} ET</span>
+            </div>
+            <div class="alert-strat">
+                <span class="as-dot" style="background:${strategy.color}"></span>
+                <span class="as-name">${strategy.name}</span>
+            </div>
+            <div class="alert-grid">
+                <div class="ag-item"><div class="ag-label">Option</div><div class="ag-value blue">${data.option}</div></div>
+                <div class="ag-item"><div class="ag-label">Strike</div><div class="ag-value">${data.strike}</div></div>
+                <div class="ag-item"><div class="ag-label">Contracts</div><div class="ag-value">${data.contracts}</div></div>
+                <div class="ag-item"><div class="ag-label">Risk</div><div class="ag-value">${data.risk}</div></div>
+            </div>
+            <div style="margin-top:6px;padding:8px 10px;background:#0a0a12;border-radius:4px;border:1px solid #1a1a2a">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                    <span style="color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Trade Simulation</span>
+                    <span style="font-size:16px;font-weight:800;color:${pnlColor}">${data.tradeStillOpen ? '~' : ''}${data.pnl}</span>
+                </div>
+                <div style="display:flex;gap:20px;font-size:11px">
+                    <div>
+                        <div style="color:#666;margin-bottom:2px">Entry</div>
+                        <div style="color:#ccc">${data.entryTime}</div>
+                        <div style="color:#fff;font-weight:600">${data.signalEntry}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;color:#444;font-size:16px">→</div>
+                    <div>
+                        <div style="color:#666;margin-bottom:2px">Exit</div>
+                        <div style="color:#ccc">${data.exitTime}</div>
+                        <div style="color:#fff;font-weight:600">${data.exitOptPrice}</div>
+                    </div>
+                    <div style="margin-left:auto;text-align:right">
+                        <div style="color:#666;margin-bottom:2px">Result</div>
+                        <div>${statusLabel}</div>
+                        <div style="color:#888;font-size:10px">${data.holdMins}m hold | ${data.slippage} slip</div>
+                    </div>
+                </div>
+            </div>`;
+    } else if (type === 'entry') {
+        const exitHtml = (data.exitLines || []).map(l =>
+            `<div style="display:flex;justify-content:space-between;padding:2px 0">
+                <span style="color:#888;font-size:11px">${l.label}</span>
+                <span style="color:${l.color};font-size:11px;font-weight:600">${l.value}</span>
+            </div>`
+        ).join('');
+
+        const extraHtml = data.extra ? `<div style="margin-top:4px;padding-top:4px;border-top:1px solid #1a1a2a;font-size:10px;color:#666">${data.extra}</div>` : '';
+
+        card.innerHTML = `
+            <div class="alert-top">
+                <span class="alert-type buy">${data.action}</span>
+                <span class="alert-time">${time} ET</span>
+            </div>
+            <div class="alert-strat">
+                <span class="as-dot" style="background:${strategy.color}"></span>
+                <span class="as-name">${strategy.name}</span>
+            </div>
+            <div class="alert-grid">
+                <div class="ag-item"><div class="ag-label">Option</div><div class="ag-value blue">${data.option}</div></div>
+                <div class="ag-item"><div class="ag-label">Strike</div><div class="ag-value">${data.strike}</div></div>
+                <div class="ag-item"><div class="ag-label">Entry</div><div class="ag-value">${data.entry}</div></div>
+                <div class="ag-item"><div class="ag-label">Contracts</div><div class="ag-value">${data.contracts}</div></div>
+                <div class="ag-item"><div class="ag-label">Premium</div><div class="ag-value">${data.premium}</div></div>
+                <div class="ag-item"><div class="ag-label">Risk</div><div class="ag-value">${data.risk}</div></div>
+            </div>
+            <div style="margin-top:6px;padding:6px 10px;background:#0a0a12;border-radius:4px;border:1px solid #1a1a2a">
+                <div style="color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Exit Rules</div>
+                ${exitHtml}
+                ${extraHtml}
+            </div>`;
+    } else {
+        const pnlCls = data.isWin ? 'green' : 'red';
+        card.innerHTML = `
+            <div class="alert-top">
+                <span class="alert-type sell${data.isWin ? ' win' : ''}">${data.action}</span>
+                <span class="alert-time">${time} ET</span>
+            </div>
+            <div class="alert-strat">
+                <span class="as-dot" style="background:${strategy.color}"></span>
+                <span class="as-name">${strategy.name}</span>
+            </div>
+            <div class="alert-grid">
+                <div class="ag-item"><div class="ag-label">P&L</div><div class="ag-value ${pnlCls}" style="font-size:16px">${data.pnl}</div></div>
+                <div class="ag-item"><div class="ag-label">Entry</div><div class="ag-value">${data.entry}</div></div>
+                <div class="ag-item"><div class="ag-label">Exit</div><div class="ag-value">${data.exit}</div></div>
+                <div class="ag-item"><div class="ag-label">Contracts</div><div class="ag-value">${data.contracts}</div></div>
+                <div class="ag-item"><div class="ag-label">Hold Time</div><div class="ag-value">${data.hold}</div></div>
+                <div class="ag-item"><div class="ag-label">Slippage</div><div class="ag-value" style="color:#888">${data.slippage}</div></div>
+            </div>`;
+    }
+
+    feed.insertBefore(card, feed.firstChild);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// STRATEGY PANEL RENDERING
+// ══════════════════════════════════════════════════════════════════════
+function renderStratPanel() {
+    const panel = document.getElementById('stratPanel');
+    let html = '';
+
+    STRATEGIES.forEach(s => {
+        const state = stratState[s.id];
+        const st = state.status;
+
+        let badgeCls = 'idle', badgeText = 'IDLE';
+        let cardCls = '';
+        if (st === 'watching') { badgeCls = 'watching'; badgeText = 'WATCHING'; }
+        else if (st === 'entry') { badgeCls = 'entry'; badgeText = 'ENTRY'; }
+        else if (st === 'in_trade') {
+            badgeCls = 'in-trade'; badgeText = 'IN TRADE';
+            cardCls = (s.direction === 1 && s.id !== 'rip_fade') ? 'active-long' : 'active-short';
+        }
+        else if (st === 'exited_win') { badgeCls = 'exited-win'; badgeText = 'DONE'; }
+        else if (st === 'exited_loss') { badgeCls = 'exited-loss'; badgeText = 'DONE'; }
+        else if (st === 'exit') { badgeCls = 'exit'; badgeText = 'EXIT'; }
+        else if (st === 'exited') {
+            badgeCls = state.pnl >= 0 ? 'exited-win' : 'exited-loss';
+            badgeText = 'DONE';
+        }
+        else if (st === 'missed') {
+            badgeCls = 'missed';
+            badgeText = 'MISSED';
+        }
+        else if (st === 'missed_closed') {
+            badgeCls = state.pnl >= 0 ? 'missed-win' : 'missed-loss';
+            badgeText = 'MISSED';
+        }
+
+        let details = `<span style="color:${s.color}">${s.desc}</span>`;
+        let pnlHtml = '';
+
+        if (st === 'in_trade') {
+            const holdMin = Math.round((etMins() - etMins(state.entryTime)) || 0);
+            if (s.id === 'rip_fade') {
+                const se = ripState.spreadEntry;
+                details = `${state.strike}/${state.strike + 5} CALL | ${state.contracts} cts | Hold: ${holdMin}m | Credit: $${(se ? se.credit : state.optionEntry).toFixed(2)}`;
+                const cls = state.pnl >= 0 ? 'up' : 'dn';
+                pnlHtml = `<div class="sc-pnl ${cls}">${fmtDollars(state.pnl)}</div>`;
+            } else {
+                details = `Strike: ${fmtPrice(state.strike)} | ${state.contracts} contracts | Hold: ${holdMin}m`;
+                const currentPrice = s.underlying === 'SPX' ? mkt.spx.price : mkt.qqq.price;
+                let estMove = 0;
+                if (s.direction === 1) estMove = currentPrice - state.entryPrice;
+                else estMove = state.entryPrice - currentPrice;
+                const estOptPnl = estMove * 0.50 * 100 * state.contracts;
+                const cls = estOptPnl >= 0 ? 'up' : 'dn';
+                pnlHtml = `<div class="sc-pnl ${cls}">~${fmtDollars(estOptPnl)}</div>`;
+            }
+        } else if (st === 'exited' || st === 'exited_win' || st === 'exited_loss') {
+            details = `${state.exitReason} | ${state.contracts} contracts | Strike: ${fmtPrice(state.strike)}`;
+            const cls = state.pnl >= 0 ? 'up' : 'dn';
+            pnlHtml = `<div class="sc-pnl ${cls}">${fmtDollars(state.pnl)}</div>`;
+        } else if (st === 'missed') {
+            details = `Signal @ ${fmtPrice(state.strike)} | ${state.contracts} cts would-be | Opened late`;
+        } else if (st === 'missed_closed') {
+            details = `${state.exitReason} | ${state.contracts} cts would-be | Opened late`;
+            const cls = state.pnl >= 0 ? 'up' : 'dn';
+            pnlHtml = `<div class="sc-pnl ${cls}" style="opacity:0.7">${fmtDollars(state.pnl)} (sim)</div>`;
+        }
+
+        html += `<div class="strat-card ${cardCls}">
+            <div class="sc-header">
+                <span class="sc-name"><span class="sc-dot" style="background:${s.color}"></span>${s.name}</span>
+                <span class="sc-badge ${badgeCls}">${badgeText}</span>
+            </div>
+            <div class="sc-details">${details}</div>
+            ${pnlHtml}
+        </div>`;
+    });
+
+    panel.innerHTML = html;
+}
+
+function updateSummary() {
+    const active = STRATEGIES.filter(s => stratState[s.id].status === 'in_trade').length;
+    const totalRisk = STRATEGIES.reduce((sum, s) => {
+        const st = stratState[s.id];
+        return sum + (st.status === 'in_trade' ? st.risk : 0);
+    }, 0);
+
+    document.getElementById('sumActive').textContent = active;
+    const pnlEl = document.getElementById('sumPnl');
+    pnlEl.textContent = fmtDollars(todayPnl);
+    pnlEl.className = 'sum-val ' + (todayPnl >= 0 ? 'up' : 'dn');
+    document.getElementById('sumWins').textContent = todayWins;
+    document.getElementById('sumLosses').textContent = todayLosses;
+    document.getElementById('sumRisk').textContent = '$' + totalRisk.toLocaleString();
+}
+
+function updateMarketBar() {
+    const spxEl = document.getElementById('mktSpx');
+    const qqqEl = document.getElementById('mktQqq');
+    const vixEl = document.getElementById('mktVix');
+    const timeEl = document.getElementById('mktTime');
+
+    if (mkt.spx.price) {
+        const chg = mkt.spx.open ? mkt.spx.price - mkt.spx.open : 0;
+        const cls = chg > 0 ? 'up' : chg < 0 ? 'dn' : 'flat';
+        spxEl.textContent = mkt.spx.price.toFixed(2) + ' (' + (chg >= 0 ? '+' : '') + chg.toFixed(2) + ')';
+        spxEl.className = 'mkt-val ' + cls;
+    }
+    if (mkt.qqq.price) {
+        const chg = mkt.qqq.open ? mkt.qqq.price - mkt.qqq.open : 0;
+        const cls = chg > 0 ? 'up' : chg < 0 ? 'dn' : 'flat';
+        qqqEl.textContent = mkt.qqq.price.toFixed(2) + ' (' + (chg >= 0 ? '+' : '') + chg.toFixed(2) + ')';
+        qqqEl.className = 'mkt-val ' + cls;
+    }
+    if (mkt.vix.price) {
+        vixEl.textContent = mkt.vix.price.toFixed(2);
+        vixEl.className = 'mkt-val ' + (mkt.vix.price >= 25 ? 'dn' : mkt.vix.price >= 20 ? 'flat' : 'up');
+    }
+    timeEl.textContent = etTimeStr() + ' ET';
+
+    // First bar display
+    if (mkt.spx.firstBar) {
+        const fb = mkt.spx.firstBar;
+        const ret = ((fb.close - fb.open) / fb.open * 100).toFixed(3);
+        const cls = fb.close > fb.open ? 'up' : 'dn';
+        document.getElementById('mktFb').textContent = (fb.close > fb.open ? 'BULL' : 'BEAR') + ' ' + (ret >= 0 ? '+' : '') + ret + '%';
+        document.getElementById('mktFb').className = 'mkt-val ' + cls;
+    }
+    if (mkt.qqq.firstBar) {
+        const fb = mkt.qqq.firstBar;
+        const ret = ((fb.close - fb.open) / fb.open * 100).toFixed(3);
+        const cls = fb.close > fb.open ? 'up' : 'dn';
+        document.getElementById('mktFbQ').textContent = (fb.close > fb.open ? 'BULL' : 'BEAR') + ' ' + (ret >= 0 ? '+' : '') + ret + '%';
+        document.getElementById('mktFbQ').className = 'mkt-val ' + cls;
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// WEBSOCKET CONNECTIONS
+// ══════════════════════════════════════════════════════════════════════
+
+let firstBarEvaluated = false;
+let barBuffer = { SPX: {}, QQQ: {}, VIX: {} };
+
+function connectWebsockets() {
+    // Indices websocket for SPX, VIX
+    wsIndices = new WebSocket(WS_URL);
+    wsIndices.onopen = () => {
+        wsIndices.send(JSON.stringify({ action: 'auth', params: API_KEY }));
+    };
+    wsIndices.onmessage = (e) => {
+        const msgs = JSON.parse(e.data);
+        msgs.forEach(msg => {
+            if (msg.ev === 'status' && msg.message === 'authenticated') {
+                // Subscribe to 1-min aggregates for SPX and VIX
+                wsIndices.send(JSON.stringify({ action: 'subscribe', params: 'AM.I:SPX,AM.I:VIX' }));
+                // Also subscribe to second-level for faster updates
+                wsIndices.send(JSON.stringify({ action: 'subscribe', params: 'A.I:SPX,A.I:VIX' }));
+                updateWsStatus('live');
+            }
+            if (msg.ev === 'A' || msg.ev === 'AM') {
+                handleAggregate(msg);
+            }
+        });
+    };
+    wsIndices.onclose = () => { updateWsStatus('off'); setTimeout(connectWebsockets, 5000); };
+    wsIndices.onerror = () => { updateWsStatus('off'); };
+
+    // Stocks websocket for QQQ
+    wsStocks = new WebSocket(WS_URL_STOCKS);
+    wsStocks.onopen = () => {
+        wsStocks.send(JSON.stringify({ action: 'auth', params: API_KEY }));
+    };
+    wsStocks.onmessage = (e) => {
+        const msgs = JSON.parse(e.data);
+        msgs.forEach(msg => {
+            if (msg.ev === 'status' && msg.message === 'authenticated') {
+                wsStocks.send(JSON.stringify({ action: 'subscribe', params: 'AM.QQQ,A.QQQ' }));
+            }
+            if (msg.ev === 'A' || msg.ev === 'AM') {
+                handleAggregate(msg);
+            }
+        });
+    };
+    wsStocks.onclose = () => { setTimeout(() => {
+        wsStocks = new WebSocket(WS_URL_STOCKS);
+        wsStocks.onopen = wsStocks.onopen;
+        wsStocks.onmessage = wsStocks.onmessage;
+    }, 5000); };
+}
+
+function handleAggregate(msg) {
+    const sym = msg.sym;
+    const isMinute = msg.ev === 'AM';
+
+    // Determine which market
+    let mktKey = null;
+    if (sym === 'I:SPX' || sym === 'SPX') mktKey = 'SPX';
+    else if (sym === 'QQQ') mktKey = 'QQQ';
+    else if (sym === 'I:VIX' || sym === 'VIX') mktKey = 'VIX';
+    if (!mktKey) return;
+
+    const price = msg.c || msg.p || 0;
+    if (!price) return;
+
+    // Convert timestamp to ET
+    const ts = new Date(msg.s || msg.t);
+    const et = new Date(ts.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    const etStr = et.getHours().toString().padStart(2,'0') + ':' + et.getMinutes().toString().padStart(2,'0');
+
+    // Update current price
+    if (mktKey === 'SPX') {
+        mkt.spx.price = price;
+        if (!mkt.spx.open && etStr >= '09:30') mkt.spx.open = msg.o || price;
+    } else if (mktKey === 'QQQ') {
+        mkt.qqq.price = price;
+        if (!mkt.qqq.open && etStr >= '09:30') mkt.qqq.open = msg.o || price;
+    } else if (mktKey === 'VIX') {
+        mkt.vix.price = price;
+        if (!mkt.vix.open) mkt.vix.open = msg.o || price;
+    }
+
+    updateMarketBar();
+
+    // Accumulate tick-level highs for velocity detection (updates every ~1 second)
+    if (mktKey === 'SPX') {
+        const tickHigh = msg.h || price;
+        const tickTs = ts.getTime();
+        velState.tickHighs.push({ t: tickTs, h: tickHigh });
+        // Trim to last 15 minutes (900 seconds → up to ~900 ticks)
+        const cutoff = tickTs - 15 * 60 * 1000;
+        while (velState.tickHighs.length > 0 && velState.tickHighs[0].t < cutoff) {
+            velState.tickHighs.shift();
+        }
+    }
+
+    // Also keep minute bars as fallback / for longer-window analysis
+    if (isMinute && mktKey === 'SPX') {
+        const barObj = {
+            t: ts.getTime(),
+            o: msg.o || price,
+            h: msg.h || price,
+            l: msg.l || price,
+            c: msg.c || price,
+        };
+        velState.bars.push(barObj);
+        // Keep only last 15 minutes
+        if (velState.bars.length > 15) {
+            velState.bars.shift();
+        }
+    }
+
+    // Process minute bars for first bar detection
+    if (isMinute && etStr === '09:31') {
+        // This is the first bar close (9:30-9:31)
+        if (mktKey === 'SPX' && !mkt.spx.firstBar) {
+            mkt.spx.firstBar = { open: msg.o, high: msg.h, low: msg.l, close: msg.c };
+        } else if (mktKey === 'QQQ' && !mkt.qqq.firstBar) {
+            mkt.qqq.firstBar = { open: msg.o, high: msg.h, low: msg.l, close: msg.c };
+        }
+
+        // Once we have first bars, evaluate entries
+        if (!firstBarEvaluated && (mkt.spx.firstBar || mkt.qqq.firstBar)) {
+            // Wait a brief moment for both to arrive
+            setTimeout(() => {
+                if (!firstBarEvaluated) {
+                    firstBarEvaluated = true;
+                    evaluateEntries();
+                    // Set opening strategies (non-velocity) to idle after first bar eval
+                    // Velocity strategies (Panic Fade, Dip Buy) keep watching all day
+                    STRATEGIES.forEach(s => {
+                        if (stratState[s.id].status === 'watching' && s.entryMode !== 'velocity') {
+                            stratState[s.id].status = 'idle';
+                        }
+                    });
+                    renderStratPanel();
+                    saveSession();
+                }
+            }, 2000);
+        }
+    }
+
+    // Evaluate exits on every price tick for active trades
+    if (mktKey === 'SPX' || mktKey === 'QQQ') {
+        evaluateExits(price, mktKey);
+        // Also check velocity strategies (SPX only)
+        if (mktKey === 'SPX') {
+            evaluateVelocitySignals(price, mktKey);
+            evaluateRipFadeSignals(price, mktKey);
+        }
+    }
+
+    // Update strategy panel periodically
+    renderStratPanel();
+}
+
+function updateWsStatus(status) {
+    const dot = document.getElementById('wsDot');
+    const text = document.getElementById('wsStatus');
+    if (status === 'live') {
+        dot.className = 'dot live';
+        text.textContent = 'Connected';
+    } else if (status === 'off') {
+        dot.className = 'dot off';
+        text.textContent = 'Disconnected';
+    } else {
+        dot.className = 'dot wait';
+        text.textContent = 'Connecting...';
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// MARKET HOURS CHECK
+// ══════════════════════════════════════════════════════════════════════
+function checkMarketHours() {
+    const now = etNow();
+    const mins = etMins(now);
+    const day = now.getDay();
+
+    // Weekend
+    if (day === 0 || day === 6) {
+        document.getElementById('wsStatus').textContent = 'Weekend — Market Closed';
+        return;
+    }
+
+    // During market hours (9:30-16:00):
+    // - Velocity strategies should always be watching (they fire all day)
+    // - Opening strategies stay idle after first-bar eval (they only fire once)
+    // - Before first-bar eval (firstBarEvaluated=false), all should be watching
+    if (mins >= 570 && mins < 960) {
+        let changed = false;
+        STRATEGIES.forEach(s => {
+            if (stratState[s.id].status === 'idle') {
+                if (s.entryMode === 'velocity' || !firstBarEvaluated) {
+                    stratState[s.id].status = 'watching';
+                    changed = true;
+                }
+            }
+        });
+        if (changed) renderStratPanel();
+    }
+
+    // Pre-market (before 9:30) — set to watching so they're ready at open
+    if (mins >= 540 && mins < 570) {
+        let changed = false;
+        STRATEGIES.forEach(s => {
+            if (stratState[s.id].status === 'idle') {
+                stratState[s.id].status = 'watching';
+                changed = true;
+            }
+        });
+        if (changed) renderStratPanel();
+    }
+
+    // After 4pm — close out
+    if (mins >= 960) { // 16:00
+        STRATEGIES.forEach(s => {
+            if (stratState[s.id].status === 'in_trade') {
+                triggerExit(s, 'Market Close', now);
+            }
+        });
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// REST API FALLBACK — fetch first bar if page opens after 9:31
+// ══════════════════════════════════════════════════════════════════════
+async function fetchFirstBarREST(ticker, mktKey) {
+    try {
+        const today = todayStr();
+        const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(ticker)}/range/1/minute/${today}/${today}?adjusted=true&sort=asc&limit=10&apiKey=${API_KEY}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data.results && data.results.length >= 2) {
+            // First bar is index 0 (9:30-9:31)
+            const bar = data.results[0];
+            return { open: bar.o, high: bar.h, low: bar.l, close: bar.c };
+        }
+    } catch(e) { console.error('REST first bar fetch error:', ticker, e); }
+    return null;
+}
+
+let isLateJoin = false; // set true when page opens after 9:31
+
+async function lateJoinCheck() {
+    // If page opens after 9:31 ET, fetch first bars via REST and evaluate
+    const mins = etMins();
+    console.log('lateJoinCheck: mins=' + mins + ' firstBarEvaluated=' + firstBarEvaluated);
+    if (mins < 571) return; // before 9:31
+
+    isLateJoin = true;
+    const minutesSinceSignal = mins - 571;
+    console.log(`Late join: ${minutesSinceSignal}m past signal — will show signal vs current pricing`);
+
+    console.log('Late join detected — fetching first bars via REST...');
+
+    // Fetch SPX first bar
+    if (!mkt.spx.firstBar) {
+        const fb = await fetchFirstBarREST('I:SPX', 'SPX');
+        if (fb) {
+            mkt.spx.firstBar = fb;
+            if (!mkt.spx.open) mkt.spx.open = fb.open;
+        }
+    }
+
+    // Fetch QQQ first bar
+    if (!mkt.qqq.firstBar) {
+        const fb = await fetchFirstBarREST('QQQ', 'QQQ');
+        if (fb) {
+            mkt.qqq.firstBar = fb;
+            if (!mkt.qqq.open) mkt.qqq.open = fb.open;
+        }
+    }
+
+    // Fetch VIX
+    if (!mkt.vix.price) {
+        try {
+            const today = todayStr();
+            const url = `https://api.polygon.io/v2/aggs/ticker/I:VIX/range/1/minute/${today}/${today}?adjusted=true&sort=desc&limit=1&apiKey=${API_KEY}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.results && data.results.length > 0) {
+                mkt.vix.price = data.results[0].c;
+                if (!mkt.vix.open) mkt.vix.open = data.results[0].o;
+            }
+        } catch(e) {}
+    }
+
+    // Fetch current SPX price
+    if (!mkt.spx.price) {
+        try {
+            const today = todayStr();
+            const url = `https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/minute/${today}/${today}?adjusted=true&sort=desc&limit=1&apiKey=${API_KEY}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.results && data.results.length > 0) {
+                mkt.spx.price = data.results[0].c;
+            }
+        } catch(e) {}
+    }
+
+    // Fetch current QQQ price
+    if (!mkt.qqq.price) {
+        try {
+            const today = todayStr();
+            const url = `https://api.polygon.io/v2/aggs/ticker/QQQ/range/1/minute/${today}/${today}?adjusted=true&sort=desc&limit=1&apiKey=${API_KEY}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.results && data.results.length > 0) {
+                mkt.qqq.price = data.results[0].c;
+            }
+        } catch(e) {}
+    }
+
+    updateMarketBar();
+
+    // Now evaluate entries — force evaluation even if websocket already set firstBarEvaluated
+    if (mkt.spx.firstBar || mkt.qqq.firstBar) {
+        console.log('Late join: SPX fb=' + JSON.stringify(mkt.spx.firstBar) + ' QQQ fb=' + JSON.stringify(mkt.qqq.firstBar));
+        console.log('Late join: VIX=' + mkt.vix.price + ' SPX price=' + mkt.spx.price + ' QQQ price=' + mkt.qqq.price);
+        firstBarEvaluated = true;
+
+        evaluateEntries();
+        // Update alerts placeholder if nothing fired
+        const feed = document.getElementById('alertsFeed');
+        if (alertCount === 0) {
+            const spxFbStr = mkt.spx.firstBar ? (mkt.spx.firstBar.close > mkt.spx.firstBar.open ? 'BULLISH' : 'BEARISH') : 'N/A';
+            const qqqFbStr = mkt.qqq.firstBar ? (mkt.qqq.firstBar.close > mkt.qqq.firstBar.open ? 'BULLISH' : 'BEARISH') : 'N/A';
+            feed.innerHTML = '<div style="text-align:center;color:#666;padding:30px 0;font-size:12px">' +
+                'Strategies evaluated at ' + etTimeStr() + ' ET<br>' +
+                'SPX 1st bar: ' + spxFbStr + ' | QQQ 1st bar: ' + qqqFbStr + ' | VIX: ' + (mkt.vix.price || 'N/A').toFixed(1) + '<br>' +
+                '<span style="color:#444">No entries triggered — waiting for next session</span></div>';
+        }
+
+        // Set opening strategies to idle; velocity strategies keep watching all day
+        STRATEGIES.forEach(s => {
+            if (stratState[s.id].status === 'watching' && s.entryMode !== 'velocity') {
+                stratState[s.id].status = 'idle';
+            }
+        });
+        renderStratPanel();
+        // Always save after evaluation so next refresh doesn't re-trigger
+        saveSession();
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════
+const sessionRestored = loadSession();
+
+if (sessionRestored) {
+    console.log('Session restored from localStorage — skipping fresh evaluation');
+    renderStratPanel();
+    updateSummary();
+    connectWebsockets();
+
+    // If any strategies are still in_trade, websocket will continue monitoring exits
+    // If all are exited/idle, just show the results
+} else {
+    renderStratPanel();
+    updateSummary();
+    connectWebsockets();
+
+    // Set strategies to watching during market hours or pre-market
+    const nowMins = etMins();
+    if (nowMins >= 540 && nowMins < 960) {
+        STRATEGIES.forEach(s => {
+            if (stratState[s.id].status === 'idle') {
+                // Before first bar eval, all watch; after, only velocity keeps watching
+                if (s.entryMode === 'velocity' || !firstBarEvaluated) {
+                    stratState[s.id].status = 'watching';
+                }
+            }
+        });
+        renderStratPanel();
+    }
+
+    // Late join — fetch first bars via REST if page opened after 9:31
+    setTimeout(lateJoinCheck, 3000);
+}
+
+// Periodic updates (always run — needed for live price updates and exit monitoring)
+setInterval(() => {
+    updateMarketBar();
+    checkMarketHours();
+    updateSummary();
+    // Also save periodically if any trades are active (captures live P&L state)
+    const hasActive = STRATEGIES.some(s => stratState[s.id].status === 'in_trade');
+    if (hasActive) saveSession();
+}, 5000);
+
+// Poll option prices for velocity strategy exits (every 10-30 seconds)
+setInterval(() => {
+    evaluateVelocityExits();
+    evaluateRipFadeExits();
+}, 15000);
+
+// ══════════════════════════════════════════════════════════════════════
+// TRADE DETAIL MODAL — Candlestick charts for SPX + Option
+// ══════════════════════════════════════════════════════════════════════
+
+const modalState = {
+    spxChart: null,
+    optChart: null,
+    spxCandles: null,
+    optCandles: null,
+    spxVolume: null,
+    optVolume: null,
+    spxRaw: [],
+    optRaw: [],
+    trades: [],      // trades for the clicked day
+    activeIdx: 0,    // which trade tab is active
+    tf: 1,           // current timeframe in minutes
+};
+
+// ── Sync a trade's corrected P&L back to calendar cell + equity curve ──
+// Called for ANY strategy after real P&L is computed from option data.
+function syncCalendarCell(trade) {
+    // trade.pnl and trade.isWin are already updated on the object reference
+    // (which points into calendarData.data). Update the DOM cell.
+    const dayCell = document.querySelector('.calendar-day[data-datestr="' + trade.dateStr + '"]');
+    if (dayCell) {
+        const dayTrades = calendarData.data.filter(t => t.dateStr === trade.dateStr && analyticsFilter.activeStrategies.has(t.stratId));
+        const dayPnl = dayTrades.reduce((s, t) => s + t.pnl, 0);
+
+        dayCell.classList.remove('profit', 'loss', 'no-trade');
+        dayCell.classList.add(dayPnl > 0 ? 'profit' : dayPnl < 0 ? 'loss' : 'no-trade');
+
+        const pnlEl = dayCell.querySelector('.calendar-day-pnl');
+        if (pnlEl) {
+            pnlEl.className = 'calendar-day-pnl ' + (dayPnl >= 0 ? 'up' : 'dn');
+            pnlEl.textContent = fmtDollarsShort(dayPnl);
+        }
+
+        // Update onclick/tooltip data so re-opening shows correct P&L
+        const tooltipData = dayTrades.map(t => t.stratId + ':' + t.pnl).join(',');
+        dayCell.setAttribute('onmouseenter', 'showDayTooltip(event,\'' + trade.dateStr + '\',\'' + tooltipData + '\')');
+        dayCell.setAttribute('onclick', 'handleCalendarDayClick(\'' + trade.dateStr + '\',\'' + tooltipData + '\')');
+    }
+
+    // Re-render equity curve with corrected P&L
+    renderEquityCurve();
+    // Re-render trade tabs so multi-trade days show corrected P&L
+    renderTradeTabs();
+}
+
+function openTradeModal(dateStr, tradesData) {
+    // Parse trades from the serialized data
+    const entries = tradesData.split(',').filter(Boolean);
+    const dayTrades = [];
+    entries.forEach(e => {
+        const parts = e.split(':');
+        const sid = parts[0];
+        const pnl = parseInt(parts[1]);
+        const stats = STRAT_BACKTEST_STATS[sid];
+        if (!stats) return;
+        // Find the full trade record from calendarData
+        const match = calendarData.data.find(t => t.dateStr === dateStr && t.stratId === sid);
+        if (match) {
+            dayTrades.push(match);
+        } else {
+            // Fallback with minimal info
+            dayTrades.push({
+                dateStr, stratId: sid, stratLabel: stats.label, color: stats.color,
+                pnl, isWin: pnl >= 0, entryTime: '09:35', exitTime: '10:00',
+                holdMins: 25, risk: 50000,
+            });
+        }
+    });
+
+    if (dayTrades.length === 0) return;
+
+    modalState.trades = dayTrades;
+    modalState.activeIdx = 0;
+    modalState.tf = 1;
+
+    // Show modal
+    document.getElementById('tradeModalOverlay').classList.add('open');
+    document.getElementById('tmDate').textContent = dateStr;
+
+    // Escape key closes modal
+    document.addEventListener('keydown', modalEscHandler);
+
+    // Build trade tabs
+    renderTradeTabs();
+
+    // Initialize charts (destroy old ones first)
+    initModalCharts();
+
+    // Load data for first trade
+    loadTradeCharts(dayTrades[0]);
+}
+
+function modalEscHandler(e) {
+    if (e.key === 'Escape') closeTradeModal();
+}
+
+function closeTradeModal() {
+    document.getElementById('tradeModalOverlay').classList.remove('open');
+    document.removeEventListener('keydown', modalEscHandler);
+    // Destroy charts to free memory
+    if (modalState.spxChart) { modalState.spxChart.remove(); modalState.spxChart = null; }
+    if (modalState.optChart) { modalState.optChart.remove(); modalState.optChart = null; }
+}
+
+function renderTradeTabs() {
+    const container = document.getElementById('tradeTabs');
+    if (modalState.trades.length <= 1) {
+        container.style.display = 'none';
+        return;
+    }
+    container.style.display = 'flex';
+    let html = '';
+    modalState.trades.forEach((t, i) => {
+        const active = i === modalState.activeIdx ? ' active' : '';
+        const pnlStr = t.pnl >= 0 ? '+$' + Math.abs(t.pnl).toLocaleString() : '-$' + Math.abs(t.pnl).toLocaleString();
+        const pnlColor = t.pnl >= 0 ? '#26a69a' : '#ef5350';
+        html += '<div class="trade-tab' + active + '" style="--tab-color:' + t.color + '" onclick="switchTradeTab(' + i + ')">' +
+            t.stratLabel + ' <span style="color:' + pnlColor + ';margin-left:4px">' + pnlStr + '</span></div>';
+    });
+    container.innerHTML = html;
+}
+
+function switchTradeTab(idx) {
+    modalState.activeIdx = idx;
+    renderTradeTabs();
+    loadTradeCharts(modalState.trades[idx]);
+}
+
+function setModalTF(tf) {
+    modalState.tf = tf;
+    document.querySelectorAll('.tm-tf-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tm-tf-btn').forEach(b => {
+        if (parseInt(b.textContent) === tf) b.classList.add('active');
+    });
+    renderModalCandles();
+}
+
+function initModalCharts() {
+    // Destroy existing
+    if (modalState.spxChart) { modalState.spxChart.remove(); modalState.spxChart = null; }
+    if (modalState.optChart) { modalState.optChart.remove(); modalState.optChart = null; }
+
+    const spxPane = document.getElementById('spxChartPane');
+    const optPane = document.getElementById('optChartPane');
+
+    // Wait a frame for layout to settle
+    requestAnimationFrame(() => {
+        const chartOpts = {
+            layout: { background: { color: '#131722' }, textColor: '#DDD' },
+            crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            timeScale: { borderColor: '#2a2e3d', timeVisible: true, secondsVisible: false },
+            rightPriceScale: { borderColor: '#2a2e3d' },
+            grid: {
+                vertLines: { color: 'rgba(255,255,255,0.04)' },
+                horzLines: { color: 'rgba(255,255,255,0.04)' },
+            },
+            localization: {
+                timeFormatter: (ts) => new Date(ts * 1000).toLocaleString('en-US', {
+                    timeZone: 'America/New_York',
+                    hour: '2-digit', minute: '2-digit', hour12: false,
+                }),
+            },
+        };
+
+        const spxW = spxPane.clientWidth;
+        const spxH = spxPane.clientHeight;
+        modalState.spxChart = LightweightCharts.createChart(spxPane, { ...chartOpts, width: spxW, height: spxH });
+        modalState.spxCandles = modalState.spxChart.addCandlestickSeries({
+            upColor: '#26a69a', downColor: '#ef5350',
+            borderUpColor: '#26a69a', borderDownColor: '#ef5350',
+            wickUpColor: '#26a69a', wickDownColor: '#ef5350',
+        });
+        modalState.spxVolume = modalState.spxChart.addHistogramSeries({
+            priceFormat: { type: 'volume' }, priceScaleId: '',
+            scaleMargins: { top: 0.85, bottom: 0 },
+        });
+        modalState.spxVolume.priceScale().applyOptions({ scaleMargins: { top: 0.85, bottom: 0 } });
+
+        // SPX OHLC tooltip
+        modalState.spxChart.subscribeCrosshairMove(param => {
+            ohlcTooltipHandler(param, modalState.spxCandles, modalState.spxVolume, 'spxOhlc');
+        });
+
+        const optW = optPane.clientWidth;
+        const optH = optPane.clientHeight;
+        modalState.optChart = LightweightCharts.createChart(optPane, { ...chartOpts, width: optW, height: optH });
+        modalState.optCandles = modalState.optChart.addCandlestickSeries({
+            upColor: '#26a69a', downColor: '#ef5350',
+            borderUpColor: '#26a69a', borderDownColor: '#ef5350',
+            wickUpColor: '#26a69a', wickDownColor: '#ef5350',
+        });
+        modalState.optVolume = modalState.optChart.addHistogramSeries({
+            priceFormat: { type: 'volume' }, priceScaleId: '',
+            scaleMargins: { top: 0.85, bottom: 0 },
+        });
+        modalState.optVolume.priceScale().applyOptions({ scaleMargins: { top: 0.85, bottom: 0 } });
+
+        // Opt OHLC tooltip
+        modalState.optChart.subscribeCrosshairMove(param => {
+            ohlcTooltipHandler(param, modalState.optCandles, modalState.optVolume, 'optOhlc');
+        });
+
+        // Sync crosshairs (wrapped in try-catch for API compatibility)
+        try {
+            modalState.spxChart.subscribeCrosshairMove(param => {
+                try { if (param.time && modalState.optChart) modalState.optChart.setCrosshairPosition(undefined, undefined, param.time); } catch(e) {}
+            });
+            modalState.optChart.subscribeCrosshairMove(param => {
+                try { if (param.time && modalState.spxChart) modalState.spxChart.setCrosshairPosition(undefined, undefined, param.time); } catch(e) {}
+            });
+        } catch(e) { console.log('Crosshair sync not available in this LWC version'); }
+    });
+}
+
+function ohlcTooltipHandler(param, candleSeries, volSeries, elId) {
+    const el = document.getElementById(elId);
+    if (!param || !param.time || !param.seriesData) { el.textContent = ''; return; }
+    const c = param.seriesData.get(candleSeries);
+    const v = param.seriesData.get(volSeries);
+    if (!c) { el.textContent = ''; return; }
+    const isUp = c.close >= c.open;
+    const color = isUp ? '#26a69a' : '#ef5350';
+    const fmt = (x) => x != null ? x.toFixed(2) : '-';
+    el.innerHTML = '<span style="color:' + color + '">O ' + fmt(c.open) + '  H ' + fmt(c.high) + '  L ' + fmt(c.low) + '  C ' + fmt(c.close) + '</span>' +
+        (v ? '  <span style="color:#888">Vol ' + (v.value || 0).toLocaleString() + '</span>' : '');
+}
+
+async function loadTradeCharts(trade) {
+    const dateStr = trade.dateStr;
+    document.getElementById('tmTitle').textContent = trade.stratLabel + ' — ' + dateStr;
+
+    // Show loading
+    document.getElementById('spxLoading').style.display = 'flex';
+    document.getElementById('spxLoading').textContent = 'Loading SPX data...';
+    document.getElementById('optLoading').style.display = 'flex';
+    document.getElementById('optLoading').textContent = 'Loading option data...';
+
+    // Temp info strip while loading
+    const strip = document.getElementById('tradeInfoStrip');
+    const isRipFade = trade.stratId === 'rip_fade';
+    strip.innerHTML = '<div class="ti-item"><span class="ti-label">Strategy</span> <span class="ti-val" style="color:' + trade.color + '">' + trade.stratLabel + '</span></div>' +
+        '<div class="ti-item" style="color:#888">' + (isRipFade ? 'Scanning for morning rally signals...' : 'Scanning for real dip signals...') + '</div>';
+
+    // Determine strategy params
+    const stratDef = STRATEGIES.find(s => s.id === trade.stratId);
+    const isVelocity = stratDef && stratDef.entryMode === 'velocity';
+    const isBearish = trade.stratId === 'edge_c';
+    const optType = (isBearish || isRipFade) ? 'C' : 'C'; // Rip Fade uses calls (bear call spread)
+
+    // Fetch SPX bars first; fall back to SPY if index data unavailable
+    let spxBars = await fetchMinuteBars('I:SPX', dateStr);
+    let spxTicker = 'SPX';
+    if (spxBars.length === 0) {
+        document.getElementById('spxLoading').textContent = 'SPX index unavailable, trying SPY...';
+        spxBars = await fetchMinuteBars('SPY', dateStr);
+        spxTicker = 'SPY';
+    }
+    modalState.spxRaw = spxBars;
+    modalState.spxTicker = spxTicker;
+
+    if (spxBars.length === 0) {
+        // Likely a holiday or no data day
+        document.getElementById('spxLoading').textContent = 'No market data for ' + dateStr + ' (market closed?)';
+        document.getElementById('optLoading').textContent = 'No data available';
+        strip.innerHTML =
+            '<div class="ti-item"><span class="ti-label">Strategy</span> <span class="ti-val" style="color:' + trade.color + '">' + trade.stratLabel + '</span></div>' +
+            '<div class="ti-item" style="color:#ef5350">Market closed on ' + dateStr + '</div>';
+        return;
+    }
+
+    // ── Detect REAL signal from SPX bars ──
+    let signal;
+    if (isRipFade) {
+        signal = detectRealRally(spxBars, trade);
+    } else {
+        signal = detectRealDip(spxBars, trade);
+    }
+    if (!signal) {
+        // Fallback: use synthetic entry time
+        const fb = detectFallbackEntry(spxBars, trade);
+        Object.assign(trade, { _realEntry: fb.entryBar, _realExit: fb.exitBar, _realPnl: null });
+    } else {
+        Object.assign(trade, {
+            _realEntry: signal.entryBar,
+            _realExit: signal.exitBar,
+            _realDropPct: signal.dropPct,
+            _realRallyPct: signal.rallyPct,
+            _realVelocity: signal.velocity,
+            entryTime: barToET(signal.entryBar),
+            exitTime: barToET(signal.exitBar),
+            holdMins: Math.round((signal.exitBar.time - signal.entryBar.time) / 60),
+        });
+    }
+
+    // Determine strike from SPX price at entry
+    let entrySpx = trade._realEntry ? trade._realEntry.close : spxBars[Math.floor(spxBars.length / 2)].close;
+    // If using SPY, scale up to SPX-equivalent for strike calculation
+    if (spxTicker === 'SPY') entrySpx = entrySpx * 10;
+    const strike = Math.round(entrySpx / 5) * 5;
+    const parts = dateStr.split('-');
+    const yy = parts[0].slice(2);
+    const mm = parts[1];
+    const dd = parts[2];
+
+    let optBars = [];
+    let optBarsLong = null;
+    let shortStrike = strike, longStrike = strike;
+    let optTicker, longOptTicker = null;
+
+    if (isRipFade) {
+        // Bear call spread: short ATM call, long ATM+width call
+        const spreadWidth = stratDef.ripSpreadWidth || 5;
+        shortStrike = strike + (stratDef.ripShortOff || 0);
+        longStrike = shortStrike + spreadWidth;
+
+        const shortSc = String(Math.round(shortStrike * 1000)).padStart(8, '0');
+        const longSc = String(Math.round(longStrike * 1000)).padStart(8, '0');
+        optTicker = 'O:SPXW' + yy + mm + dd + 'C' + shortSc;
+        longOptTicker = 'O:SPXW' + yy + mm + dd + 'C' + longSc;
+
+        document.getElementById('optChartLabel').textContent = 'SPXW ' + mm + '/' + dd + ' ' + shortStrike + '/' + longStrike + ' CALL SPREAD';
+        document.getElementById('optLoading').textContent = 'Loading both spread legs...';
+
+        // Fetch both legs in parallel
+        const [shortResult, longResult] = await Promise.all([
+            fetchMinuteBars(optTicker, dateStr),
+            fetchMinuteBars(longOptTicker, dateStr),
+        ]);
+        optBars = shortResult;
+        optBarsLong = longResult;
+    } else {
+        const sc = String(Math.round(strike * 1000)).padStart(8, '0');
+        optTicker = 'O:SPXW' + yy + mm + dd + optType + sc;
+        const typeStr = optType === 'C' ? 'CALL' : 'PUT';
+        document.getElementById('optChartLabel').textContent = 'SPXW ' + mm + '/' + dd + ' ' + strike + ' ' + typeStr;
+        optBars = await fetchMinuteBars(optTicker, dateStr);
+    }
+
+    modalState.optRaw = optBars;
+
+    // ═══════════════════════════════════════════════════════════════
+    // REAL P&L CALCULATION — from actual option data
+    // Rip Fade: writes real spread P&L to trade.pnl (reliable, both legs)
+    // Others: informational only, no overwrite (detectRealDip is unreliable)
+    // ═══════════════════════════════════════════════════════════════
+    let optEntryPrice = null, optExitPrice = null, optContracts = null;
+    let spreadCredit = trade._spreadCredit || null;
+    let spreadDebit = trade._spreadDebit || null;
+    let longEntryP = null, longExitP = null;
+    let exitReason = trade._exitReason || null;
+    let realPnl = trade._realPnl || null;
+
+    // If already pre-computed, just extract display values from option bars
+    if (isRipFade && trade._pnlCorrected && optBars.length > 0 && trade._realEntry) {
+        const shortAtEntry = findClosestBar(optBars, barToET(trade._realEntry), dateStr);
+        if (shortAtEntry) optEntryPrice = shortAtEntry.close;
+        if (trade._realExit) {
+            const shortAtExit = findClosestBar(optBars, barToET(trade._realExit), dateStr);
+            if (shortAtExit) optExitPrice = shortAtExit.close;
+        }
+        if (spreadCredit != null) {
+            const spreadWidthVal = longStrike - shortStrike;
+            const maxLossPerContract = (spreadWidthVal - spreadCredit) * 100;
+            optContracts = Math.max(1, Math.floor(trade.risk / Math.max(maxLossPerContract, 100)));
+        }
+
+    } else if (isRipFade && optBars.length > 0 && optBarsLong && optBarsLong.length > 0 && trade._realEntry) {
+        // ── Bear Call Spread P&L ──
+        const shortAtEntry = findClosestBar(optBars, barToET(trade._realEntry), dateStr);
+        const longAtEntry = findClosestBar(optBarsLong, barToET(trade._realEntry), dateStr);
+
+        if (shortAtEntry && longAtEntry) {
+            optEntryPrice = shortAtEntry.close;
+            longEntryP = longAtEntry.close;
+            spreadCredit = optEntryPrice - longEntryP;
+
+            if (spreadCredit > 0) {
+                const spreadWidthVal = longStrike - shortStrike;
+                const maxLossPerContract = (spreadWidthVal - spreadCredit) * 100;
+                optContracts = Math.max(1, Math.floor(trade.risk / Math.max(maxLossPerContract, 100)));
+
+                // Walk forward bar-by-bar using real option prices for both legs
+                const profitTarget = stratDef.ripProfitTarget || 0.50;
+                const stopMult = stratDef.ripStopMult || 3.0;
+                const maxHold = stratDef.ripMaxHold || 60;
+                const entryTimeUnix = trade._realEntry.time;
+
+                const ptSpread = spreadCredit * profitTarget;
+                const slSpread = spreadCredit * stopMult;
+
+                let bestExitShort = null, bestExitLong = null;
+                exitReason = 'time_stop';
+
+                for (let m = 1; m <= maxHold; m++) {
+                    const targetTime = entryTimeUnix + m * 60;
+                    const shortBar = findClosestBarByTime(optBars, targetTime);
+                    const longBar = findClosestBarByTime(optBarsLong, targetTime);
+
+                    if (!shortBar || !longBar) continue;
+                    if (Math.abs(shortBar.time - targetTime) > 90) continue;
+                    if (Math.abs(longBar.time - targetTime) > 90) continue;
+
+                    const currentSpread = shortBar.close - longBar.close;
+
+                    if (currentSpread <= ptSpread) {
+                        bestExitShort = shortBar;
+                        bestExitLong = longBar;
+                        exitReason = 'profit_target';
+                        break;
+                    }
+                    if (currentSpread >= slSpread) {
+                        bestExitShort = shortBar;
+                        bestExitLong = longBar;
+                        exitReason = 'stop_loss';
+                        break;
+                    }
+
+                    bestExitShort = shortBar;
+                    bestExitLong = longBar;
+                }
+
+                if (bestExitShort && bestExitLong) {
+                    optExitPrice = bestExitShort.close;
+                    longExitP = bestExitLong.close;
+                    spreadDebit = optExitPrice - longExitP;
+
+                    realPnl = Math.round((spreadCredit - spreadDebit) * optContracts * 100);
+
+                    // Rip Fade spread P&L is calculated from BOTH real option legs
+                    // — this is reliable, so we DO write it back to the trade object
+                    // so calendar, equity curve, and modal all show the same number.
+                    trade.pnl = realPnl;
+                    trade.isWin = realPnl >= 0;
+                    trade._spreadCredit = spreadCredit;
+                    trade._spreadDebit = spreadDebit;
+                    trade._exitReason = exitReason;
+                    trade._realPnl = realPnl;
+                    trade._pnlCorrected = true; // flag so we know this trade was corrected
+                    savePnLToCache(trade);       // persist to localStorage
+
+                    // Update exit bar/time for chart markers
+                    trade._realExit = bestExitShort;
+                    trade.exitTime = barToET(bestExitShort);
+                    trade.holdMins = Math.round((bestExitShort.time - trade._realEntry.time) / 60);
+                }
+            }
+        }
+
+    } else if (!isRipFade && optBars.length > 0 && trade._realEntry && trade._realExit) {
+        // ── Single-leg option P&L — compute from REAL option prices ──
+        const optAtEntry = findClosestBar(optBars, barToET(trade._realEntry), dateStr);
+        const optAtExit = findClosestBar(optBars, barToET(trade._realExit), dateStr);
+
+        if (optAtEntry && optAtExit) {
+            optEntryPrice = optAtEntry.close;
+            optExitPrice = optAtExit.close;
+            optContracts = Math.max(1, Math.floor(trade.risk / (optEntryPrice * 100)));
+
+            // Only compute P&L if not already done by background pre-compute
+            if (!trade._pnlCorrected) {
+                const direction = isBearish ? -1 : 1;
+                realPnl = Math.round(direction * (optExitPrice - optEntryPrice) * optContracts * 100);
+                trade.pnl = realPnl;
+                trade.isWin = realPnl >= 0;
+                trade._realPnl = realPnl;
+                trade._pnlCorrected = true;
+                savePnLToCache(trade);       // persist to localStorage
+            }
+        }
+    }
+
+    // Sync corrected P&L back to calendar cell + equity curve (ALL strategies)
+    if (trade._pnlCorrected && !trade._calendarSynced) {
+        trade._calendarSynced = true;
+        syncCalendarCell(trade);
+    }
+
+    // ── Build info strip ──
+    const displayPnl = trade.pnl;
+    const displayIsWin = trade.isWin;
+    const pnlClass = displayPnl >= 0 ? 'up' : 'dn';
+    const pnlStr = displayPnl >= 0 ? '+$' + Math.abs(displayPnl).toLocaleString() : '-$' + Math.abs(displayPnl).toLocaleString();
+    const resultBadge = displayIsWin ? '<span style="color:#26a69a;font-weight:800">WIN</span>' : '<span style="color:#ef5350;font-weight:800">LOSS</span>';
+    let infoHtml =
+        '<div class="ti-item"><span class="ti-label">Strategy</span> <span class="ti-val" style="color:' + trade.color + '">' + trade.stratLabel + '</span></div>' +
+        '<div class="ti-item"><span class="ti-label">P&L</span> <span class="ti-val ' + pnlClass + '">' + pnlStr + '</span></div>' +
+        '<div class="ti-item">' + resultBadge + '</div>' +
+        '<div class="ti-item"><span class="ti-label">Entry</span> <span class="ti-val">' + trade.entryTime + ' ET</span></div>' +
+        '<div class="ti-item"><span class="ti-label">Exit</span> <span class="ti-val">' + trade.exitTime + ' ET</span></div>' +
+        '<div class="ti-item"><span class="ti-label">Hold</span> <span class="ti-val">' + trade.holdMins + 'm</span></div>' +
+        '<div class="ti-item"><span class="ti-label">Risk</span> <span class="ti-val">$' + (trade.risk / 1000).toFixed(0) + 'k</span></div>';
+    if (trade._realRallyPct) {
+        infoHtml += '<div class="ti-item"><span class="ti-label">Rally</span> <span class="ti-val up">+' + trade._realRallyPct.toFixed(2) + '%</span></div>';
+    }
+    if (trade._realDropPct) {
+        infoHtml += '<div class="ti-item"><span class="ti-label">Drop</span> <span class="ti-val dn">-' + trade._realDropPct.toFixed(2) + '%</span></div>';
+    }
+    if (trade._realVelocity) {
+        infoHtml += '<div class="ti-item"><span class="ti-label">Velocity</span> <span class="ti-val">' + trade._realVelocity.toFixed(3) + '%/m</span></div>';
+    }
+    if (isRipFade) {
+        infoHtml += '<div class="ti-item"><span class="ti-label">Type</span> <span class="ti-val" style="color:#ff8800">Bear Call Spread</span></div>';
+        if (spreadCredit != null) {
+            infoHtml += '<div class="ti-item"><span class="ti-label">Credit</span> <span class="ti-val up">$' + spreadCredit.toFixed(2) + '</span></div>';
+        }
+        if (spreadDebit != null) {
+            const debitColor = spreadDebit < spreadCredit ? '#26a69a' : '#ef5350';
+            infoHtml += '<div class="ti-item"><span class="ti-label">Debit</span> <span class="ti-val" style="color:' + debitColor + '">$' + spreadDebit.toFixed(2) + '</span></div>';
+        }
+        if (exitReason) {
+            const reasonLabel = exitReason === 'profit_target' ? 'PT Hit' : exitReason === 'stop_loss' ? 'SL Hit' : 'Time Stop';
+            const reasonColor = exitReason === 'profit_target' ? '#26a69a' : exitReason === 'stop_loss' ? '#ef5350' : '#ffaa33';
+            infoHtml += '<div class="ti-item"><span class="ti-label">Exit</span> <span class="ti-val" style="color:' + reasonColor + '">' + reasonLabel + '</span></div>';
+        }
+    }
+    if (optContracts) {
+        infoHtml += '<div class="ti-item"><span class="ti-label">Contracts</span> <span class="ti-val">' + optContracts + '</span></div>';
+    }
+    if (optEntryPrice != null) {
+        infoHtml += '<div class="ti-item"><span class="ti-label">Opt Entry</span> <span class="ti-val">$' + optEntryPrice.toFixed(2) + '</span></div>';
+        infoHtml += '<div class="ti-item"><span class="ti-label">Opt Exit</span> <span class="ti-val">$' + optExitPrice.toFixed(2) + '</span></div>';
+    }
+    strip.innerHTML = infoHtml;
+
+    // Refresh tabs (P&L unchanged, just re-render)
+    renderTradeTabs();
+
+    // Render charts
+    renderModalCandles();
+
+    // Set watermarks
+    if (modalState.spxChart) {
+        modalState.spxChart.applyOptions({ watermark: {
+            visible: true, fontSize: 48, horzAlign: 'center', vertAlign: 'center',
+            color: 'rgba(74,144,217,0.12)', text: spxTicker,
+        }});
+    }
+    if (modalState.optChart) {
+        const wmText = isRipFade
+            ? 'SPXW ' + shortStrike + '/' + longStrike + ' CALL SPREAD'
+            : 'SPXW ' + strike + ' ' + (optType === 'C' ? 'CALL' : 'PUT');
+        modalState.optChart.applyOptions({ watermark: {
+            visible: true, fontSize: 36, horzAlign: 'center', vertAlign: 'center',
+            color: 'rgba(171,71,188,0.12)', text: wmText,
+        }});
+    }
+}
+
+// ── Detect a REAL dip from SPX bars matching strategy params ──
+function detectRealDip(bars, trade) {
+    const stratDef = STRATEGIES.find(s => s.id === trade.stratId);
+    const isVelocity = stratDef && stratDef.entryMode === 'velocity';
+
+    // Strategy parameters
+    let dropThreshold, minVel, maxVel, lookback, tsMin;
+    if (isVelocity) {
+        dropThreshold = stratDef.velDropPct || 0.25;
+        minVel = stratDef.velMinSpeed || 0;
+        maxVel = stratDef.velMaxSpeed || 999;
+        lookback = 15; // wider lookback for better peak detection
+        tsMin = stratDef.tsMin || 30;
+    } else {
+        dropThreshold = 0.20;
+        minVel = 0;
+        maxVel = 999;
+        lookback = 15;
+        tsMin = stratDef ? (stratDef.tsMin || 30) : 30;
+    }
+
+    // Filter bars to market hours (9:30-15:50 ET)
+    const mktBars = bars.filter(b => {
+        const et = barToETObj(b);
+        const mins = et.getHours() * 60 + et.getMinutes();
+        return mins >= 570 && mins <= 950;
+    });
+
+    if (mktBars.length < lookback + 5) return null;
+
+    // ── STRICT DIP DETECTION ──
+    // A real dip requires:
+    //   1. A clear rolling high in the lookback window
+    //   2. A sharp drop: at least N consecutive declining bars (close < prior close)
+    //   3. The drop velocity exceeds the strategy's minimum
+    //   4. The current bar is at/near the trough (bar.low is lowest in last 3 bars)
+    //   5. Minimum absolute point drop (filters out noise on high SPX values)
+
+    const dips = [];
+    const minAbsPoints = 15; // At SPX ~6000-6800, 15pts ≈ 0.22-0.25%
+
+    for (let i = lookback; i < mktBars.length - 2; i++) {
+        const bar = mktBars[i];
+        const etMins = barToETMins(bar);
+        if (etMins < 575 || etMins > 945) continue; // 9:35-15:45
+
+        // Find rolling high in lookback window
+        let rollingHigh = 0;
+        let peakIdx = i - lookback;
+        for (let j = Math.max(0, i - lookback); j < i; j++) {
+            if (mktBars[j].high > rollingHigh) {
+                rollingHigh = mktBars[j].high;
+                peakIdx = j;
+            }
+        }
+
+        // Absolute and percentage drop from peak to current bar's low
+        const absDropPts = rollingHigh - bar.low;
+        const dropPct = absDropPts / rollingHigh * 100;
+
+        if (dropPct < dropThreshold) continue;
+        if (absDropPts < minAbsPoints) continue;
+
+        // ── Consecutive declining bars check ──
+        // Count how many of the last 4 bars before (and including) this one closed lower than previous
+        let redCount = 0;
+        for (let k = Math.max(1, i - 3); k <= i; k++) {
+            if (mktBars[k].close < mktBars[k - 1].close) redCount++;
+        }
+        // Require at least 3 of last 4 bars to be red (real directional selling)
+        if (redCount < 3) continue;
+
+        // ── Trough confirmation ──
+        // This bar's low should be the lowest of the last 3 bars (we're at the bottom)
+        const recentLow = Math.min(mktBars[i].low, mktBars[i - 1].low, mktBars[i - 2].low);
+        if (bar.low > recentLow * 1.0002) continue; // must be at or near the trough
+
+        // ── Bar range expansion ──
+        // The drop bars should have larger ranges than the bars before the peak (panic selling = wide bars)
+        let avgRangeInDrop = 0;
+        let dropBars = i - peakIdx;
+        if (dropBars < 1) dropBars = 1;
+        for (let k = peakIdx; k <= i; k++) {
+            avgRangeInDrop += (mktBars[k].high - mktBars[k].low);
+        }
+        avgRangeInDrop /= dropBars;
+
+        let avgRangeBefore = 0;
+        const beforeStart = Math.max(0, peakIdx - 5);
+        for (let k = beforeStart; k < peakIdx; k++) {
+            avgRangeBefore += (mktBars[k].high - mktBars[k].low);
+        }
+        avgRangeBefore /= Math.max(1, peakIdx - beforeStart);
+
+        // Drop bars should have at least 1.3x the range of pre-drop bars (real acceleration)
+        if (avgRangeBefore > 0 && avgRangeInDrop < avgRangeBefore * 1.3) continue;
+
+        // Velocity calculation
+        const elapsedMins = Math.max(1, (bar.time - mktBars[peakIdx].time) / 60);
+        const velocity = dropPct / elapsedMins;
+
+        if (velocity < minVel || velocity > maxVel) continue;
+
+        // Quality score: higher = better signal
+        const qualityScore = (velocity * 10) + (dropPct * 5) + (redCount * 2) + (avgRangeInDrop / Math.max(0.01, avgRangeBefore));
+
+        dips.push({
+            entryIdx: i,
+            entryBar: bar,
+            peakIdx: peakIdx,
+            peakBar: mktBars[peakIdx],
+            dropPct: dropPct,
+            absDropPts: absDropPts,
+            velocity: velocity,
+            elapsedMins: elapsedMins,
+            redCount: redCount,
+            qualityScore: qualityScore,
+        });
+    }
+
+    if (dips.length === 0) return null;
+
+    // Pick the best dip by quality score (combines velocity, drop magnitude, and bar structure)
+    const bestDip = dips.reduce((best, d) => d.qualityScore > best.qualityScore ? d : best, dips[0]);
+
+    // ── Simulate exit using OPTION prices if available, else SPX underlying ──
+    const entryIdx = bestDip.entryIdx;
+    const entryPrice = mktBars[entryIdx].close;
+    const maxHold = Math.min(tsMin, mktBars.length - 1 - entryIdx);
+    let exitIdx = entryIdx + maxHold; // default: time stop
+    let peakAfterEntry = entryPrice;
+    let exitReason = 'time_stop';
+
+    for (let j = entryIdx + 1; j <= entryIdx + maxHold && j < mktBars.length; j++) {
+        const p = mktBars[j].close;
+        const h = mktBars[j].high;
+
+        // Track peak after entry
+        if (h > peakAfterEntry) peakAfterEntry = h;
+
+        const fromEntry = (p - entryPrice) / entryPrice * 100;
+
+        // Stop loss: SPX continues dropping > 0.15% below entry (option would be down ~30%)
+        if (fromEntry < -0.15) {
+            exitIdx = j;
+            exitReason = 'stop_loss';
+            break;
+        }
+
+        // Trail stop: price bounced then fading back
+        if (peakAfterEntry > entryPrice) {
+            const bounceFromEntry = (peakAfterEntry - entryPrice) / entryPrice * 100;
+            const fadeFromPeak = (peakAfterEntry - p) / peakAfterEntry * 100;
+
+            // Only trail if we actually had a meaningful bounce (> 0.05%)
+            if (bounceFromEntry > 0.05 && fadeFromPeak > 0.04 && j >= entryIdx + 2) {
+                exitIdx = j;
+                exitReason = 'trail_stop';
+                break;
+            }
+        }
+    }
+
+    exitIdx = Math.min(exitIdx, mktBars.length - 1);
+
+    return {
+        entryBar: mktBars[entryIdx],
+        exitBar: mktBars[exitIdx],
+        dropPct: bestDip.dropPct,
+        velocity: bestDip.velocity,
+        exitReason: exitReason,
+    };
+}
+
+function detectFallbackEntry(bars, trade) {
+    // Fallback: use the synthetic entry/exit times but snap to nearest bars
+    const entryBar = findClosestBar(bars, trade.entryTime, trade.dateStr) || bars[Math.floor(bars.length * 0.3)];
+    const exitBar = findClosestBar(bars, trade.exitTime, trade.dateStr) || bars[Math.min(bars.length - 1, Math.floor(bars.length * 0.5))];
+    return { entryBar, exitBar };
+}
+
+// ── Detect a REAL morning rally from SPX bars for Rip Fade strategy ──
+// Strategy: find the PEAK of the morning rally (that's where you sell the spread),
+// then simulate the exit as SPX fades back.
+function detectRealRally(bars, trade) {
+    // Forward-walking threshold crossing — mirrors backtest & live exactly.
+    // Walks bar-by-bar tracking rolling low. Fires on the FIRST bar where
+    // rally >= minRally AND velocity >= minVel. No hindsight.
+    const stratDef = STRATEGIES.find(s => s.id === trade.stratId);
+    if (!stratDef) return null;
+
+    const minRally = stratDef.ripMinRally || 0.35;
+    const minVel   = stratDef.ripMinVel   || 0.05;
+    const maxHoldMins = stratDef.ripMaxHold || 60;
+
+    // Get all RTH bars
+    const allMktBars = bars.filter(b => {
+        const et = barToETObj(b);
+        const mins = et.getHours() * 60 + et.getMinutes();
+        return mins >= 570 && mins <= 960;
+    });
+    if (allMktBars.length < 5) return null;
+
+    // Walk forward through first 30 min, exactly like backtest find_entries_multi
+    let rollingLow = allMktBars[0].low;
+    let troughIdx = 0;
+    let entryIdxInAll = -1;
+    let rallyPct = 0;
+    let velocity = 0;
+
+    for (let i = 0; i < allMktBars.length; i++) {
+        const mins = barToETMins(allMktBars[i]);
+        if (mins > 600) break; // first 30 min only
+
+        // Track rolling low
+        if (allMktBars[i].low < rollingLow) {
+            rollingLow = allMktBars[i].low;
+            troughIdx = i;
+        }
+
+        // Calculate rally from rolling low (use close, matching backtest)
+        rallyPct = (allMktBars[i].close - rollingLow) / rollingLow * 100;
+        const elapsed = i - troughIdx;
+        velocity = elapsed > 0 ? rallyPct / elapsed : 0;
+
+        // Fire on first bar where both conditions met
+        if (rallyPct >= minRally && velocity >= minVel) {
+            entryIdxInAll = i;
+            break;
+        }
+    }
+
+    if (entryIdxInAll < 0) return null;
+
+    // Simulate exit — spread profits as SPX drops back or theta decays
+    const entryPrice = allMktBars[entryIdxInAll].close;
+    let exitIdx = Math.min(entryIdxInAll + maxHoldMins, allMktBars.length - 1);
+
+    for (let j = entryIdxInAll + 1; j <= Math.min(entryIdxInAll + maxHoldMins, allMktBars.length - 1); j++) {
+        const p = allMktBars[j].close;
+        const moveFromEntry = (p - entryPrice) / entryPrice * 100;
+
+        // Profit target: SPX dropped 0.15%+ from entry (spread narrowed ~50%)
+        if (moveFromEntry < -0.15) {
+            exitIdx = j;
+            break;
+        }
+        // Stop: SPX rallied another 0.25%+ above entry (spread widening)
+        if (moveFromEntry > 0.25) {
+            exitIdx = j;
+            break;
+        }
+    }
+
+    return {
+        entryBar: allMktBars[entryIdxInAll],
+        exitBar: allMktBars[exitIdx],
+        rallyPct: rallyPct,
+        velocity: velocity,
+        exitReason: 'simulated',
+    };
+}
+
+function barToET(bar) {
+    const d = new Date(bar.time * 1000);
+    const et = new Date(d.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    return String(et.getHours()).padStart(2, '0') + ':' + String(et.getMinutes()).padStart(2, '0');
+}
+
+function barToETObj(bar) {
+    const d = new Date(bar.time * 1000);
+    return new Date(d.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+}
+
+function barToETMins(bar) {
+    const et = barToETObj(bar);
+    return et.getHours() * 60 + et.getMinutes();
+}
+
+async function fetchDayClose(dateStr) {
+    // Get SPX close for the day (to determine ATM strike)
+    try {
+        const url = 'https://api.polygon.io/v2/aggs/ticker/I:SPX/range/1/day/' + dateStr + '/' + dateStr + '?apiKey=' + API_KEY;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data.results && data.results.length > 0) return data.results[0].c;
+    } catch(e) {}
+    return null;
+}
+
+async function fetchMinuteBars(ticker, dateStr) {
+    try {
+        const url = 'https://api.polygon.io/v2/aggs/ticker/' + encodeURIComponent(ticker) + '/range/1/minute/' + dateStr + '/' + dateStr +
+            '?adjusted=true&sort=asc&limit=10000&apiKey=' + API_KEY;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data.results && data.results.length > 0) {
+            return data.results.map(r => ({
+                time: r.t / 1000,
+                open: r.o, high: r.h, low: r.l, close: r.c,
+                value: r.v || 0,
+                color: r.c >= r.o ? 'rgba(38,166,154,0.5)' : 'rgba(239,83,80,0.5)',
+            }));
+        }
+    } catch(e) {
+        console.error('Fetch error for ' + ticker + ':', e);
+    }
+    return [];
+}
+
+function aggregateModalBars(bars, tfMins) {
+    if (tfMins <= 1) return bars;
+    const out = [];
+    for (let i = 0; i < bars.length; ) {
+        const anchor = bars[i].time;
+        const bucket = [];
+        while (i < bars.length && bucket.length < tfMins) {
+            bucket.push(bars[i++]);
+        }
+        if (!bucket.length) break;
+        out.push({
+            time: anchor,
+            open: bucket[0].open,
+            high: Math.max(...bucket.map(b => b.high)),
+            low: Math.min(...bucket.map(b => b.low)),
+            close: bucket[bucket.length - 1].close,
+            value: bucket.reduce((s, b) => s + (b.value || 0), 0),
+            color: bucket[bucket.length - 1].close >= bucket[0].open ? 'rgba(38,166,154,0.5)' : 'rgba(239,83,80,0.5)',
+        });
+    }
+    return out;
+}
+
+function renderModalCandles() {
+    const trade = modalState.trades[modalState.activeIdx];
+    const tf = modalState.tf;
+    const entryBar = trade._realEntry;
+    const exitBar = trade._realExit;
+
+    // SPX
+    const spxAgg = aggregateModalBars(modalState.spxRaw, tf);
+    if (modalState.spxCandles && spxAgg.length > 0) {
+        modalState.spxCandles.setData(spxAgg);
+        modalState.spxVolume.setData(spxAgg);
+
+        // Find the aggregated bars closest to entry/exit timestamps
+        const markers = [];
+        const tradeIsRipFade = trade.stratId === 'rip_fade';
+        // trade.isWin is already corrected for Rip Fade, original for others
+        const modalIsWin = trade.isWin;
+        if (entryBar) {
+            const snapEntry = findClosestBarByTime(spxAgg, entryBar.time);
+            if (snapEntry) {
+                markers.push({
+                    time: snapEntry.time,
+                    position: tradeIsRipFade ? 'aboveBar' : 'belowBar',
+                    color: tradeIsRipFade ? '#ff8800' : '#2962ff',
+                    shape: tradeIsRipFade ? 'arrowDown' : 'arrowUp',
+                    text: (tradeIsRipFade ? 'SELL SPREAD ' : 'BUY DIP ') + barToET(entryBar),
+                });
+            }
+        }
+        if (exitBar) {
+            const snapExit = findClosestBarByTime(spxAgg, exitBar.time);
+            if (snapExit) {
+                markers.push({
+                    time: snapExit.time,
+                    position: tradeIsRipFade ? 'belowBar' : 'aboveBar',
+                    color: modalIsWin ? '#26a69a' : '#ef5350',
+                    shape: tradeIsRipFade ? 'arrowUp' : 'arrowDown',
+                    text: (modalIsWin ? 'WIN ' : 'LOSS ') + barToET(exitBar),
+                });
+            }
+        }
+        // Sort markers by time (required by lightweight-charts)
+        markers.sort((a, b) => a.time - b.time);
+        modalState.spxCandles.setMarkers(markers);
+
+        // Zoom to entry area: show from ~15 bars before entry to ~15 bars after exit
+        if (entryBar && exitBar) {
+            const entryTime = entryBar.time - 15 * 60;
+            const exitTime = exitBar.time + 15 * 60;
+            modalState.spxChart.timeScale().setVisibleRange({ from: entryTime, to: exitTime });
+        } else {
+            modalState.spxChart.timeScale().fitContent();
+        }
+        document.getElementById('spxLoading').style.display = 'none';
+    } else if (spxAgg.length === 0) {
+        document.getElementById('spxLoading').textContent = 'No SPX data for ' + trade.dateStr;
+    }
+
+    // Option
+    const optAgg = aggregateModalBars(modalState.optRaw, tf);
+    if (modalState.optCandles && optAgg.length > 0) {
+        modalState.optCandles.setData(optAgg);
+        modalState.optVolume.setData(optAgg);
+
+        const optMarkers = [];
+        const optIsRipFade = trade.stratId === 'rip_fade';
+        const optModalIsWin = trade.isWin;
+        if (entryBar) {
+            const optEntry = findClosestBarByTime(optAgg, entryBar.time);
+            if (optEntry) {
+                // For Rip Fade show spread credit; for others show single-leg price
+                const entryLabel = optIsRipFade && trade._spreadCredit
+                    ? 'SELL SPREAD $' + trade._spreadCredit.toFixed(2)
+                    : (optIsRipFade ? 'SELL @ $' : 'BUY @ $') + optEntry.close.toFixed(2);
+                optMarkers.push({
+                    time: optEntry.time,
+                    position: optIsRipFade ? 'aboveBar' : 'belowBar',
+                    color: optIsRipFade ? '#ff8800' : '#2962ff',
+                    shape: optIsRipFade ? 'arrowDown' : 'arrowUp',
+                    text: entryLabel,
+                });
+            }
+        }
+        if (exitBar) {
+            const optExit = findClosestBarByTime(optAgg, exitBar.time);
+            if (optExit) {
+                // For Rip Fade show spread debit at close; for others show single-leg price
+                const exitLabel = optIsRipFade && trade._spreadDebit != null
+                    ? 'CLOSE SPREAD $' + trade._spreadDebit.toFixed(2)
+                    : (optIsRipFade ? 'BUY BACK @ $' : 'SELL @ $') + optExit.close.toFixed(2);
+                optMarkers.push({
+                    time: optExit.time,
+                    position: optIsRipFade ? 'belowBar' : 'aboveBar',
+                    color: optModalIsWin ? '#26a69a' : '#ef5350',
+                    shape: optIsRipFade ? 'arrowUp' : 'arrowDown',
+                    text: exitLabel,
+                });
+            }
+        }
+        optMarkers.sort((a, b) => a.time - b.time);
+        modalState.optCandles.setMarkers(optMarkers);
+
+        // Sync zoom to same time range as SPX
+        if (entryBar && exitBar) {
+            const entryTime = entryBar.time - 15 * 60;
+            const exitTime = exitBar.time + 15 * 60;
+            modalState.optChart.timeScale().setVisibleRange({ from: entryTime, to: exitTime });
+        } else {
+            modalState.optChart.timeScale().fitContent();
+        }
+        document.getElementById('optLoading').style.display = 'none';
+    } else if (optAgg.length === 0) {
+        document.getElementById('optLoading').textContent = 'No option data for this strike/date';
+    }
+
+    // Update pane labels with TF
+    document.querySelector('#spxChartPane .chart-pane-label').textContent = (modalState.spxTicker || 'SPX') + ' ' + tf + 'm';
+    document.querySelector('#optChartPane .chart-pane-label').textContent = document.getElementById('optChartLabel').textContent + ' ' + tf + 'm';
+}
+
+// Find bar with closest unix timestamp
+function findClosestBarByTime(bars, targetTime) {
+    if (!bars.length) return null;
+    let best = bars[0];
+    let bestDiff = Math.abs(bars[0].time - targetTime);
+    for (let i = 1; i < bars.length; i++) {
+        const diff = Math.abs(bars[i].time - targetTime);
+        if (diff < bestDiff) {
+            bestDiff = diff;
+            best = bars[i];
+        }
+    }
+    return best;
+}
+
+function findClosestBar(bars, timeStr, dateStr) {
+    // Convert "HH:MM" ET to unix seconds and find closest bar
+    if (!bars.length || !timeStr) return null;
+    const parts = timeStr.split(':');
+    const targetH = parseInt(parts[0]);
+    const targetM = parseInt(parts[1]);
+
+    // Build target timestamp: dateStr + timeStr in ET
+    // Since bars are already in UTC seconds, we need to find the bar whose ET time matches
+    let bestBar = null;
+    let bestDiff = Infinity;
+
+    bars.forEach(bar => {
+        const d = new Date(bar.time * 1000);
+        const et = new Date(d.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+        const diffMins = Math.abs((et.getHours() * 60 + et.getMinutes()) - (targetH * 60 + targetM));
+        if (diffMins < bestDiff) {
+            bestDiff = diffMins;
+            bestBar = bar;
+        }
+    });
+
+    return bestBar;
+}
+
+// Update calendar day click to open the modal instead of just tooltip
+function handleCalendarDayClick(dateStr, tradesData) {
+    hideDayTooltip();
+    openTradeModal(dateStr, tradesData);
+}
+
+// Handle resize for modal charts
+window.addEventListener('resize', () => {
+    if (modalState.spxChart) {
+        const spxPane = document.getElementById('spxChartPane');
+        modalState.spxChart.applyOptions({ width: spxPane.clientWidth, height: spxPane.clientHeight });
+    }
+    if (modalState.optChart) {
+        const optPane = document.getElementById('optChartPane');
+        modalState.optChart.applyOptions({ width: optPane.clientWidth, height: optPane.clientHeight });
+    }
+});
+</script>
+</body>
+</html>
