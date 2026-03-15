@@ -17,3 +17,4 @@ __pycache__/
 morning_rip_*.csv
 morning_rip_*.json
 today_*.csv
+overnight_low_results_v3.json
