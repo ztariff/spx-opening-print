@@ -1,0 +1,217 @@
+==========================================================================================
+SPX Opening Print — All Edges Options Backtest (10s resolution)
+==========================================================================================
+
+Loading data...
+  SPX intraday: 2053 days
+  Current strategy: 331 dates
+
+Building features...
+  2053 tradeable days
+
+
+==========================================================================================
+EDGE A: SPX Scalp
+  All bullish 1st bar, trail=0.02%, SL=15pts, TS=30
+==========================================================================================
+  Eligible days: 1099
+  Processing 1/1099 (2018-01-03)...
+  Processing 100/1099 (2018-10-25)...
+  Processing 200/1099 (2019-08-01)...
+  Processing 300/1099 (2020-05-01)...
+  Processing 400/1099 (2021-02-02)...
+  Processing 500/1099 (2021-12-06)...
+  Processing 600/1099 (2022-07-08)...
+  Processing 700/1099 (2023-03-23)...
+  Processing 800/1099 (2023-12-06)...
+  Processing 900/1099 (2024-08-26)...
+  Processing 1000/1099 (2025-06-06)...
+
+  Completed: 1091 trades, 8 skipped
+
+  EDGE A: SPX Scalp
+    Trades:       1091
+    Total P&L:    $3,282,862
+    Win Rate:     65.4%  (714W / 377L)
+    Profit Factor:2.58
+    Max Drawdown: $91,924
+    Sharpe:       3.87
+    Calmar:       35.71
+    Avg Premium:  $79,071
+    Avg Contracts:55
+    Avg Hold:     2.1 min
+  Saved to /Users/nano/Desktop/Opening Print/spx_edges_output/edge_A_trades.json
+
+
+==========================================================================================
+EDGE B: SPX Filtered Scalp
+  fb_ret>0.05%, trail=0.05%, SL=15pts, TS=30
+==========================================================================================
+  Eligible days: 559
+  Processing 1/559 (2018-02-12)...
+  Processing 100/559 (2020-03-27)...
+  Processing 200/559 (2021-12-10)...
+  Processing 300/559 (2022-12-14)...
+  Processing 400/559 (2024-02-01)...
+  Processing 500/559 (2025-05-09)...
+
+  Completed: 556 trades, 3 skipped
+
+  EDGE B: SPX Filtered Scalp
+    Trades:       556
+    Total P&L:    $2,888,602
+    Win Rate:     67.6%  (376W / 180L)
+    Profit Factor:3.60
+    Max Drawdown: $104,512
+    Sharpe:       3.58
+    Calmar:       27.64
+    Avg Premium:  $81,090
+    Avg Contracts:48
+    Avg Hold:     2.6 min
+  Saved to /Users/nano/Desktop/Opening Print/spx_edges_output/edge_B_trades.json
+
+
+==========================================================================================
+EDGE C: Bearish Short
+  Bearish 1st bar, BUY PUT, PT=8pts, SL=5pts, TS=30
+==========================================================================================
+  Eligible days: 954
+  Processing 1/954 (2018-01-02)...
+  Processing 100/954 (2018-10-04)...
+  Processing 200/954 (2019-08-05)...
+  Processing 300/954 (2020-06-01)...
+  Processing 400/954 (2021-04-16)...
+  Processing 500/954 (2022-01-18)...
+  Processing 600/954 (2023-02-15)...
+  Processing 700/954 (2024-01-09)...
+  Processing 800/954 (2024-11-18)...
+  Processing 900/954 (2025-09-11)...
+
+  Completed: 948 trades, 6 skipped
+
+  EDGE C: Bearish Short
+    Trades:       948
+    Total P&L:    $3,973,104
+    Win Rate:     43.6%  (413W / 535L)
+    Profit Factor:1.54
+    Max Drawdown: $220,936
+    Sharpe:       1.77
+    Calmar:       17.98
+    Avg Premium:  $78,760
+    Avg Contracts:93
+    Avg Hold:     12.2 min
+  Saved to /Users/nano/Desktop/Opening Print/spx_edges_output/edge_C_trades.json
+
+
+==========================================================================================
+EDGE D: Missed Days
+  Bullish non-traded days, trail=0.05%, SL=10pts, TS=120
+==========================================================================================
+  Eligible days: 768
+  Processing 1/768 (2018-01-03)...
+  Processing 100/768 (2018-12-13)...
+  Processing 200/768 (2019-10-21)...
+  Processing 300/768 (2020-10-28)...
+  Processing 400/768 (2022-05-23)...
+  Processing 500/768 (2023-06-26)...
+  Processing 600/768 (2024-03-07)...
+  Processing 700/768 (2025-03-07)...
+
+  Completed: 761 trades, 7 skipped
+
+  EDGE D: Missed Days
+    Trades:       761
+    Total P&L:    $2,494,551
+    Win Rate:     58.7%  (447W / 314L)
+    Profit Factor:2.21
+    Max Drawdown: $101,511
+    Sharpe:       2.61
+    Calmar:       24.57
+    Avg Premium:  $80,122
+    Avg Contracts:58
+    Avg Hold:     3.4 min
+  Saved to /Users/nano/Desktop/Opening Print/spx_edges_output/edge_D_trades.json
+
+
+==========================================================================================
+EDGE E: Ultra Scalp
+  All bullish, PT=1pt, SL=1pt, TS=5min
+==========================================================================================
+  Eligible days: 1099
+  Processing 1/1099 (2018-01-03)...
+  Processing 100/1099 (2018-10-25)...
+  Processing 200/1099 (2019-08-01)...
+  Processing 300/1099 (2020-05-01)...
+  Processing 400/1099 (2021-02-02)...
+  Processing 500/1099 (2021-12-06)...
+  Processing 600/1099 (2022-07-08)...
+  Processing 700/1099 (2023-03-23)...
+  Processing 800/1099 (2023-12-06)...
+  Processing 900/1099 (2024-08-26)...
+  Processing 1000/1099 (2025-06-06)...
+
+  Completed: 1091 trades, 8 skipped
+
+  EDGE E: Ultra Scalp
+    Trades:       1091
+    Total P&L:    $3,261,182
+    Win Rate:     59.0%  (644W / 447L)
+    Profit Factor:2.84
+    Max Drawdown: $39,159
+    Sharpe:       4.45
+    Calmar:       83.28
+    Avg Premium:  $79,071
+    Avg Contracts:55
+    Avg Hold:     1.1 min
+  Saved to /Users/nano/Desktop/Opening Print/spx_edges_output/edge_E_trades.json
+
+
+==========================================================================================
+EDGE F: Current + Trail
+  Currently traded days, trail=0.05%, SL=15pts, TS=30
+==========================================================================================
+  Eligible days: 331
+  Processing 1/331 (2018-02-16)...
+  Processing 100/331 (2021-03-15)...
+  Processing 200/331 (2022-12-12)...
+  Processing 300/331 (2025-10-06)...
+
+  Completed: 330 trades, 1 skipped
+
+  EDGE F: Current + Trail
+    Trades:       330
+    Total P&L:    $1,241,082
+    Win Rate:     62.7%  (207W / 123L)
+    Profit Factor:2.73
+    Max Drawdown: $55,390
+    Sharpe:       2.09
+    Calmar:       22.41
+    Avg Premium:  $76,645
+    Avg Contracts:48
+    Avg Hold:     3.0 min
+  Saved to /Users/nano/Desktop/Opening Print/spx_edges_output/edge_F_trades.json
+
+
+==========================================================================================
+SUMMARY COMPARISON
+==========================================================================================
+
+  Edge   Name                          N          P&L     WR     PF      MaxDD  Sharpe  AvgHold
+  A      SPX Scalp                  1091 $  3,282,862  65.4%  2.58 $   91,924    3.87    2.1m
+  B      SPX Filtered Scalp          556 $  2,888,602  67.6%  3.60 $  104,512    3.58    2.6m
+  C      Bearish Short               948 $  3,973,104  43.6%  1.54 $  220,936    1.77   12.2m
+  D      Missed Days                 761 $  2,494,551  58.7%  2.21 $  101,511    2.61    3.4m
+  E      Ultra Scalp                1091 $  3,261,182  59.0%  2.84 $   39,159    4.45    1.1m
+  F      Current + Trail             330 $  1,241,082  62.7%  2.73 $   55,390    2.09    3.0m
+
+  COMBINED PORTFOLIO IDEAS:
+    B+Existing (Scalp + Hold)                N=  556  P&L=$  2,888,602  MaxDD=$  104,512  Sharpe=  3.58
+    B+C (Scalp + Bear Short)                 N= 1504  P&L=$  6,861,706  MaxDD=$  185,144  Sharpe=  2.88
+    A+C (Full Scalp + Bear)                  N= 2039  P&L=$  7,255,966  MaxDD=$  185,180  Sharpe=  3.03
+    B+D (Filtered Scalp + Missed)            N= 1317  P&L=$  5,383,153  MaxDD=$  172,502  Sharpe=  4.28
+    A+C+D (Everything)                       N= 2800  P&L=$  9,750,517  MaxDD=$  257,044  Sharpe=  3.78
+
+
+==========================================================================================
+COMPLETE
+==========================================================================================

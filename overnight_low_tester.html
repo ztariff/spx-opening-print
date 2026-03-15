@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overnight Low Support — ES/SPX Backtest</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0a0a12; color: #ccc; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; }
+h1 { color: #fff; font-size: 22px; margin-bottom: 4px; }
+.subtitle { color: #888; font-size: 13px; margin-bottom: 20px; }
+
+.controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px; }
+.ctrl-group { display: flex; flex-direction: column; gap: 4px; }
+.ctrl-group label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+.ctrl-group input, .ctrl-group select { background: #1a1a2e; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+.ctrl-group input:focus, .ctrl-group select:focus { border-color: #4a90d9; outline: none; }
+button { padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.2s; }
+button:hover { transform: translateY(-1px); }
+.btn-run { background: #4a90d9; color: #fff; }
+.btn-run:hover { background: #5aa0e9; }
+.btn-run:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; }
+.btn-stop { background: #ef5350; color: #fff; }
+
+.status-bar { background: #12121e; border: 1px solid #222; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; }
+.status-bar .progress { height: 4px; background: #222; border-radius: 2px; margin-top: 8px; overflow: hidden; }
+.status-bar .progress-fill { height: 100%; background: #4a90d9; transition: width 0.3s; border-radius: 2px; }
+
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+@media (max-width: 900px) { .results-grid { grid-template-columns: 1fr; } }
+
+.card { background: #12121e; border: 1px solid #1a1a2e; border-radius: 10px; padding: 16px; }
+.card h3 { color: #aaa; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+
+.stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1a1a2e; font-size: 13px; }
+.stat-row:last-child { border-bottom: none; }
+.stat-label { color: #888; }
+.stat-val { color: #fff; font-weight: 600; }
+.stat-val.up { color: #26a69a; }
+.stat-val.dn { color: #ef5350; }
+.stat-val.warn { color: #ffaa00; }
+
+.trades-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.trades-table th { text-align: left; padding: 8px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #222; font-size: 11px; }
+.trades-table td { padding: 6px 8px; border-bottom: 1px solid #111; }
+.trades-table tr:hover { background: #1a1a2e; }
+
+.ticker-test { margin-bottom: 20px; }
+.ticker-test .result { background: #12121e; border-radius: 6px; padding: 10px; margin-top: 8px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; }
+
+#tradeLog { max-height: 600px; overflow-y: auto; }
+
+.full-width { grid-column: 1 / -1; }
+
+.regime-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.regime-card { background: #0a0a12; border-radius: 6px; padding: 10px; text-align: center; }
+.regime-card .regime-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+.regime-card .regime-val { font-size: 18px; font-weight: 800; }
+
+canvas { border-radius: 8px; }
+</style>
+</head>
+<body>
+<h1>Overnight Low Support — Short Put Backtest</h1>
+<div class="subtitle">Thesis: ES sets an overnight low → rallies off it → RTH drifts back to the low → sell puts against it</div>
+
+<!-- Step 1: Discover ES ticker -->
+<div class="card ticker-test" id="tickerTestCard">
+    <h3>Step 1: Verify ES Futures Data Access</h3>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn-run" onclick="testTickers()">Test ES Ticker Formats</button>
+        <span id="tickerStatus" style="color:#888;font-size:12px"></span>
+    </div>
+    <div class="result" id="tickerResult" style="display:none"></div>
+</div>
+
+<!-- Step 2: Backtest Controls -->
+<div class="controls">
+    <div class="ctrl-group">
+        <label>ES Ticker</label>
+        <input type="text" id="esTicker" value="" placeholder="auto-detected" style="width:140px">
+    </div>
+    <div class="ctrl-group">
+        <label>Start Date</label>
+        <input type="date" id="startDate" value="2024-01-02">
+    </div>
+    <div class="ctrl-group">
+        <label>End Date</label>
+        <input type="date" id="endDate" value="2026-03-12">
+    </div>
+    <div class="ctrl-group">
+        <label>Proximity (pts)</label>
+        <input type="number" id="proximity" value="10" min="1" max="30" style="width:80px">
+    </div>
+    <div class="ctrl-group">
+        <label>Min ON Rally (%)</label>
+        <input type="number" id="minRally" value="0.3" min="0" max="5" step="0.1" style="width:80px" title="Minimum rally off overnight low before RTH">
+    </div>
+    <div class="ctrl-group">
+        <label>Stop (mins below)</label>
+        <input type="number" id="stopMins" value="5" min="1" max="15" style="width:80px">
+    </div>
+    <div class="ctrl-group">
+        <label>Max Hold (mins)</label>
+        <input type="number" id="maxHold" value="60" min="5" max="120" style="width:80px">
+    </div>
+    <div class="ctrl-group">
+        <label>Entry Window</label>
+        <select id="entryWindow">
+            <option value="all">All Day (9:35-15:30)</option>
+            <option value="morning">Morning (9:35-11:30)</option>
+            <option value="afternoon">Afternoon (12:00-15:30)</option>
+        </select>
+    </div>
+    <div class="ctrl-group" style="align-self:flex-end">
+        <button class="btn-run" id="runBtn" onclick="runBacktest()">Run Backtest</button>
+    </div>
+    <div class="ctrl-group" style="align-self:flex-end">
+        <button class="btn-stop" id="stopBtn" onclick="stopBacktest()" style="display:none">Stop</button>
+    </div>
+</div>
+
+<div class="status-bar" id="statusBar" style="display:none">
+    <span id="statusText">Initializing...</span>
+    <div class="progress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<!-- Results -->
+<div class="results-grid" id="resultsArea" style="display:none">
+    <div class="card">
+        <h3>Overall Performance</h3>
+        <div id="overallStats"></div>
+    </div>
+    <div class="card">
+        <h3>VIX Regime Breakdown</h3>
+        <div id="vixStats"></div>
+    </div>
+    <div class="card">
+        <h3>Bounce Analysis (Underlying)</h3>
+        <div id="bounceStats"></div>
+    </div>
+    <div class="card">
+        <h3>Entry Time Distribution</h3>
+        <div id="timeStats"></div>
+    </div>
+    <div class="card full-width">
+        <h3>Equity Curve</h3>
+        <canvas id="equityCanvas" width="1200" height="300"></canvas>
+    </div>
+    <div class="card full-width">
+        <h3>Yearly Breakdown</h3>
+        <div id="yearlyStats"></div>
+    </div>
+    <div class="card full-width">
+        <h3>Trade Log <span id="tradeCount" style="color:#666;font-weight:400"></span></h3>
+        <div id="tradeLog"></div>
+    </div>
+</div>
+
+<script>
+const API_KEY = ''; // Set via environment - do not hardcode
+let running = false;
+let allTrades = [];
+
+// ── Rate limiter: Polygon free tier = 5 req/min ──
+const rateLimiter = {
+    queue: [],
+    inflight: 0,
+    maxPerMin: 5,
+    timestamps: [],
+
+    async throttle() {
+        const now = Date.now();
+        // Remove timestamps older than 60s
+        this.timestamps = this.timestamps.filter(t => now - t < 60000);
+
+        if (this.timestamps.length >= this.maxPerMin) {
+            const waitMs = 60000 - (now - this.timestamps[0]) + 200;
+            await new Promise(r => setTimeout(r, waitMs));
+            return this.throttle(); // recheck
+        }
+        this.timestamps.push(Date.now());
+    }
+};
+
+async function polygonFetch(url) {
+    await rateLimiter.throttle();
+    const resp = await fetch(url);
+    if (resp.status === 429) {
+        // Rate limited — wait and retry
+        await new Promise(r => setTimeout(r, 12000));
+        return polygonFetch(url);
+    }
+    return resp.json();
+}
+
+// ── Fetch minute bars for a ticker over a date range ──
+async function fetchBars(ticker, from, to, multiplier = 1, timespan = 'minute', limit = 5000) {
+    const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(ticker)}/range/${multiplier}/${timespan}/${from}/${to}?adjusted=true&sort=asc&limit=${limit}&apiKey=${API_KEY}`;
+    const data = await polygonFetch(url);
+    if (data.results && data.results.length > 0) {
+        return data.results.map(r => ({
+            t: r.t, // unix ms
+            o: r.o, h: r.h, l: r.l, c: r.c, v: r.v,
+            time: new Date(r.t),
+        }));
+    }
+    return [];
+}
+
+// ── Step 1: Test which ES ticker format works ──
+async function testTickers() {
+    const status = document.getElementById('tickerStatus');
+    const result = document.getElementById('tickerResult');
+    result.style.display = 'block';
+    result.textContent = '';
+    status.textContent = 'Testing ticker formats...';
+
+    // ES futures contract months: H=Mar, M=Jun, U=Sep, Z=Dec
+    // Current front month for March 2026 should be H26 or H2026
+    const now = new Date();
+    const year = now.getFullYear();
+    const yy = String(year).slice(2);
+    const month = now.getMonth(); // 0-indexed
+
+    // Determine front month
+    const contractMonths = [
+        { code: 'H', month: 2 },  // March
+        { code: 'M', month: 5 },  // June
+        { code: 'U', month: 8 },  // September
+        { code: 'Z', month: 11 }, // December
+    ];
+
+    let frontCode = 'H';
+    let frontYear = yy;
+    for (const cm of contractMonths) {
+        if (cm.month >= month) {
+            frontCode = cm.code;
+            frontYear = yy;
+            break;
+        }
+    }
+
+    const testDate = '2026-03-10';
+    const prevDate = '2026-03-07';
+
+    const tickersToTest = [
+        // Specific contracts
+        `C:ES${frontCode}${frontYear}`,
+        `C:ES${frontCode}${year}`,
+        // Other formats
+        'C:ES00',
+        'I:ES',
+        'ES1!',
+        // Try SPY as proxy (extended hours)
+        'SPY',
+        // E-mini S&P continuous
+        'C:ES1!',
+        // Try with different prefixes
+        `ES${frontCode}${frontYear}`,
+        `ES${frontCode}${year}`,
+    ];
+
+    let foundTicker = null;
+
+    for (const ticker of tickersToTest) {
+        result.textContent += `Testing ${ticker}... `;
+        try {
+            const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(ticker)}/range/5/minute/${prevDate}/${testDate}?adjusted=true&sort=asc&limit=10&apiKey=${API_KEY}`;
+            await rateLimiter.throttle();
+            const resp = await fetch(url);
+            const data = await resp.json();
+
+            if (data.results && data.results.length > 0) {
+                const firstBar = data.results[0];
+                const lastBar = data.results[data.results.length - 1];
+                const firstTime = new Date(firstBar.t).toISOString();
+                const lastTime = new Date(lastBar.t).toISOString();
+                result.textContent += `✅ ${data.resultsCount} bars (${firstTime} → ${lastTime})\n`;
+                result.textContent += `  Price range: ${firstBar.l.toFixed(2)} - ${firstBar.h.toFixed(2)}\n`;
+
+                if (!foundTicker) {
+                    foundTicker = ticker;
+                    document.getElementById('esTicker').value = ticker;
+                }
+            } else {
+                result.textContent += `❌ No data (status: ${data.status})\n`;
+            }
+        } catch (e) {
+            result.textContent += `❌ Error: ${e.message}\n`;
+        }
+    }
+
+    // Also try searching Polygon's ticker reference
+    result.textContent += `\nSearching Polygon ticker reference for "ES"...\n`;
+    try {
+        await rateLimiter.throttle();
+        const searchUrl = `https://api.polygon.io/v3/reference/tickers?search=ES&type=INDEX&limit=10&apiKey=${API_KEY}`;
+        const resp = await fetch(searchUrl);
+        const data = await resp.json();
+        if (data.results) {
+            data.results.forEach(r => {
+                result.textContent += `  Found: ${r.ticker} — ${r.name} (${r.market}/${r.type})\n`;
+            });
+        }
+    } catch (e) {}
+
+    // Try other search
+    try {
+        await rateLimiter.throttle();
+        const searchUrl2 = `https://api.polygon.io/v3/reference/tickers?search=mini%20sp&limit=10&apiKey=${API_KEY}`;
+        const resp2 = await fetch(searchUrl2);
+        const data2 = await resp2.json();
+        if (data2.results) {
+            data2.results.forEach(r => {
+                result.textContent += `  Found: ${r.ticker} — ${r.name} (${r.market}/${r.type})\n`;
+            });
+        }
+    } catch (e) {}
+
+    if (foundTicker) {
+        status.textContent = `✅ Found working ticker: ${foundTicker}`;
+        status.style.color = '#26a69a';
+    } else {
+        status.textContent = '⚠️ No ES ticker found. Will try SPY extended hours as fallback.';
+        status.style.color = '#ffaa00';
+        document.getElementById('esTicker').value = 'SPY';
+
+        // Test SPY extended hours
+        result.textContent += `\nTesting SPY with extended hours data...\n`;
+        try {
+            // SPY pre-market starts at 4 AM ET / post-market to 8 PM ET
+            const url = `https://api.polygon.io/v2/aggs/ticker/SPY/range/1/minute/${prevDate}/${testDate}?adjusted=true&sort=asc&limit=50000&apiKey=${API_KEY}`;
+            await rateLimiter.throttle();
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.results && data.results.length > 0) {
+                // Check time range
+                const times = data.results.map(r => new Date(r.t));
+                const hours = times.map(t => t.getUTCHours());
+                const minHour = Math.min(...hours);
+                const maxHour = Math.max(...hours);
+                result.textContent += `  SPY: ${data.resultsCount} bars, hours ${minHour}-${maxHour} UTC\n`;
+
+                // Check for pre/post market bars
+                const preMarket = data.results.filter(r => {
+                    const h = new Date(r.t).getUTCHours();
+                    return h < 14; // before 9 AM ET (14 UTC)
+                });
+                const postMarket = data.results.filter(r => {
+                    const h = new Date(r.t).getUTCHours();
+                    return h >= 21; // after 4 PM ET (21 UTC)
+                });
+                result.textContent += `  Pre-market bars: ${preMarket.length}, Post-market bars: ${postMarket.length}\n`;
+                if (preMarket.length > 0) {
+                    result.textContent += `  First pre-market: ${new Date(preMarket[0].t).toISOString()} @ ${preMarket[0].c.toFixed(2)}\n`;
+                }
+            }
+        } catch (e) {
+            result.textContent += `  Error: ${e.message}\n`;
+        }
+    }
+}
+
+// ── Generate trading days list ──
+function getTradingDays(start, end) {
+    const days = [];
+    let d = new Date(start + 'T12:00:00Z');
+    const endD = new Date(end + 'T12:00:00Z');
+
+    while (d <= endD) {
+        const dow = d.getUTCDay();
+        if (dow !== 0 && dow !== 6) {
+            days.push(d.toISOString().slice(0, 10));
+        }
+        d.setUTCDate(d.getUTCDate() + 1);
+    }
+    return days;
+}
+
+// ── Convert timestamp to ET minutes (for easier time comparison) ──
+function tsToETMins(ts) {
+    const d = new Date(ts);
+    // Convert to ET (approximate: UTC-5 for EST, UTC-4 for EDT)
+    // Use locale string for proper DST handling
+    const et = new Date(d.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    return et.getHours() * 60 + et.getMinutes();
+}
+
+function tsToETStr(ts) {
+    const d = new Date(ts);
+    const et = new Date(d.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    return et.getHours().toString().padStart(2, '0') + ':' + et.getMinutes().toString().padStart(2, '0');
+}
+
+// ── Main Backtest ──
+async function runBacktest() {
+    if (running) return;
+    running = true;
+    allTrades = [];
+
+    const esTicker = document.getElementById('esTicker').value || 'SPY';
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const proximity = parseFloat(document.getElementById('proximity').value);
+    const minRally = parseFloat(document.getElementById('minRally').value) / 100; // convert to decimal
+    const stopMins = parseInt(document.getElementById('stopMins').value);
+    const maxHold = parseInt(document.getElementById('maxHold').value);
+    const entryWindow = document.getElementById('entryWindow').value;
+
+    let entryStart = 575; // 9:35
+    let entryEnd = 930;   // 15:30
+    if (entryWindow === 'morning') { entryStart = 575; entryEnd = 690; }
+    if (entryWindow === 'afternoon') { entryStart = 720; entryEnd = 930; }
+
+    document.getElementById('runBtn').disabled = true;
+    document.getElementById('stopBtn').style.display = 'inline-block';
+    document.getElementById('statusBar').style.display = 'block';
+    document.getElementById('resultsArea').style.display = 'none';
+
+    const tradingDays = getTradingDays(startDate, endDate);
+    const totalDays = tradingDays.length;
+
+    updateStatus(`Processing ${totalDays} trading days...`, 0);
+
+    // We need to fetch data in batches to minimize API calls
+    // Strategy: fetch ES data in weekly chunks (covers overnight sessions)
+    // Then fetch SPX RTH data separately
+
+    // For overnight: we need data from 6 PM prior day to 9:30 AM current day
+    // We'll fetch in multi-day ranges to reduce API calls
+
+    const BATCH_SIZE = 5; // days per batch
+    let processed = 0;
+    let skipped = 0;
+    let noData = 0;
+
+    // Process in batches
+    for (let batchStart = 0; batchStart < totalDays && running; batchStart += BATCH_SIZE) {
+        const batchEnd = Math.min(batchStart + BATCH_SIZE, totalDays);
+        const batchDays = tradingDays.slice(batchStart, batchEnd);
+
+        // Fetch ES/SPY data covering the batch range (include prior day for overnight)
+        const fetchFrom = batchStart > 0 ? tradingDays[batchStart - 1] : batchDays[0];
+        const fetchTo = batchDays[batchDays.length - 1];
+
+        updateStatus(`Fetching ${esTicker} data: ${fetchFrom} → ${fetchTo}...`, (batchStart / totalDays) * 100);
+
+        let esBars, spxBars;
+        try {
+            // Fetch ES/SPY 1-min bars
+            esBars = await fetchBars(esTicker, fetchFrom, fetchTo, 1, 'minute', 50000);
+
+            // Fetch SPX for RTH (if using ES as overnight source, we still need SPX for RTH)
+            if (esTicker !== 'I:SPX') {
+                spxBars = await fetchBars('I:SPX', batchDays[0], fetchTo, 1, 'minute', 50000);
+            } else {
+                spxBars = esBars;
+            }
+        } catch (e) {
+            updateStatus(`Error fetching data: ${e.message}`, (batchStart / totalDays) * 100);
+            noData += batchDays.length;
+            processed += batchDays.length;
+            continue;
+        }
+
+        if (!esBars || esBars.length === 0) {
+            noData += batchDays.length;
+            processed += batchDays.length;
+            continue;
+        }
+
+        // Index bars by date
+        const esByDate = {};
+        esBars.forEach(bar => {
+            const dateStr = bar.time.toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+            if (!esByDate[dateStr]) esByDate[dateStr] = [];
+            esByDate[dateStr].push(bar);
+        });
+
+        const spxByDate = {};
+        if (spxBars) {
+            spxBars.forEach(bar => {
+                const dateStr = bar.time.toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+                if (!spxByDate[dateStr]) spxByDate[dateStr] = [];
+                spxByDate[dateStr].push(bar);
+            });
+        }
+
+        // Process each day in batch
+        for (const dayStr of batchDays) {
+            if (!running) break;
+            processed++;
+
+            // Get prior trading day
+            const dayIdx = tradingDays.indexOf(dayStr);
+            if (dayIdx < 1) { skipped++; continue; }
+            const prevDay = tradingDays[dayIdx - 1];
+
+            // ── Find overnight low ──
+            // Overnight session: after prior day's close (4 PM ET) to current day's open (9:30 AM ET)
+            // For SPY this is post-market + pre-market bars
+            // For ES futures this is the globex session
+
+            const overnightBars = [];
+
+            // Collect bars from prior day after 16:00 ET
+            const prevDayBars = esByDate[prevDay] || [];
+            prevDayBars.forEach(bar => {
+                const etMins = tsToETMins(bar.t);
+                if (etMins >= 960) { // after 4 PM ET
+                    overnightBars.push(bar);
+                }
+            });
+
+            // Collect bars from current day before 9:30 ET
+            const currDayBars = esByDate[dayStr] || [];
+            currDayBars.forEach(bar => {
+                const etMins = tsToETMins(bar.t);
+                if (etMins < 570) { // before 9:30 AM ET
+                    overnightBars.push(bar);
+                }
+            });
+
+            if (overnightBars.length < 5) {
+                // Not enough overnight data — skip
+                skipped++;
+                continue;
+            }
+
+            // Find overnight low and high
+            const overnightLow = Math.min(...overnightBars.map(b => b.l));
+            const overnightHigh = Math.max(...overnightBars.map(b => b.h));
+            const overnightClose = overnightBars[overnightBars.length - 1].c; // price just before RTH open
+
+            // Rally off the overnight low: how far did price bounce from the low?
+            const rallyPct = (overnightClose - overnightLow) / overnightLow;
+
+            // Filter: require minimum rally off overnight low
+            if (rallyPct < minRally) {
+                skipped++;
+                continue;
+            }
+
+            // ── Get RTH bars (SPX preferred, fallback to ES/SPY) ──
+            let rthBars = (spxByDate[dayStr] || []).filter(bar => {
+                const etMins = tsToETMins(bar.t);
+                return etMins >= 570 && etMins <= 960; // 9:30 - 16:00
+            });
+
+            // If no SPX data, use ES/SPY bars during RTH
+            if (rthBars.length < 10) {
+                rthBars = currDayBars.filter(bar => {
+                    const etMins = tsToETMins(bar.t);
+                    return etMins >= 570 && etMins <= 960;
+                });
+            }
+
+            if (rthBars.length < 10) {
+                noData++;
+                continue;
+            }
+
+            // Scale factor: if using SPY, multiply by ~10 to get SPX-equivalent
+            // Actually, for the proximity check we should compare apples to apples
+            // If ES ticker is SPY, overnight low is in SPY terms, and RTH might be SPX
+            // Let's keep everything in the same ticker's terms
+            const rthTicker = spxByDate[dayStr] && spxByDate[dayStr].length > 10 ? 'SPX' : esTicker;
+
+            // If overnight is SPY but RTH is SPX, we need to scale
+            let scaledOvernightLow = overnightLow;
+            if (esTicker === 'SPY' && rthTicker === 'SPX') {
+                // SPX ≈ SPY * 10 (rough)
+                scaledOvernightLow = overnightLow * 10;
+            } else if (esTicker !== 'SPY' && esTicker !== 'I:SPX' && rthTicker === 'SPX') {
+                // ES ≈ SPX (very close)
+                scaledOvernightLow = overnightLow;
+            }
+
+            // ── Scan RTH for approach to overnight low ──
+            let entryBar = null;
+            let entryIdx = -1;
+
+            for (let j = 0; j < rthBars.length; j++) {
+                const bar = rthBars[j];
+                const etMins = tsToETMins(bar.t);
+
+                if (etMins < entryStart || etMins >= entryEnd) continue;
+
+                const distance = bar.l - scaledOvernightLow;
+
+                // Price approaches overnight low from above (within proximity, still above)
+                if (distance >= -2 && distance <= proximity && bar.c >= scaledOvernightLow - 1) {
+                    entryBar = bar;
+                    entryIdx = j;
+                    break;
+                }
+            }
+
+            if (!entryBar) {
+                skipped++;
+                continue;
+            }
+
+            // ── Simulate trade ──
+            let consecBelow = 0;
+            let stopped = false;
+            let exitBar = null;
+            let exitIdx = entryIdx;
+            let maxDrawdown = 0;
+            let maxBounce = 0;
+
+            for (let k = entryIdx + 1; k < Math.min(entryIdx + maxHold + 1, rthBars.length); k++) {
+                const bar = rthBars[k];
+
+                const drawdown = entryBar.c - bar.l;
+                if (drawdown > maxDrawdown) maxDrawdown = drawdown;
+
+                const bounce = bar.h - entryBar.c;
+                if (bounce > maxBounce) maxBounce = bounce;
+
+                if (bar.c < scaledOvernightLow) {
+                    consecBelow++;
+                } else {
+                    consecBelow = 0;
+                }
+
+                if (consecBelow >= stopMins) {
+                    stopped = true;
+                    exitBar = bar;
+                    exitIdx = k;
+                    break;
+                }
+
+                exitIdx = k;
+            }
+
+            if (!exitBar) {
+                exitBar = rthBars[exitIdx];
+            }
+
+            const holdMins = exitIdx - entryIdx;
+            const underlyingMove = exitBar.c - entryBar.c;
+
+            // Short put P&L estimation
+            // Premium: ATM 0DTE put ≈ 0.4 * S * (VIX/100) * sqrt(T)
+            // We don't have VIX per-bar, use a rough estimate based on overnight range
+            const overnightRange = (overnightHigh - overnightLow) / overnightLow;
+            const impliedVol = Math.max(12, overnightRange * 100 * 4); // rough annualized
+
+            const entryETMins = tsToETMins(entryBar.t);
+            const hoursLeft = Math.max(0.25, (960 - entryETMins) / 60);
+            const T = hoursLeft / (252 * 6.5);
+            const premium = 0.4 * entryBar.c * (impliedVol / 100) * Math.sqrt(T);
+
+            // Put value at exit
+            const exitETMins = tsToETMins(exitBar.t);
+            const hoursLeftExit = Math.max(0, (960 - exitETMins) / 60);
+            const T_exit = hoursLeftExit / (252 * 6.5);
+            const intrinsic = Math.max(0, scaledOvernightLow - exitBar.c);
+            const timeVal = 0.4 * exitBar.c * (impliedVol / 100) * Math.sqrt(T_exit) * 0.3;
+            const putAtExit = intrinsic + timeVal;
+
+            const pnlPerContract = (premium - putAtExit) * 100;
+            const contracts = Math.max(1, Math.min(20, Math.round(50000 / (premium * 100))));
+            const totalPnl = Math.round(pnlPerContract * contracts);
+
+            allTrades.push({
+                date: dayStr,
+                entryTime: tsToETStr(entryBar.t),
+                exitTime: tsToETStr(exitBar.t),
+                overnightLow: Math.round(scaledOvernightLow * 100) / 100,
+                overnightHigh: Math.round(overnightHigh * 100) / 100,
+                rallyPct: Math.round(rallyPct * 10000) / 100,
+                entryPrice: Math.round(entryBar.c * 100) / 100,
+                exitPrice: Math.round(exitBar.c * 100) / 100,
+                underlyingMove: Math.round(underlyingMove * 100) / 100,
+                pnl: totalPnl,
+                premium: Math.round(premium * 100) / 100,
+                contracts,
+                holdMins,
+                stopped,
+                maxDrawdown: Math.round(maxDrawdown * 100) / 100,
+                maxBounce: Math.round(maxBounce * 100) / 100,
+                impliedVol: Math.round(impliedVol * 10) / 10,
+            });
+
+            updateStatus(`${processed}/${totalDays} days | ${allTrades.length} trades | ${skipped} skipped | ${noData} no data`, (processed / totalDays) * 100);
+        }
+    }
+
+    running = false;
+    document.getElementById('runBtn').disabled = false;
+    document.getElementById('stopBtn').style.display = 'none';
+
+    if (allTrades.length > 0) {
+        renderResults();
+    } else {
+        updateStatus(`Completed. No trades found. ${skipped} days skipped, ${noData} days with no data.`, 100);
+    }
+}
+
+function stopBacktest() {
+    running = false;
+    if (allTrades.length > 0) renderResults();
+}
+
+function updateStatus(text, pct) {
+    document.getElementById('statusText').textContent = text;
+    document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ── Render Results ──
+function renderResults() {
+    document.getElementById('resultsArea').style.display = 'grid';
+    updateStatus(`Complete: ${allTrades.length} trades found`, 100);
+
+    const trades = allTrades;
+    const wins = trades.filter(t => t.pnl > 0);
+    const losses = trades.filter(t => t.pnl <= 0);
+    const totalPnl = trades.reduce((s, t) => s + t.pnl, 0);
+    const avgPnl = totalPnl / trades.length;
+    const wr = (wins.length / trades.length * 100).toFixed(1);
+    const avgWin = wins.length > 0 ? wins.reduce((s, t) => s + t.pnl, 0) / wins.length : 0;
+    const avgLoss = losses.length > 0 ? losses.reduce((s, t) => s + t.pnl, 0) / losses.length : 0;
+    const pf = losses.length > 0 && avgLoss !== 0 ? (wins.reduce((s, t) => s + t.pnl, 0) / Math.abs(losses.reduce((s, t) => s + t.pnl, 0))).toFixed(2) : '∞';
+    const stoppedPct = (trades.filter(t => t.stopped).length / trades.length * 100).toFixed(1);
+    const bouncePct = (trades.filter(t => t.underlyingMove > 0).length / trades.length * 100).toFixed(1);
+    const avgRally = (trades.reduce((s, t) => s + t.rallyPct, 0) / trades.length).toFixed(2);
+    const avgHold = (trades.reduce((s, t) => s + t.holdMins, 0) / trades.length).toFixed(1);
+    const maxDD = Math.max(...trades.map(t => t.maxDrawdown)).toFixed(1);
+
+    // Sharpe (annualized, assuming ~250 trading days)
+    const dailyPnl = {};
+    trades.forEach(t => { dailyPnl[t.date] = (dailyPnl[t.date] || 0) + t.pnl; });
+    const dailyReturns = Object.values(dailyPnl);
+    const meanDaily = dailyReturns.reduce((s, r) => s + r, 0) / dailyReturns.length;
+    const stdDaily = Math.sqrt(dailyReturns.reduce((s, r) => s + (r - meanDaily) ** 2, 0) / dailyReturns.length);
+    const sharpe = stdDaily > 0 ? ((meanDaily / stdDaily) * Math.sqrt(250)).toFixed(2) : 'N/A';
+
+    document.getElementById('overallStats').innerHTML = `
+        <div class="stat-row"><span class="stat-label">Total Trades</span><span class="stat-val">${trades.length}</span></div>
+        <div class="stat-row"><span class="stat-label">Win Rate</span><span class="stat-val ${wr >= 55 ? 'up' : wr < 45 ? 'dn' : ''}">${wr}%</span></div>
+        <div class="stat-row"><span class="stat-label">Total P&L</span><span class="stat-val ${totalPnl >= 0 ? 'up' : 'dn'}">$${totalPnl.toLocaleString()}</span></div>
+        <div class="stat-row"><span class="stat-label">Avg P&L / Trade</span><span class="stat-val ${avgPnl >= 0 ? 'up' : 'dn'}">$${Math.round(avgPnl).toLocaleString()}</span></div>
+        <div class="stat-row"><span class="stat-label">Avg Win</span><span class="stat-val up">$${Math.round(avgWin).toLocaleString()}</span></div>
+        <div class="stat-row"><span class="stat-label">Avg Loss</span><span class="stat-val dn">$${Math.round(avgLoss).toLocaleString()}</span></div>
+        <div class="stat-row"><span class="stat-label">Profit Factor</span><span class="stat-val">${pf}</span></div>
+        <div class="stat-row"><span class="stat-label">Sharpe Ratio</span><span class="stat-val ${sharpe >= 1.5 ? 'up' : sharpe < 0.5 ? 'dn' : ''}">${sharpe}</span></div>
+        <div class="stat-row"><span class="stat-label">Stop Rate</span><span class="stat-val ${stoppedPct > 40 ? 'dn' : ''}">${stoppedPct}%</span></div>
+        <div class="stat-row"><span class="stat-label">Bounce Rate (underlying)</span><span class="stat-val ${bouncePct >= 55 ? 'up' : bouncePct < 45 ? 'dn' : ''}">${bouncePct}%</span></div>
+        <div class="stat-row"><span class="stat-label">Avg ON Rally</span><span class="stat-val">${avgRally}%</span></div>
+        <div class="stat-row"><span class="stat-label">Avg Hold</span><span class="stat-val">${avgHold}m</span></div>
+        <div class="stat-row"><span class="stat-label">Max Drawdown (single)</span><span class="stat-val dn">${maxDD}pts</span></div>
+    `;
+
+    // VIX regime (using impliedVol as proxy)
+    const lowVol = trades.filter(t => t.impliedVol < 15);
+    const midVol = trades.filter(t => t.impliedVol >= 15 && t.impliedVol < 25);
+    const highVol = trades.filter(t => t.impliedVol >= 25);
+
+    function regimeStats(arr, label) {
+        if (arr.length === 0) return `<div class="stat-row"><span class="stat-label">${label}</span><span class="stat-val">No trades</span></div>`;
+        const w = arr.filter(t => t.pnl > 0).length;
+        const tot = arr.reduce((s, t) => s + t.pnl, 0);
+        return `<div class="stat-row"><span class="stat-label">${label}</span><span class="stat-val">${arr.length}T, WR ${(w/arr.length*100).toFixed(1)}%, avg <span class="${tot/arr.length >= 0 ? 'up' : 'dn'}">$${Math.round(tot/arr.length).toLocaleString()}</span></span></div>`;
+    }
+
+    document.getElementById('vixStats').innerHTML =
+        regimeStats(lowVol, 'Low Vol (<15)') +
+        regimeStats(midVol, 'Mid Vol (15-25)') +
+        regimeStats(highVol, 'High Vol (25+)') +
+        `<div style="margin-top:12px;color:#666;font-size:11px">Vol estimated from overnight range (proxy for VIX)</div>`;
+
+    // Bounce stats
+    const bounceByHold = {};
+    [5, 10, 15, 30, 60].forEach(h => {
+        const count = trades.filter(t => t.holdMins >= h);
+        // We don't have per-hold data easily, so show overall
+    });
+
+    // Rally size analysis
+    const bigRally = trades.filter(t => t.rallyPct >= 0.5);
+    const medRally = trades.filter(t => t.rallyPct >= 0.3 && t.rallyPct < 0.5);
+    const smallRally = trades.filter(t => t.rallyPct < 0.3);
+
+    document.getElementById('bounceStats').innerHTML =
+        regimeStats(bigRally, 'Big ON Rally (≥0.5%)') +
+        regimeStats(medRally, 'Med ON Rally (0.3-0.5%)') +
+        regimeStats(smallRally, 'Small ON Rally (<0.3%)') +
+        `<div style="margin-top:12px"><div class="stat-row"><span class="stat-label">Avg Underlying Move</span><span class="stat-val ${trades.reduce((s,t)=>s+t.underlyingMove,0)/trades.length >= 0 ? 'up' : 'dn'}">${(trades.reduce((s,t)=>s+t.underlyingMove,0)/trades.length).toFixed(2)}pts</span></div></div>` +
+        `<div class="stat-row"><span class="stat-label">Avg Max Bounce</span><span class="stat-val up">${(trades.reduce((s,t)=>s+t.maxBounce,0)/trades.length).toFixed(1)}pts</span></div>` +
+        `<div class="stat-row"><span class="stat-label">Avg Max Drawdown</span><span class="stat-val dn">${(trades.reduce((s,t)=>s+t.maxDrawdown,0)/trades.length).toFixed(1)}pts</span></div>`;
+
+    // Time of day
+    const byHour = {};
+    trades.forEach(t => {
+        const hr = t.entryTime.slice(0, 2);
+        if (!byHour[hr]) byHour[hr] = [];
+        byHour[hr].push(t);
+    });
+    let timeHtml = '';
+    Object.keys(byHour).sort().forEach(hr => {
+        const ht = byHour[hr];
+        const w = ht.filter(t => t.pnl > 0).length;
+        const avg = ht.reduce((s, t) => s + t.pnl, 0) / ht.length;
+        const br = ht.filter(t => t.underlyingMove > 0).length / ht.length * 100;
+        timeHtml += `<div class="stat-row"><span class="stat-label">${hr}:xx ET</span><span class="stat-val">${ht.length}T, WR ${(w/ht.length*100).toFixed(0)}%, BR ${br.toFixed(0)}%, avg <span class="${avg >= 0 ? 'up' : 'dn'}">$${Math.round(avg).toLocaleString()}</span></span></div>`;
+    });
+    document.getElementById('timeStats').innerHTML = timeHtml;
+
+    // Yearly breakdown
+    const byYear = {};
+    trades.forEach(t => {
+        const y = t.date.slice(0, 4);
+        if (!byYear[y]) byYear[y] = [];
+        byYear[y].push(t);
+    });
+    let yearHtml = '<table class="trades-table"><tr><th>Year</th><th>Trades</th><th>WR</th><th>Total P&L</th><th>Avg P&L</th><th>Stop Rate</th><th>Bounce Rate</th></tr>';
+    Object.keys(byYear).sort().forEach(y => {
+        const yt = byYear[y];
+        const w = yt.filter(t => t.pnl > 0).length;
+        const tot = yt.reduce((s, t) => s + t.pnl, 0);
+        const sr = (yt.filter(t => t.stopped).length / yt.length * 100).toFixed(0);
+        const br = (yt.filter(t => t.underlyingMove > 0).length / yt.length * 100).toFixed(0);
+        yearHtml += `<tr><td>${y}</td><td>${yt.length}</td><td>${(w/yt.length*100).toFixed(1)}%</td><td class="${tot>=0?'up':'dn'}" style="color:${tot>=0?'#26a69a':'#ef5350'}">$${tot.toLocaleString()}</td><td>$${Math.round(tot/yt.length).toLocaleString()}</td><td>${sr}%</td><td>${br}%</td></tr>`;
+    });
+    yearHtml += '</table>';
+    document.getElementById('yearlyStats').innerHTML = yearHtml;
+
+    // Equity curve
+    drawEquityCurve(trades);
+
+    // Trade log
+    document.getElementById('tradeCount').textContent = `(${trades.length} trades)`;
+    let logHtml = '<table class="trades-table"><tr><th>Date</th><th>Entry</th><th>Exit</th><th>ON Low</th><th>ON Rally</th><th>Entry Px</th><th>Exit Px</th><th>Move</th><th>P&L</th><th>Hold</th><th>Exit</th></tr>';
+    trades.forEach(t => {
+        const pnlColor = t.pnl >= 0 ? '#26a69a' : '#ef5350';
+        const exitLabel = t.stopped ? '🛑 STOP' : '⏰ TIME';
+        logHtml += `<tr>
+            <td>${t.date}</td>
+            <td>${t.entryTime}</td>
+            <td>${t.exitTime}</td>
+            <td>${t.overnightLow.toFixed(1)}</td>
+            <td>${t.rallyPct.toFixed(2)}%</td>
+            <td>${t.entryPrice.toFixed(1)}</td>
+            <td>${t.exitPrice.toFixed(1)}</td>
+            <td style="color:${t.underlyingMove>=0?'#26a69a':'#ef5350'}">${t.underlyingMove>=0?'+':''}${t.underlyingMove.toFixed(1)}</td>
+            <td style="color:${pnlColor};font-weight:700">${t.pnl>=0?'+':''}$${t.pnl.toLocaleString()}</td>
+            <td>${t.holdMins}m</td>
+            <td>${exitLabel}</td>
+        </tr>`;
+    });
+    logHtml += '</table>';
+    document.getElementById('tradeLog').innerHTML = logHtml;
+}
+
+function drawEquityCurve(trades) {
+    const canvas = document.getElementById('equityCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(0, 0, W, H);
+
+    if (trades.length === 0) return;
+
+    // Cumulative P&L
+    const cumPnl = [];
+    let cum = 0;
+    trades.forEach(t => {
+        cum += t.pnl;
+        cumPnl.push(cum);
+    });
+
+    const maxPnl = Math.max(...cumPnl);
+    const minPnl = Math.min(...cumPnl, 0);
+    const range = maxPnl - minPnl || 1;
+
+    const padL = 80, padR = 20, padT = 20, padB = 30;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    // Grid
+    ctx.strokeStyle = '#1a1a2e';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+        const y = padT + (plotH * i / 4);
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(W - padR, y);
+        ctx.stroke();
+
+        const val = maxPnl - (range * i / 4);
+        ctx.fillStyle = '#666';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('$' + Math.round(val).toLocaleString(), padL - 8, y + 3);
+    }
+
+    // Zero line
+    const zeroY = padT + ((maxPnl - 0) / range) * plotH;
+    ctx.strokeStyle = '#333';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(padL, zeroY);
+    ctx.lineTo(W - padR, zeroY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Curve
+    ctx.strokeStyle = cumPnl[cumPnl.length - 1] >= 0 ? '#26a69a' : '#ef5350';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    cumPnl.forEach((p, i) => {
+        const x = padL + (i / (cumPnl.length - 1)) * plotW;
+        const y = padT + ((maxPnl - p) / range) * plotH;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Fill under curve
+    const lastX = padL + plotW;
+    const lastY = padT + ((maxPnl - cumPnl[cumPnl.length - 1]) / range) * plotH;
+    ctx.lineTo(lastX, zeroY);
+    ctx.lineTo(padL, zeroY);
+    ctx.closePath();
+    ctx.fillStyle = cumPnl[cumPnl.length - 1] >= 0 ? 'rgba(38,166,154,0.1)' : 'rgba(239,83,80,0.1)';
+    ctx.fill();
+}
+</script>
+</body>
+</html>

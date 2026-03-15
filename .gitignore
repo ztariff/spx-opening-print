@@ -1,0 +1,19 @@
+# Large data caches (fetch locally via scripts)
+options_cache/
+qqq_options_cache/
+overnight_cache/
+
+# Large raw data files (too big for git)
+spx_1min_bars.csv
+qqq_1min_bars.csv
+trade_calendar.html
+
+# OS files
+.DS_Store
+__pycache__/
+*.pyc
+
+# Intermediate scratch results
+morning_rip_*.csv
+morning_rip_*.json
+today_*.csv

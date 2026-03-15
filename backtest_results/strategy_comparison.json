@@ -1,0 +1,154 @@
+{
+  "edge_a": {
+    "n": 735,
+    "win_rate": 47.2,
+    "avg_pnl": 3806,
+    "total_pnl": 2797538,
+    "avg_win": 21691,
+    "avg_loss": -12189,
+    "sharpe": 0.181,
+    "max_drawdown": 211280,
+    "profit_factor": 1.59,
+    "avg_hold_mins": 10.5,
+    "exit_reasons": {
+      "time_stop": 365,
+      "stop_loss": 239,
+      "trailing_stop": 131
+    }
+  },
+  "edge_d": {
+    "n": 201,
+    "win_rate": 52.7,
+    "avg_pnl": 6955,
+    "total_pnl": 1398028,
+    "avg_win": 28521,
+    "avg_loss": -17107,
+    "sharpe": 0.245,
+    "max_drawdown": 200353,
+    "profit_factor": 1.86,
+    "avg_hold_mins": 23.8,
+    "exit_reasons": {
+      "time_stop": 129,
+      "stop_loss": 50,
+      "trailing_stop": 22
+    }
+  },
+  "edge_e": {
+    "n": 735,
+    "win_rate": 42.2,
+    "avg_pnl": 2859,
+    "total_pnl": 2101277,
+    "avg_win": 19549,
+    "avg_loss": -9315,
+    "sharpe": 0.169,
+    "max_drawdown": 244470,
+    "profit_factor": 1.53,
+    "avg_hold_mins": 6.7,
+    "exit_reasons": {
+      "time_stop": 179,
+      "stop_loss": 422,
+      "profit_target": 134
+    }
+  },
+  "edge_c": {
+    "n": 117,
+    "win_rate": 59.0,
+    "avg_pnl": -2360,
+    "total_pnl": -276106,
+    "avg_win": 11119,
+    "avg_loss": -21736,
+    "sharpe": -0.108,
+    "max_drawdown": 308088,
+    "profit_factor": 0.74,
+    "avg_hold_mins": 7.3,
+    "exit_reasons": {
+      "trailing_stop": 58,
+      "stop_loss": 59
+    }
+  },
+  "spx_original": {
+    "n": 529,
+    "win_rate": 42.2,
+    "avg_pnl": 2804,
+    "total_pnl": 1483563,
+    "avg_win": 60609,
+    "avg_loss": -39321,
+    "sharpe": 0.047,
+    "max_drawdown": 1271174,
+    "profit_factor": 1.12,
+    "avg_hold_mins": 23.2,
+    "exit_reasons": {
+      "time_stop": 341,
+      "stop_loss": 187,
+      "profit_target": 1
+    }
+  },
+  "edge_b": {
+    "n": 422,
+    "win_rate": 53.8,
+    "avg_pnl": 4039,
+    "total_pnl": 1704530,
+    "avg_win": 18532,
+    "avg_loss": -12832,
+    "sharpe": 0.185,
+    "max_drawdown": 221732,
+    "profit_factor": 1.68,
+    "avg_hold_mins": 9.9,
+    "exit_reasons": {
+      "trailing_stop": 356,
+      "time_stop": 27,
+      "stop_loss": 39
+    }
+  },
+  "edge_f": {
+    "n": 534,
+    "win_rate": 50.9,
+    "avg_pnl": 2793,
+    "total_pnl": 1491282,
+    "avg_win": 18099,
+    "avg_loss": -13098,
+    "sharpe": 0.131,
+    "max_drawdown": 327210,
+    "profit_factor": 1.43,
+    "avg_hold_mins": 9.7,
+    "exit_reasons": {
+      "trailing_stop": 444,
+      "time_stop": 38,
+      "stop_loss": 52
+    }
+  },
+  "vel_panic_fade": {
+    "n": 163,
+    "win_rate": 44.2,
+    "avg_pnl": -703,
+    "total_pnl": -114512,
+    "avg_win": 7865,
+    "avg_loss": -7481,
+    "sharpe": -0.066,
+    "max_drawdown": 273496,
+    "profit_factor": 0.83,
+    "avg_hold_mins": 4.5,
+    "exit_reasons": {
+      "time_stop": 125,
+      "trailing_stop": 24,
+      "stop_loss": 14
+    }
+  },
+  "vel_dip_buy": {
+    "n": 284,
+    "win_rate": 32.7,
+    "avg_pnl": -987,
+    "total_pnl": -280279,
+    "avg_win": 9457,
+    "avg_loss": -6072,
+    "sharpe": -0.102,
+    "max_drawdown": 340325,
+    "profit_factor": 0.76,
+    "avg_hold_mins": 15.4,
+    "exit_reasons": {
+      "time_stop": 56,
+      "stop_loss": 33,
+      "trailing_stop": 195
+    }
+  }
+}

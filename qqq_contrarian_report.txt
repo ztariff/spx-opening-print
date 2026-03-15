@@ -1,0 +1,254 @@
+Loading data...
+  QQQ daily: 2057 | QQQ intraday: 2057 days | VIX: 2083
+================================================================================
+PHASE 1: CONTRARIAN COMBINED FILTER SEARCH (LINEAR)
+================================================================================
+  Total days: 2057
+
+  Baseline (bullish, no filters): N=1060 Sharpe=0.593 WR=62.4% PF=3.29 Total=90.95%
+
+  --- CONTRARIAN COMBINED FILTERS ---
+  Label                                                      N  Sharpe    WR    PF    Total  MaxDD
+  -----------------------------------------------------------------------------------------------
+  Below SMA50                                              323   0.663  65.0  3.72    30.70  0.500  (+0.071)
+  Below SMA200                                             228   0.741  68.0  4.25    23.70  0.400  (+0.148)
+  VIX >= 18                                                552   0.681  65.8  3.83    53.55  0.600  (+0.088)
+  VIX >= 20                                                429   0.686  66.0  3.87    41.85  0.600  (+0.093)
+  Prior day red                                            515   0.655  64.7  3.67    48.33  0.700  (+0.063)
+  Prior big red (<-1%)                                     179   0.916  73.7  5.62    21.70  0.400  (+0.323)
+  Gap down                                                 468   0.665  65.2  3.74    44.43  0.500  (+0.072)
+  Exclude Tuesday                                          854   0.631  63.9  3.52    77.31  0.700  (+0.038)
+  RSI 40-60                                                390   0.684  66.2  3.87    37.86  0.500  (+0.092)
+  Prior range > 1.5%                                       469   0.686  65.9  3.86    45.80  0.400  (+0.093)
+  Below SMA50 + VIX >= 18                                  273   0.725  67.4  4.13    27.90  0.500  (+0.133)
+  Below SMA50 + VIX >= 20                                  228   0.729  67.5  4.16    23.40  0.500  (+0.136)
+  Below SMA50 + prior red                                  192   0.762  68.8  4.40    20.40  0.400  (+0.169)
+  Below SMA50 + prior big red                              101   1.082  78.2  7.18    13.60  0.200  (+0.489)
+  Below SMA50 + gap down                                   164   0.766  68.9  4.43    17.50  0.400  (+0.173)
+  Below SMA50 + no Tue                                     261   0.656  64.8  3.67    24.60  0.400  (+0.064)
+  Below SMA50 + RSI 40-60                                  126   0.684  65.9  3.86    12.30  0.400  (+0.091)
+  Below SMA200 + VIX >= 18                                 212   0.739  67.9  4.24    22.00  0.400  (+0.147)
+  Below SMA200 + prior red                                 130   0.918  73.8  5.65    15.80  0.600  (+0.326)
+  Below SMA200 + gap down                                  120   0.989  75.8  6.28    15.30  0.400  (+0.396)
+  VIX >= 18 + prior red                                    300   0.751  68.3  4.32    31.50  0.600  (+0.159)
+  VIX >= 18 + prior big red                                146   1.023  76.7  6.59    19.00  0.400  (+0.430)
+  VIX >= 18 + gap down                                     267   0.767  68.9  4.43    28.50  0.500  (+0.175)
+  VIX >= 20 + prior red                                    248   0.768  69.0  4.44    26.50  0.600  (+0.176)
+  Prior red + gap down                                     231   0.770  68.8  4.48    24.69  0.500  (+0.178)
+  Prior big red + gap down                                  85   1.107  78.8  7.44    11.60  0.300  (+0.514)
+  Prior range > 1.5% + VIX >= 18                           385   0.758  68.6  4.36    40.70  0.400  (+0.165)
+  Below SMA50 + VIX >= 18 + prior red                      161   0.860  72.0  5.16    18.70  0.400  (+0.267)
+  Below SMA50 + VIX >= 18 + gap down                       137   0.866  72.3  5.21    16.00  0.200  (+0.274)
+  Below SMA50 + VIX >= 18 + no Tue                         223   0.709  66.8  4.03    22.40  0.400  (+0.117)
+  Below SMA50 + prior red + gap down                        95   0.948  74.7  5.92    11.80  0.400  (+0.355)
+  Below SMA50 + prior red + no Tue                         155   0.770  69.0  4.46    16.60  0.300  (+0.177)
+  Below SMA50 + VIX >= 20 + prior red                      138   0.850  71.7  5.08    15.90  0.400  (+0.257)
+  Below SMA200 + VIX >= 18 + prior red                     124   0.903  73.4  5.52    14.90  0.600  (+0.310)
+  VIX >= 18 + prior red + gap down                         140   0.959  75.0  6.00    17.50  0.300  (+0.366)
+  VIX >= 18 + prior red + no Tue                           249   0.772  69.1  4.47    26.70  0.500  (+0.179)
+  VIX >= 20 + prior red + gap down                         122   1.004  76.2  6.41    15.70  0.300  (+0.411)
+  Prior range > 1.5% + VIX >= 18 + gap down                186   0.913  73.7  5.59    22.50  0.300  (+0.320)
+  Below SMA50 + VIX >= 18 + prior red + no Tue             131   0.874  72.5  5.28    15.40  0.300  (+0.282)
+  Below SMA50 + VIX >= 18 + prior red + gap down            79   1.148  79.7  7.87    11.00  0.300  (+0.555)
+  Below SMA50 + VIX >= 18 + gap down + no Tue              118   0.914  73.7  5.61    14.30  0.300  (+0.321)
+  Below SMA200 + VIX >= 18 + prior red + gap down           67   1.549  86.6 12.89    10.70  0.100  (+0.957)
+  VIX >= 18 + prior red + gap down + no Tue                115   1.049  77.4  6.85    15.20  0.300  (+0.456)
+  VIX >= 18 + prior big red + no Tue                       124   1.050  77.4  6.86    16.40  0.300  (+0.458)
+  VIX 18-30 + prior red + gap down                         106   0.941  74.5  5.85    13.10  0.200  (+0.348)
+  [MOMENTUM] Above SMA50 + VIX 16-30 + RSI 35-70           273   0.645  64.5  3.61    25.31  0.600  (+0.052)
+
+  ================================================================================
+  TOP 15 CONTRARIAN COMBOS BY SHARPE
+  ================================================================================
+  # 1: Sharpe 1.549 | Below SMA200 + VIX >= 18 + prior red + gap down
+        N=67 WR=86.6% PF=12.89 Total=10.70% MaxDD=0.100%
+  # 2: Sharpe 1.148 | Below SMA50 + VIX >= 18 + prior red + gap down
+        N=79 WR=79.7% PF=7.87 Total=11.00% MaxDD=0.300%
+  # 3: Sharpe 1.107 | Prior big red + gap down
+        N=85 WR=78.8% PF=7.44 Total=11.60% MaxDD=0.300%
+  # 4: Sharpe 1.082 | Below SMA50 + prior big red
+        N=101 WR=78.2% PF=7.18 Total=13.60% MaxDD=0.200%
+  # 5: Sharpe 1.050 | VIX >= 18 + prior big red + no Tue
+        N=124 WR=77.4% PF=6.86 Total=16.40% MaxDD=0.300%
+  # 6: Sharpe 1.049 | VIX >= 18 + prior red + gap down + no Tue
+        N=115 WR=77.4% PF=6.85 Total=15.20% MaxDD=0.300%
+  # 7: Sharpe 1.023 | VIX >= 18 + prior big red
+        N=146 WR=76.7% PF=6.59 Total=19.00% MaxDD=0.400%
+  # 8: Sharpe 1.004 | VIX >= 20 + prior red + gap down
+        N=122 WR=76.2% PF=6.41 Total=15.70% MaxDD=0.300%
+  # 9: Sharpe 0.989 | Below SMA200 + gap down
+        N=120 WR=75.8% PF=6.28 Total=15.30% MaxDD=0.400%
+  #10: Sharpe 0.959 | VIX >= 18 + prior red + gap down
+        N=140 WR=75.0% PF=6.00 Total=17.50% MaxDD=0.300%
+  #11: Sharpe 0.948 | Below SMA50 + prior red + gap down
+        N=95 WR=74.7% PF=5.92 Total=11.80% MaxDD=0.400%
+  #12: Sharpe 0.941 | VIX 18-30 + prior red + gap down
+        N=106 WR=74.5% PF=5.85 Total=13.10% MaxDD=0.200%
+  #13: Sharpe 0.918 | Below SMA200 + prior red
+        N=130 WR=73.8% PF=5.65 Total=15.80% MaxDD=0.600%
+  #14: Sharpe 0.916 | Prior big red (<-1%)
+        N=179 WR=73.7% PF=5.62 Total=21.70% MaxDD=0.400%
+  #15: Sharpe 0.914 | Below SMA50 + VIX >= 18 + gap down + no Tue
+        N=118 WR=73.7% PF=5.61 Total=14.30% MaxDD=0.300%
+
+  ================================================================================
+  PT/SL SENSITIVITY ON TOP 3 COMBOS
+  ================================================================================
+
+  Combo: Below SMA200 + VIX >= 18 + prior red + gap down
+    PT%   SL%   TS |    N  Sharpe    WR    PF    Total  MaxDD
+  -----------------------------------------------------------------
+   0.15  0.10   30 |   67   1.471  88.1 11.06     8.05  0.100
+   0.20  0.10   30 |   67   1.549  86.6 12.89    10.70  0.100
+   0.25  0.10   30 |   67   1.168  77.6  8.67    11.50  0.300
+   0.30  0.10   30 |   67   1.078  73.1  8.17    12.90  0.300
+   0.20  0.15   30 |   67   1.272  86.6  8.59    10.25  0.150
+   0.20  0.10   60 |   67   1.549  86.6 12.89    10.70  0.100
+   0.30  0.15   30 |   67   0.996  76.1  6.38    12.90  0.450
+   0.30  0.15   60 |   67   0.996  76.1  6.38    12.90  0.450
+   0.40  0.10   30 |   67   0.839  61.2  6.31    13.80  0.300
+   0.20  0.10   15 |   67   1.549  86.6 12.89    10.70  0.100
+   0.15  0.10   15 |   67   1.471  88.1 11.06     8.05  0.100
+
+  Combo: Below SMA50 + VIX >= 18 + prior red + gap down
+    PT%   SL%   TS |    N  Sharpe    WR    PF    Total  MaxDD
+  -----------------------------------------------------------------
+   0.15  0.10   30 |   79   1.100  82.3  6.96     8.35  0.300
+   0.20  0.10   30 |   79   1.148  79.7  7.87    11.00  0.300
+   0.25  0.10   30 |   79   1.009  73.4  6.90    12.40  0.500
+   0.30  0.10   30 |   79   1.004  70.9  7.30    14.50  0.500
+   0.20  0.15   30 |   79   0.912  79.7  5.25    10.20  0.450
+   0.20  0.10   60 |   79   1.148  79.7  7.87    11.00  0.300
+   0.30  0.15   30 |   79   0.902  73.4  5.52    14.25  0.750
+   0.30  0.15   60 |   79   0.902  73.4  5.52    14.25  0.750
+   0.40  0.10   30 |   79   0.770  58.2  5.58    15.10  0.500
+   0.20  0.10   15 |   79   1.148  79.7  7.87    11.00  0.300
+   0.15  0.10   15 |   79   1.100  82.3  6.96     8.35  0.300
+
+  Combo: Prior big red + gap down
+    PT%   SL%   TS |    N  Sharpe    WR    PF    Total  MaxDD
+  -----------------------------------------------------------------
+   0.15  0.10   30 |   85   1.047  81.2  6.47     8.75  0.300
+   0.20  0.10   30 |   85   1.107  78.8  7.44    11.60  0.300
+   0.25  0.10   30 |   85   0.993  72.9  6.74    13.20  0.300
+   0.30  0.10   30 |   85   0.958  69.4  6.81    15.10  0.300
+   0.20  0.15   30 |   85   0.975  81.2  5.75    11.40  0.300
+   0.20  0.10   60 |   85   1.107  78.8  7.44    11.60  0.300
+   0.30  0.15   30 |   85   0.878  72.9  5.34    14.98  0.450
+   0.30  0.15   60 |   85   0.873  72.9  5.32    14.92  0.450
+   0.40  0.10   30 |   85   0.757  57.6  5.44    16.00  0.600
+   0.20  0.10   15 |   85   1.107  78.8  7.44    11.60  0.300
+   0.15  0.10   15 |   85   1.047  81.2  6.47     8.75  0.300
+
+
+================================================================================
+PHASE 2: OPTIONS BACKTEST ON TOP 5 CONTRARIAN COMBOS
+================================================================================
+
+  --- Testing #1: Below SMA200 + VIX >= 18 + prior red + gap down (linear Sharpe=1.549) ---
+  Bullish filtered days: 67
+    Processing 1/67: 2018-11-06...
+    Processing 50/67: 2022-12-14...
+
+    OPTIONS RESULTS: Below SMA200 + VIX >= 18 + prior red + gap down
+    Trades: 61 (skipped 6)
+    Total P&L: $327,516
+    WR: 62.3%  |  PF: 3.04
+    Max DD: $64,683
+    Sharpe: 1.32  |  Calmar: 5.06
+    Avg premium: $75,752
+
+  --- Testing #2: Below SMA50 + VIX >= 18 + prior red + gap down (linear Sharpe=1.148) ---
+  Bullish filtered days: 79
+    Processing 1/79: 2018-03-23...
+    Processing 50/79: 2022-09-22...
+
+    OPTIONS RESULTS: Below SMA50 + VIX >= 18 + prior red + gap down
+    Trades: 70 (skipped 9)
+    Total P&L: $446,172
+    WR: 62.9%  |  PF: 3.46
+    Max DD: $64,683
+    Sharpe: 1.46  |  Calmar: 6.90
+    Avg premium: $76,629
+
+  --- Testing #3: Prior big red + gap down (linear Sharpe=1.107) ---
+  Bullish filtered days: 85
+    Processing 1/85: 2018-03-02...
+    Processing 50/85: 2022-06-10...
+
+    OPTIONS RESULTS: Prior big red + gap down
+    Trades: 73 (skipped 12)
+    Total P&L: $575,182
+    WR: 64.4%  |  PF: 3.88
+    Max DD: $63,975
+    Sharpe: 1.48  |  Calmar: 8.99
+    Avg premium: $80,694
+
+  --- Testing #4: Below SMA50 + prior big red (linear Sharpe=1.082) ---
+  Bullish filtered days: 101
+    Processing 1/101: 2018-03-23...
+    Processing 50/101: 2022-03-15...
+    Processing 100/101: 2025-12-18...
+
+    OPTIONS RESULTS: Below SMA50 + prior big red
+    Trades: 85 (skipped 16)
+    Total P&L: $491,951
+    WR: 65.9%  |  PF: 2.94
+    Max DD: $71,722
+    Sharpe: 1.36  |  Calmar: 6.86
+    Avg premium: $82,723
+
+  --- Testing #5: VIX >= 18 + prior big red + no Tue (linear Sharpe=1.050) ---
+  Bullish filtered days: 124
+    Processing 1/124: 2018-02-22...
+    Processing 50/124: 2021-03-19...
+    Processing 100/124: 2022-12-14...
+
+    OPTIONS RESULTS: VIX >= 18 + prior big red + no Tue
+    Trades: 101 (skipped 23)
+    Total P&L: $575,110
+    WR: 64.4%  |  PF: 2.62
+    Max DD: $56,389
+    Sharpe: 1.29  |  Calmar: 10.20
+    Avg premium: $80,573
+
+
+================================================================================
+BEST CONTRARIAN COMBO: Prior big red + gap down
+================================================================================
+  Trades: 73
+  Total P&L: $575,182
+  Win Rate: 64.4%
+  Profit Factor: 3.88
+  Max Drawdown: $63,975
+  Sharpe Ratio: 1.48
+  Calmar Ratio: 8.99
+
+  COMPARISON:
+  Metric                 QQQ Contrarian     SPX Momentum
+  -------------------------------------------------------
+  Trades                             73              331
+  Total P&L                    $575,182       $6,110,000
+  Win Rate                        64.4%            50.8%
+  Profit Factor                    3.88             2.16
+  Max Drawdown                  $63,975         $319,000
+  Sharpe                           1.48             1.41
+  Calmar                           8.99            19.15
+
+  YEARLY BREAKDOWN:
+  2018:   7 trades, P&L $    70,989, Cum $      70,989, WR 71%
+  2020:  10 trades, P&L $   116,578, Cum $     187,567, WR 60%
+  2021:   6 trades, P&L $    74,884, Cum $     262,451, WR 83%
+  2022:  28 trades, P&L $   219,436, Cum $     481,887, WR 64%
+  2023:   9 trades, P&L $   109,975, Cum $     591,862, WR 89%
+  2024:   4 trades, P&L $    20,676, Cum $     612,538, WR 50%
+  2025:   8 trades, P&L $   -44,941, Cum $     567,597, WR 25%
+  2026:   1 trades, P&L $     7,585, Cum $     575,182, WR 100%
+
+  BY EXIT REASON:
+    Profit Target (QQQ)      :  52 trades, avg $    14,073, WR 87%
+    Stop Loss (QQQ)          :  21 trades, avg $    -7,457, WR 10%
+
+  Trade data saved: /Users/nano/Desktop/Opening Print/qqq_contrarian_trades.json
+
+Report saved to: /Users/nano/Desktop/Opening Print/qqq_contrarian_report.txt

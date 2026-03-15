@@ -1,0 +1,189 @@
+[
+  {
+    "label": "Bull_GapCont|Fri|Std_10_5_15|bull_call_10",
+    "n": 37,
+    "wr": 75.7,
+    "avg": 58.59,
+    "total": 2168.0,
+    "sharpe": 0.591,
+    "mdd": 203.0,
+    "is_sharpe": 0.179,
+    "oos_sharpe": 0.835
+  },
+  {
+    "label": "Bull_GapCont|Fri|Std_10_5_15|bull_call_5",
+    "n": 37,
+    "wr": 78.4,
+    "avg": 32.68,
+    "total": 1209.0,
+    "sharpe": 0.733,
+    "mdd": 76.0,
+    "is_sharpe": 0.838,
+    "oos_sharpe": 0.698
+  },
+  {
+    "label": "Bull_GapCont|Fri|Std_10_5_15|long_call",
+    "n": 37,
+    "wr": 75.7,
+    "avg": 215.3,
+    "total": 7966.0,
+    "sharpe": 0.703,
+    "mdd": 710.0,
+    "is_sharpe": 1.052,
+    "oos_sharpe": 0.618
+  },
+  {
+    "label": "Bull_GapCont|Fri|Std_10_5_15|long_otm_call",
+    "n": 45,
+    "wr": 71.1,
+    "avg": 172.87,
+    "total": 7779.0,
+    "sharpe": 0.611,
+    "mdd": 650.0,
+    "is_sharpe": 0.676,
+    "oos_sharpe": 0.589
+  },
+  {
+    "label": "StrongBody_Bull|VeryLow|Micro_2_1.5_5|bull_call_10",
+    "n": 29,
+    "wr": 86.2,
+    "avg": 42.48,
+    "total": 1232.0,
+    "sharpe": 1.161,
+    "mdd": 23.0,
+    "is_sharpe": 1.145,
+    "oos_sharpe": 1.325
+  },
+  {
+    "label": "StrongBody_Bull|VeryLow|Micro_2_1.5_5|long_call",
+    "n": 29,
+    "wr": 82.8,
+    "avg": 108.28,
+    "total": 3140.0,
+    "sharpe": 1.29,
+    "mdd": 66.0,
+    "is_sharpe": 1.673,
+    "oos_sharpe": 1.205
+  },
+  {
+    "label": "StrongBody_Bull|VeryLow|Micro_2_1.5_5|long_itm_call",
+    "n": 36,
+    "wr": 83.3,
+    "avg": 93.36,
+    "total": 3361.0,
+    "sharpe": 0.84,
+    "mdd": 235.0,
+    "is_sharpe": 0.949,
+    "oos_sharpe": 0.802
+  },
+  {
+    "label": "StrongBody_Bull|VeryLow|Micro_2_1.5_5|long_otm_call",
+    "n": 36,
+    "wr": 72.2,
+    "avg": 64.11,
+    "total": 2308.0,
+    "sharpe": 0.693,
+    "mdd": 184.0,
+    "is_sharpe": 0.875,
+    "oos_sharpe": 0.649
+  },
+  {
+    "label": "StrongBody_PrevBull|Fri|Asym_12_4_20|bull_call_10",
+    "n": 23,
+    "wr": 78.3,
+    "avg": 94.61,
+    "total": 2176.0,
+    "sharpe": 0.951,
+    "mdd": 90.0,
+    "is_sharpe": 0.783,
+    "oos_sharpe": 1.0
+  },
+  {
+    "label": "StrongBody_PrevBull|Fri|Asym_12_4_20|long_call",
+    "n": 23,
+    "wr": 69.6,
+    "avg": 265.61,
+    "total": 6109.0,
+    "sharpe": 0.704,
+    "mdd": 370.0,
+    "is_sharpe": 0.483,
+    "oos_sharpe": 0.805
+  },
+  {
+    "label": "StrongBody_PrevBull|Fri|Asym_12_4_20|long_otm_call",
+    "n": 24,
+    "wr": 75.0,
+    "avg": 213.12,
+    "total": 5115.0,
+    "sharpe": 0.609,
+    "mdd": 438.0,
+    "is_sharpe": 0.426,
+    "oos_sharpe": 0.708
+  },
+  {
+    "label": "StrongBody_Trend|VeryLow|Micro_2_1.5_5|bull_call_10",
+    "n": 28,
+    "wr": 85.7,
+    "avg": 41.21,
+    "total": 1154.0,
+    "sharpe": 1.126,
+    "mdd": 23.0,
+    "is_sharpe": 0.992,
+    "oos_sharpe": 1.325
+  },
+  {
+    "label": "StrongBody_Trend|VeryLow|Micro_2_1.5_5|long_call",
+    "n": 28,
+    "wr": 82.1,
+    "avg": 107.57,
+    "total": 3012.0,
+    "sharpe": 1.26,
+    "mdd": 66.0,
+    "is_sharpe": 1.553,
+    "oos_sharpe": 1.205
+  },
+  {
+    "label": "StrongBody_Trend|VeryLow|Micro_2_1.5_5|long_otm_call",
+    "n": 35,
+    "wr": 71.4,
+    "avg": 63.37,
+    "total": 2218.0,
+    "sharpe": 0.676,
+    "mdd": 184.0,
+    "is_sharpe": 0.824,
+    "oos_sharpe": 0.649
+  },
+  {
+    "label": "TripleBull_BodyTrendPrev|VeryLow|Micro_4_2_8|bull_call_10",
+    "n": 19,
+    "wr": 73.7,
+    "avg": 36.16,
+    "total": 687.0,
+    "sharpe": 0.397,
+    "mdd": 237.0,
+    "is_sharpe": -0.01,
+    "oos_sharpe": 1.075
+  },
+  {
+    "label": "TripleBull_BodyTrendPrev|VeryLow|Micro_4_2_8|long_call",
+    "n": 19,
+    "wr": 78.9,
+    "avg": 126.63,
+    "total": 2406.0,
+    "sharpe": 0.853,
+    "mdd": 190.0,
+    "is_sharpe": 0.602,
+    "oos_sharpe": 0.946
+  },
+  {
+    "label": "TripleBull_BodyTrendPrev|VeryLow|Micro_4_2_8|long_otm_call",
+    "n": 23,
+    "wr": 78.3,
+    "avg": 90.09,
+    "total": 2072.0,
+    "sharpe": 0.732,
+    "mdd": 171.0,
+    "is_sharpe": 0.623,
+    "oos_sharpe": 0.762
+  }
+]

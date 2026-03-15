@@ -1,0 +1,633 @@
+====================================================================================================
+DROP VELOCITY ANALYSIS — DOES SPEED OF MOVE AFFECT MEAN REVERSION EDGE?
+====================================================================================================
+
+Loading data...
+  SPX 1-min days: 2053  |  0DTE-eligible: 867
+
+====================================================================================================
+PHASE 1: DETECT SPIKES WITH VELOCITY METRICS
+====================================================================================================
+
+  [1/867] 2022-09-19: 17 spikes  (vel: 0.047, 0.022, 0.050)
+  [100/867] 2023-02-09: 14 spikes  (vel: 0.027, 0.050, 0.022)
+  [200/867] 2023-07-06: 3 spikes  (vel: 0.044, 0.027, 0.027)
+  [300/867] 2023-11-27: 1 spikes  (vel: 0.021)
+  [400/867] 2024-04-22: 6 spikes  (vel: 0.024, 0.027, 0.032)
+  [500/867] 2024-09-13: 5 spikes  (vel: 0.025, 0.059, 0.026)
+  [600/867] 2025-02-07: 15 spikes  (vel: 0.060, 0.051, 0.035)
+  [700/867] 2025-07-03: 1 spikes  (vel: 0.024)
+  [800/867] 2025-11-24: 4 spikes  (vel: 0.044, 0.053, 0.026)
+
+  Total tradeable spikes: 5829
+  Options found: 5829  |  missed: 0
+
+── Velocity Distribution ──
+  Mean velocity:   0.0489 %/min
+  Median velocity: 0.0346 %/min
+  P25: 0.0264  P75: 0.0500
+  Min:  0.0200  Max: 1.6993
+  Mean elapsed:    8.3 mins  Median: 10.0 mins
+
+  Velocity histogram:
+    0.00-0.03 %/min:  2184  ################################################################################
+    0.03-0.05 %/min:  2186  ################################################################################
+    0.05-0.08 %/min:   898  ################################################################################
+    0.08-0.10 %/min:   160  ################
+    0.10-0.15 %/min:   209  ####################
+    0.15-0.20 %/min:    62  ######
+    0.20-0.30 %/min:    81  ########
+    0.30-0.50 %/min:    36  ###
+    0.50+     %/min:    13  #
+
+  Elapsed time histogram (minutes from peak to trough):
+     1 min:    81  ########
+     2 min:   132  #############
+     3 min:   182  ##################
+     4 min:   216  #####################
+     5 min:   257  #########################
+     6 min:   313  ###############################
+     7 min:   345  ##################################
+     8 min:   536  #####################################################
+     9 min:   753  ###########################################################################
+    10 min:  3014  ################################################################################
+
+====================================================================================================
+PHASE 2: VELOCITY BUCKET ANALYSIS — BUY ATM CALL ON DIP
+====================================================================================================
+
+Simulating trades across all param combos...
+
+  Processing group 200/3621 (2022-10-19)  trades so far: 6972
+  Processing group 400/3621 (2022-11-23)  trades so far: 12950
+  Processing group 600/3621 (2023-01-06)  trades so far: 18508
+  Processing group 800/3621 (2023-03-01)  trades so far: 23562
+  Processing group 1000/3621 (2023-05-04)  trades so far: 28728
+  Processing group 1200/3621 (2023-08-24)  trades so far: 32494
+  Processing group 1400/3621 (2023-11-03)  trades so far: 37156
+  Processing group 1600/3621 (2024-04-09)  trades so far: 40964
+  Processing group 1800/3621 (2024-07-19)  trades so far: 44940
+  Processing group 2000/3621 (2024-09-06)  trades so far: 48846
+  Processing group 2200/3621 (2024-12-20)  trades so far: 52318
+  Processing group 2400/3621 (2025-02-28)  trades so far: 56756
+  Processing group 2600/3621 (2025-04-01)  trades so far: 61194
+  Processing group 2800/3621 (2025-04-17)  trades so far: 65380
+  Processing group 3000/3621 (2025-06-20)  trades so far: 69580
+  Processing group 3200/3621 (2025-10-22)  trades so far: 73136
+  Processing group 3400/3621 (2025-12-16)  trades so far: 77140
+  Processing group 3600/3621 (2026-02-27)  trades so far: 81130
+  Total trade results: 81522
+
+─── 2A: Edge by Velocity Bucket ───
+
+  ══ Drop >= 0.20% ══
+    ── tr10 sl30 ts10 ──
+  ALL VELOCITIES               N= 5823  WR= 43.0%  PF= 1.29  Total=$ 7,396,923  $/tr=$  1,270  DD=$3,082,222  Sh= 1.01  Hold= 4.5m
+  ULTRA-FAST (>0.25)           N=   78  WR= 56.4%  PF= 2.02  Total=$   371,552  $/tr=$  4,763  DD=$  61,423  Sh= 1.86  Hold= 4.7m
+  FAST (0.10-0.25)             N=  323  WR= 57.6%  PF= 3.02  Total=$ 2,174,834  $/tr=$  6,733  DD=$  71,709  Sh= 1.21  Hold= 5.1m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 50.1%  PF= 2.09  Total=$ 4,179,179  $/tr=$  3,958  DD=$ 202,064  Sh= 1.57  Hold= 4.5m
+  SLOW (<0.05)                 N= 4366  WR= 39.9%  PF= 1.03  Total=$   671,358  $/tr=$    154  DD=$3,253,148  Sh= 0.21  Hold= 4.4m
+
+    ── tr10 sl30 ts30 ──
+  ALL VELOCITIES               N= 5823  WR= 42.2%  PF= 1.28  Total=$ 7,346,430  $/tr=$  1,262  DD=$2,998,892  Sh= 0.99  Hold= 5.6m
+  ULTRA-FAST (>0.25)           N=   78  WR= 57.7%  PF= 2.04  Total=$   358,056  $/tr=$  4,590  DD=$  63,951  Sh= 2.00  Hold= 5.2m
+  FAST (0.10-0.25)             N=  323  WR= 56.0%  PF= 2.86  Total=$ 2,102,828  $/tr=$  6,510  DD=$  73,788  Sh= 1.09  Hold= 6.3m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 48.8%  PF= 2.04  Total=$ 4,270,596  $/tr=$  4,044  DD=$ 202,064  Sh= 1.49  Hold= 5.5m
+  SLOW (<0.05)                 N= 4366  WR= 39.3%  PF= 1.03  Total=$   614,950  $/tr=$    141  DD=$3,113,500  Sh= 0.19  Hold= 5.6m
+
+    ── tr10 sl30 ts60 ──
+  ALL VELOCITIES               N= 5823  WR= 42.2%  PF= 1.27  Total=$ 7,215,435  $/tr=$  1,239  DD=$3,009,989  Sh= 0.99  Hold= 5.9m
+  ULTRA-FAST (>0.25)           N=   78  WR= 57.7%  PF= 2.04  Total=$   358,056  $/tr=$  4,590  DD=$  63,951  Sh= 2.00  Hold= 5.2m
+  FAST (0.10-0.25)             N=  323  WR= 56.0%  PF= 2.90  Total=$ 2,141,244  $/tr=$  6,629  DD=$  73,788  Sh= 1.13  Hold= 6.5m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 48.8%  PF= 2.04  Total=$ 4,281,521  $/tr=$  4,054  DD=$ 202,064  Sh= 1.51  Hold= 5.8m
+  SLOW (<0.05)                 N= 4366  WR= 39.3%  PF= 1.02  Total=$   434,614  $/tr=$    100  DD=$3,129,847  Sh= 0.15  Hold= 5.8m
+
+    ── tr10 sl30 ts5 ──
+  ALL VELOCITIES               N= 5823  WR= 45.4%  PF= 1.32  Total=$ 7,525,519  $/tr=$  1,292  DD=$3,163,177  Sh= 1.03  Hold= 3.3m
+  ULTRA-FAST (>0.25)           N=   78  WR= 62.8%  PF= 2.43  Total=$   451,955  $/tr=$  5,794  DD=$  47,383  Sh= 2.18  Hold= 3.5m
+  FAST (0.10-0.25)             N=  323  WR= 62.5%  PF= 3.46  Total=$ 2,222,004  $/tr=$  6,879  DD=$  83,449  Sh= 1.22  Hold= 3.7m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 52.9%  PF= 2.16  Total=$ 3,992,500  $/tr=$  3,781  DD=$ 190,074  Sh= 1.60  Hold= 3.3m
+  SLOW (<0.05)                 N= 4366  WR= 42.1%  PF= 1.05  Total=$   859,060  $/tr=$    197  DD=$3,368,587  Sh= 0.27  Hold= 3.3m
+
+    ── tr10 sl30 ts15 ──
+  ALL VELOCITIES               N= 5823  WR= 42.4%  PF= 1.28  Total=$ 7,377,012  $/tr=$  1,267  DD=$3,027,354  Sh= 0.97  Hold= 5.0m
+  ULTRA-FAST (>0.25)           N=   78  WR= 57.7%  PF= 2.15  Total=$   396,477  $/tr=$  5,083  DD=$  63,951  Sh= 2.02  Hold= 5.0m
+  FAST (0.10-0.25)             N=  323  WR= 56.3%  PF= 3.02  Total=$ 2,196,450  $/tr=$  6,800  DD=$  68,261  Sh= 1.11  Hold= 5.7m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 49.1%  PF= 2.00  Total=$ 4,041,084  $/tr=$  3,827  DD=$ 202,064  Sh= 1.47  Hold= 5.0m
+  SLOW (<0.05)                 N= 4366  WR= 39.4%  PF= 1.04  Total=$   743,001  $/tr=$    170  DD=$3,152,684  Sh= 0.22  Hold= 5.0m
+
+    ── tr10 sl30 ts30 pt50 ──
+  ALL VELOCITIES               N= 5823  WR= 42.2%  PF= 1.25  Total=$ 6,701,819  $/tr=$  1,151  DD=$2,809,422  Sh= 0.97  Hold= 5.2m
+  ULTRA-FAST (>0.25)           N=   78  WR= 57.7%  PF= 2.07  Total=$   367,841  $/tr=$  4,716  DD=$  63,951  Sh= 1.81  Hold= 4.7m
+  FAST (0.10-0.25)             N=  323  WR= 56.0%  PF= 2.84  Total=$ 2,069,616  $/tr=$  6,407  DD=$  73,788  Sh= 1.14  Hold= 5.6m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 48.8%  PF= 1.91  Total=$ 3,735,846  $/tr=$  3,538  DD=$ 190,474  Sh= 1.57  Hold= 5.0m
+  SLOW (<0.05)                 N= 4366  WR= 39.3%  PF= 1.03  Total=$   528,516  $/tr=$    121  DD=$3,044,446  Sh= 0.17  Hold= 5.3m
+
+    ── tr10 sl30 ts30 pt100 ──
+  ALL VELOCITIES               N= 5823  WR= 42.2%  PF= 1.28  Total=$ 7,331,705  $/tr=$  1,259  DD=$2,991,317  Sh= 0.99  Hold= 5.6m
+  ULTRA-FAST (>0.25)           N=   78  WR= 57.7%  PF= 2.03  Total=$   354,558  $/tr=$  4,546  DD=$  63,951  Sh= 1.99  Hold= 5.1m
+  FAST (0.10-0.25)             N=  323  WR= 56.0%  PF= 2.88  Total=$ 2,116,828  $/tr=$  6,554  DD=$  73,788  Sh= 1.08  Hold= 6.2m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 48.8%  PF= 1.98  Total=$ 4,036,803  $/tr=$  3,823  DD=$ 202,064  Sh= 1.47  Hold= 5.4m
+  SLOW (<0.05)                 N= 4366  WR= 39.3%  PF= 1.04  Total=$   823,516  $/tr=$    189  DD=$3,116,780  Sh= 0.25  Hold= 5.5m
+
+    ── tr15 sl40 ts30 ──
+  ALL VELOCITIES               N= 5823  WR= 42.5%  PF= 1.49  Total=$15,741,233  $/tr=$  2,703  DD=$1,203,007  Sh= 1.95  Hold= 9.4m
+  ULTRA-FAST (>0.25)           N=   78  WR= 51.3%  PF= 1.80  Total=$   319,483  $/tr=$  4,096  DD=$  86,602  Sh= 1.24  Hold= 8.8m
+  FAST (0.10-0.25)             N=  323  WR= 56.3%  PF= 3.01  Total=$ 2,641,503  $/tr=$  8,178  DD=$ 127,980  Sh= 1.18  Hold= 9.9m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 47.7%  PF= 2.19  Total=$ 5,982,004  $/tr=$  5,665  DD=$ 201,786  Sh= 1.80  Hold= 9.2m
+  SLOW (<0.05)                 N= 4366  WR= 40.1%  PF= 1.27  Total=$ 6,798,243  $/tr=$  1,557  DD=$1,495,728  Sh= 1.91  Hold= 9.4m
+
+    ── tr5 sl20 ts10 ──
+  ALL VELOCITIES               N= 5823  WR= 39.0%  PF= 0.75  Total=$-5,628,115  $/tr=$   -967  DD=$9,176,277  Sh=-1.08  Hold= 2.3m
+  ULTRA-FAST (>0.25)           N=   78  WR= 38.5%  PF= 0.66  Total=$  -154,193  $/tr=$ -1,977  DD=$ 182,201  Sh=-1.42  Hold= 2.1m
+  FAST (0.10-0.25)             N=  323  WR= 54.8%  PF= 1.83  Total=$   905,580  $/tr=$  2,804  DD=$ 104,521  Sh= 1.07  Hold= 2.7m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 46.7%  PF= 1.23  Total=$   795,620  $/tr=$    753  DD=$ 909,581  Sh= 0.47  Hold= 2.3m
+  SLOW (<0.05)                 N= 4366  WR= 35.9%  PF= 0.59  Total=$-7,175,122  $/tr=$ -1,643  DD=$8,860,038  Sh=-2.31  Hold= 2.3m
+
+    ── tr20 sl50 ts60 ──
+  ALL VELOCITIES               N= 5823  WR= 39.9%  PF= 1.48  Total=$19,438,772  $/tr=$  3,338  DD=$ 859,780  Sh= 2.35  Hold=15.9m
+  ULTRA-FAST (>0.25)           N=   78  WR= 38.5%  PF= 1.77  Total=$   396,760  $/tr=$  5,087  DD=$ 119,242  Sh= 1.13  Hold=14.6m
+  FAST (0.10-0.25)             N=  323  WR= 52.3%  PF= 2.60  Total=$ 2,748,612  $/tr=$  8,510  DD=$ 191,148  Sh= 1.12  Hold=16.0m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 45.4%  PF= 2.14  Total=$ 7,292,828  $/tr=$  6,906  DD=$ 348,611  Sh= 2.05  Hold=15.8m
+  SLOW (<0.05)                 N= 4366  WR= 37.7%  PF= 1.28  Total=$ 9,000,572  $/tr=$  2,062  DD=$ 873,610  Sh= 2.19  Hold=15.9m
+
+    ── tr10 sl30 ts90 ──
+  ALL VELOCITIES               N= 5823  WR= 42.1%  PF= 1.27  Total=$ 7,296,764  $/tr=$  1,253  DD=$3,009,989  Sh= 0.99  Hold= 5.9m
+  ULTRA-FAST (>0.25)           N=   78  WR= 57.7%  PF= 2.04  Total=$   358,056  $/tr=$  4,590  DD=$  63,951  Sh= 2.00  Hold= 5.2m
+  FAST (0.10-0.25)             N=  323  WR= 56.0%  PF= 2.96  Total=$ 2,206,902  $/tr=$  6,833  DD=$  73,788  Sh= 1.16  Hold= 6.6m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 48.8%  PF= 2.02  Total=$ 4,219,019  $/tr=$  3,995  DD=$ 202,064  Sh= 1.50  Hold= 5.8m
+  SLOW (<0.05)                 N= 4366  WR= 39.2%  PF= 1.02  Total=$   512,787  $/tr=$    117  DD=$3,129,847  Sh= 0.17  Hold= 5.9m
+
+    ── tr5 sl20 ts5 ──
+  ALL VELOCITIES               N= 5823  WR= 39.2%  PF= 0.74  Total=$-5,727,121  $/tr=$   -984  DD=$9,194,370  Sh=-1.11  Hold= 1.9m
+  ULTRA-FAST (>0.25)           N=   78  WR= 39.7%  PF= 0.73  Total=$  -119,447  $/tr=$ -1,531  DD=$ 163,764  Sh=-1.22  Hold= 1.8m
+  FAST (0.10-0.25)             N=  323  WR= 55.7%  PF= 1.93  Total=$   970,541  $/tr=$  3,005  DD=$ 108,481  Sh= 1.07  Hold= 2.3m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 47.3%  PF= 1.20  Total=$   678,402  $/tr=$    642  DD=$ 865,687  Sh= 0.43  Hold= 2.0m
+  SLOW (<0.05)                 N= 4366  WR= 36.1%  PF= 0.58  Total=$-7,256,617  $/tr=$ -1,662  DD=$8,937,042  Sh=-2.35  Hold= 1.9m
+
+    ── tr10 sl30 ts10 pt50 ──
+  ALL VELOCITIES               N= 5823  WR= 43.0%  PF= 1.28  Total=$ 7,006,141  $/tr=$  1,203  DD=$2,919,176  Sh= 1.01  Hold= 4.4m
+  ULTRA-FAST (>0.25)           N=   78  WR= 56.4%  PF= 1.95  Total=$   349,117  $/tr=$  4,476  DD=$  61,423  Sh= 1.65  Hold= 4.4m
+  FAST (0.10-0.25)             N=  323  WR= 57.6%  PF= 2.92  Total=$ 2,061,591  $/tr=$  6,383  DD=$  71,709  Sh= 1.22  Hold= 4.8m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 50.1%  PF= 2.03  Total=$ 3,923,484  $/tr=$  3,715  DD=$ 190,474  Sh= 1.62  Hold= 4.4m
+  SLOW (<0.05)                 N= 4366  WR= 39.9%  PF= 1.03  Total=$   671,949  $/tr=$    154  DD=$3,152,868  Sh= 0.21  Hold= 4.3m
+
+    ── tr10 sl30 ts60 pt100 ──
+  ALL VELOCITIES               N= 5823  WR= 42.2%  PF= 1.27  Total=$ 7,272,773  $/tr=$  1,249  DD=$2,990,894  Sh= 0.99  Hold= 5.8m
+  ULTRA-FAST (>0.25)           N=   78  WR= 57.7%  PF= 2.03  Total=$   354,558  $/tr=$  4,546  DD=$  63,951  Sh= 1.99  Hold= 5.1m
+  FAST (0.10-0.25)             N=  323  WR= 56.0%  PF= 2.89  Total=$ 2,130,419  $/tr=$  6,596  DD=$  73,788  Sh= 1.11  Hold= 6.3m
+  MEDIUM (0.05-0.10)           N= 1056  WR= 48.8%  PF= 1.98  Total=$ 4,048,311  $/tr=$  3,834  DD=$ 202,064  Sh= 1.44  Hold= 5.6m
+  SLOW (<0.05)                 N= 4366  WR= 39.3%  PF= 1.04  Total=$   739,485  $/tr=$    169  DD=$3,116,357  Sh= 0.24  Hold= 5.8m
+
+  ══ Drop >= 0.30% ══
+    ── tr10 sl30 ts10 ──
+  ALL VELOCITIES               N= 2442  WR= 42.6%  PF= 1.38  Total=$ 4,083,592  $/tr=$  1,672  DD=$ 993,896  Sh= 0.99  Hold= 4.5m
+  ULTRA-FAST (>0.25)           N=   60  WR= 58.3%  PF= 2.23  Total=$   352,003  $/tr=$  5,867  DD=$  60,650  Sh= 2.21  Hold= 5.0m
+  FAST (0.10-0.25)             N=  206  WR= 60.2%  PF= 3.48  Total=$ 1,686,108  $/tr=$  8,185  DD=$  69,910  Sh= 1.53  Hold= 5.1m
+  MEDIUM (0.05-0.10)           N=  739  WR= 46.0%  PF= 1.82  Total=$ 2,418,092  $/tr=$  3,272  DD=$ 159,817  Sh= 1.43  Hold= 4.5m
+  SLOW (<0.05)                 N= 1437  WR= 37.7%  PF= 0.95  Total=$  -372,611  $/tr=$   -259  DD=$1,201,933  Sh=-0.33  Hold= 4.4m
+
+    ── tr10 sl30 ts30 ──
+  ALL VELOCITIES               N= 2442  WR= 42.2%  PF= 1.35  Total=$ 4,008,982  $/tr=$  1,642  DD=$1,071,226  Sh= 0.93  Hold= 5.7m
+  ULTRA-FAST (>0.25)           N=   60  WR= 60.0%  PF= 2.29  Total=$   338,507  $/tr=$  5,642  DD=$  62,491  Sh= 2.51  Hold= 5.6m
+  FAST (0.10-0.25)             N=  206  WR= 58.7%  PF= 3.33  Total=$ 1,670,757  $/tr=$  8,110  DD=$  69,910  Sh= 1.32  Hold= 6.4m
+  MEDIUM (0.05-0.10)           N=  739  WR= 44.7%  PF= 1.73  Total=$ 2,345,207  $/tr=$  3,173  DD=$ 180,151  Sh= 1.33  Hold= 5.5m
+  SLOW (<0.05)                 N= 1437  WR= 37.9%  PF= 0.95  Total=$  -345,489  $/tr=$   -240  DD=$1,198,008  Sh=-0.31  Hold= 5.6m
+
+    ── tr10 sl30 ts60 ──
+  ALL VELOCITIES               N= 2442  WR= 42.0%  PF= 1.34  Total=$ 3,921,799  $/tr=$  1,606  DD=$1,071,226  Sh= 0.92  Hold= 5.9m
+  ULTRA-FAST (>0.25)           N=   60  WR= 60.0%  PF= 2.29  Total=$   338,507  $/tr=$  5,642  DD=$  62,491  Sh= 2.51  Hold= 5.6m
+  FAST (0.10-0.25)             N=  206  WR= 58.7%  PF= 3.35  Total=$ 1,684,348  $/tr=$  8,176  DD=$  69,910  Sh= 1.36  Hold= 6.6m
+  MEDIUM (0.05-0.10)           N=  739  WR= 44.7%  PF= 1.74  Total=$ 2,377,247  $/tr=$  3,217  DD=$ 180,151  Sh= 1.32  Hold= 5.7m
+  SLOW (<0.05)                 N= 1437  WR= 37.5%  PF= 0.94  Total=$  -478,303  $/tr=$   -333  DD=$1,198,008  Sh=-0.44  Hold= 5.9m
+
+    ── tr10 sl30 ts5 ──
+  ALL VELOCITIES               N= 2442  WR= 45.5%  PF= 1.38  Total=$ 3,762,080  $/tr=$  1,541  DD=$1,283,281  Sh= 0.94  Hold= 3.3m
+  ULTRA-FAST (>0.25)           N=   60  WR= 65.0%  PF= 2.59  Total=$   392,336  $/tr=$  6,539  DD=$  47,383  Sh= 2.52  Hold= 3.7m
+  FAST (0.10-0.25)             N=  206  WR= 66.0%  PF= 4.17  Total=$ 1,721,486  $/tr=$  8,357  DD=$  59,710  Sh= 1.53  Hold= 3.7m
+  MEDIUM (0.05-0.10)           N=  739  WR= 48.6%  PF= 1.82  Total=$ 2,235,405  $/tr=$  3,025  DD=$ 163,547  Sh= 1.41  Hold= 3.3m
+  SLOW (<0.05)                 N= 1437  WR= 40.1%  PF= 0.91  Total=$  -587,147  $/tr=$   -409  DD=$1,424,335  Sh=-0.58  Hold= 3.2m
+
+    ── tr10 sl30 ts15 ──
+  ALL VELOCITIES               N= 2442  WR= 42.2%  PF= 1.35  Total=$ 4,011,524  $/tr=$  1,643  DD=$1,030,951  Sh= 0.92  Hold= 5.1m
+  ULTRA-FAST (>0.25)           N=   60  WR= 60.0%  PF= 2.43  Total=$   376,928  $/tr=$  6,282  DD=$  62,491  Sh= 2.50  Hold= 5.3m
+  FAST (0.10-0.25)             N=  206  WR= 59.2%  PF= 3.52  Total=$ 1,756,237  $/tr=$  8,525  DD=$  69,910  Sh= 1.35  Hold= 5.8m
+  MEDIUM (0.05-0.10)           N=  739  WR= 45.1%  PF= 1.71  Total=$ 2,242,188  $/tr=$  3,034  DD=$ 174,691  Sh= 1.31  Hold= 5.0m
+  SLOW (<0.05)                 N= 1437  WR= 37.5%  PF= 0.95  Total=$  -363,829  $/tr=$   -253  DD=$1,160,199  Sh=-0.31  Hold= 5.0m
+
+    ── tr10 sl30 ts30 pt50 ──
+  ALL VELOCITIES               N= 2442  WR= 42.2%  PF= 1.31  Total=$ 3,531,877  $/tr=$  1,446  DD=$1,006,942  Sh= 0.94  Hold= 5.2m
+  ULTRA-FAST (>0.25)           N=   60  WR= 60.0%  PF= 2.32  Total=$   348,292  $/tr=$  5,805  DD=$  62,491  Sh= 2.15  Hold= 4.9m
+  FAST (0.10-0.25)             N=  206  WR= 58.7%  PF= 3.24  Total=$ 1,608,608  $/tr=$  7,809  DD=$  69,910  Sh= 1.43  Hold= 5.6m
+  MEDIUM (0.05-0.10)           N=  739  WR= 44.7%  PF= 1.61  Total=$ 1,942,153  $/tr=$  2,628  DD=$ 168,914  Sh= 1.41  Hold= 5.0m
+  SLOW (<0.05)                 N= 1437  WR= 37.9%  PF= 0.95  Total=$  -367,176  $/tr=$   -256  DD=$1,224,656  Sh=-0.34  Hold= 5.3m
+
+    ── tr10 sl30 ts30 pt100 ──
+  ALL VELOCITIES               N= 2442  WR= 42.2%  PF= 1.34  Total=$ 3,916,894  $/tr=$  1,604  DD=$1,052,368  Sh= 0.94  Hold= 5.6m
+  ULTRA-FAST (>0.25)           N=   60  WR= 60.0%  PF= 2.27  Total=$   335,009  $/tr=$  5,583  DD=$  62,491  Sh= 2.50  Hold= 5.4m
+  FAST (0.10-0.25)             N=  206  WR= 58.7%  PF= 3.38  Total=$ 1,709,507  $/tr=$  8,299  DD=$  69,910  Sh= 1.32  Hold= 6.3m
+  MEDIUM (0.05-0.10)           N=  739  WR= 44.7%  PF= 1.68  Total=$ 2,187,339  $/tr=$  2,960  DD=$ 180,151  Sh= 1.36  Hold= 5.4m
+  SLOW (<0.05)                 N= 1437  WR= 37.9%  PF= 0.96  Total=$  -314,961  $/tr=$   -219  DD=$1,180,392  Sh=-0.28  Hold= 5.6m
+
+    ── tr15 sl40 ts30 ──
+  ALL VELOCITIES               N= 2442  WR= 42.1%  PF= 1.57  Total=$ 7,835,544  $/tr=$  3,209  DD=$ 659,122  Sh= 1.48  Hold= 9.4m
+  ULTRA-FAST (>0.25)           N=   60  WR= 53.3%  PF= 2.10  Total=$   340,001  $/tr=$  5,667  DD=$  77,034  Sh= 1.69  Hold= 8.9m
+  FAST (0.10-0.25)             N=  206  WR= 60.2%  PF= 3.60  Total=$ 2,143,104  $/tr=$ 10,403  DD=$  80,083  Sh= 1.36  Hold=10.1m
+  MEDIUM (0.05-0.10)           N=  739  WR= 45.1%  PF= 1.91  Total=$ 3,541,377  $/tr=$  4,792  DD=$ 152,838  Sh= 1.66  Hold= 9.0m
+  SLOW (<0.05)                 N= 1437  WR= 37.4%  PF= 1.21  Total=$ 1,811,062  $/tr=$  1,260  DD=$1,027,332  Sh= 1.11  Hold= 9.5m
+
+    ── tr5 sl20 ts10 ──
+  ALL VELOCITIES               N= 2442  WR= 41.8%  PF= 0.89  Total=$-1,066,670  $/tr=$   -437  DD=$2,752,891  Sh=-0.46  Hold= 2.4m
+  ULTRA-FAST (>0.25)           N=   60  WR= 41.7%  PF= 0.69  Total=$  -111,042  $/tr=$ -1,851  DD=$ 141,123  Sh=-1.28  Hold= 2.3m
+  FAST (0.10-0.25)             N=  206  WR= 57.3%  PF= 2.06  Total=$   744,548  $/tr=$  3,614  DD=$ 110,159  Sh= 1.33  Hold= 2.8m
+  MEDIUM (0.05-0.10)           N=  739  WR= 44.2%  PF= 1.15  Total=$   366,450  $/tr=$    496  DD=$ 575,112  Sh= 0.38  Hold= 2.4m
+  SLOW (<0.05)                 N= 1437  WR= 38.3%  PF= 0.64  Total=$-2,066,626  $/tr=$ -1,438  DD=$2,538,331  Sh=-2.11  Hold= 2.4m
+
+    ── tr20 sl50 ts60 ──
+  ALL VELOCITIES               N= 2442  WR= 40.4%  PF= 1.58  Total=$10,025,125  $/tr=$  4,105  DD=$ 498,581  Sh= 1.69  Hold=15.9m
+  ULTRA-FAST (>0.25)           N=   60  WR= 43.3%  PF= 2.03  Total=$   424,405  $/tr=$  7,073  DD=$ 100,234  Sh= 1.39  Hold=13.6m
+  FAST (0.10-0.25)             N=  206  WR= 56.8%  PF= 3.44  Total=$ 2,434,725  $/tr=$ 11,819  DD=$ 111,964  Sh= 1.32  Hold=16.6m
+  MEDIUM (0.05-0.10)           N=  739  WR= 42.5%  PF= 1.91  Total=$ 4,475,731  $/tr=$  6,056  DD=$ 243,247  Sh= 1.67  Hold=15.6m
+  SLOW (<0.05)                 N= 1437  WR= 36.9%  PF= 1.24  Total=$ 2,690,264  $/tr=$  1,872  DD=$ 539,068  Sh= 1.24  Hold=16.0m
+
+    ── tr10 sl30 ts90 ──
+  ALL VELOCITIES               N= 2442  WR= 42.0%  PF= 1.34  Total=$ 3,969,099  $/tr=$  1,625  DD=$1,071,226  Sh= 0.92  Hold= 5.9m
+  ULTRA-FAST (>0.25)           N=   60  WR= 60.0%  PF= 2.29  Total=$   338,507  $/tr=$  5,642  DD=$  62,491  Sh= 2.51  Hold= 5.6m
+  FAST (0.10-0.25)             N=  206  WR= 58.7%  PF= 3.44  Total=$ 1,750,006  $/tr=$  8,495  DD=$  69,910  Sh= 1.40  Hold= 6.7m
+  MEDIUM (0.05-0.10)           N=  739  WR= 44.7%  PF= 1.72  Total=$ 2,328,137  $/tr=$  3,150  DD=$ 180,151  Sh= 1.31  Hold= 5.8m
+  SLOW (<0.05)                 N= 1437  WR= 37.5%  PF= 0.94  Total=$  -447,551  $/tr=$   -311  DD=$1,198,008  Sh=-0.41  Hold= 5.9m
+
+    ── tr5 sl20 ts5 ──
+  ALL VELOCITIES               N= 2442  WR= 42.2%  PF= 0.86  Total=$-1,248,380  $/tr=$   -511  DD=$2,788,524  Sh=-0.57  Hold= 2.0m
+  ULTRA-FAST (>0.25)           N=   60  WR= 41.7%  PF= 0.73  Total=$   -95,642  $/tr=$ -1,594  DD=$ 129,841  Sh=-1.37  Hold= 1.9m
+  FAST (0.10-0.25)             N=  206  WR= 58.3%  PF= 2.21  Total=$   800,307  $/tr=$  3,885  DD=$ 108,559  Sh= 1.41  Hold= 2.4m
+  MEDIUM (0.05-0.10)           N=  739  WR= 44.9%  PF= 1.10  Total=$   251,416  $/tr=$    340  DD=$ 545,998  Sh= 0.28  Hold= 2.0m
+  SLOW (<0.05)                 N= 1437  WR= 38.5%  PF= 0.61  Total=$-2,204,461  $/tr=$ -1,534  DD=$2,594,280  Sh=-2.40  Hold= 2.0m
+
+    ── tr10 sl30 ts10 pt50 ──
+  ALL VELOCITIES               N= 2442  WR= 42.6%  PF= 1.34  Total=$ 3,653,144  $/tr=$  1,496  DD=$ 977,926  Sh= 0.98  Hold= 4.4m
+  ULTRA-FAST (>0.25)           N=   60  WR= 58.3%  PF= 2.16  Total=$   329,568  $/tr=$  5,493  DD=$  60,650  Sh= 1.91  Hold= 4.5m
+  FAST (0.10-0.25)             N=  206  WR= 60.2%  PF= 3.32  Total=$ 1,581,516  $/tr=$  7,677  DD=$  69,910  Sh= 1.54  Hold= 4.9m
+  MEDIUM (0.05-0.10)           N=  739  WR= 46.0%  PF= 1.74  Total=$ 2,174,012  $/tr=$  2,942  DD=$ 159,817  Sh= 1.54  Hold= 4.4m
+  SLOW (<0.05)                 N= 1437  WR= 37.7%  PF= 0.94  Total=$  -431,952  $/tr=$   -301  DD=$1,211,802  Sh=-0.40  Hold= 4.3m
+
+    ── tr10 sl30 ts60 pt100 ──
+  ALL VELOCITIES               N= 2442  WR= 42.0%  PF= 1.33  Total=$ 3,815,912  $/tr=$  1,563  DD=$1,052,368  Sh= 0.93  Hold= 5.8m
+  ULTRA-FAST (>0.25)           N=   60  WR= 60.0%  PF= 2.27  Total=$   335,009  $/tr=$  5,583  DD=$  62,491  Sh= 2.50  Hold= 5.4m
+  FAST (0.10-0.25)             N=  206  WR= 58.7%  PF= 3.40  Total=$ 1,723,098  $/tr=$  8,365  DD=$  69,910  Sh= 1.37  Hold= 6.5m
+  MEDIUM (0.05-0.10)           N=  739  WR= 44.7%  PF= 1.67  Total=$ 2,169,920  $/tr=$  2,936  DD=$ 180,151  Sh= 1.34  Hold= 5.5m
+  SLOW (<0.05)                 N= 1437  WR= 37.5%  PF= 0.94  Total=$  -412,115  $/tr=$   -287  DD=$1,180,392  Sh=-0.37  Hold= 5.8m
+
+  ══ Drop >= 0.40% ══
+    ── tr10 sl30 ts10 ──
+  ALL VELOCITIES               N= 1122  WR= 42.9%  PF= 1.55  Total=$ 2,722,450  $/tr=$  2,426  DD=$ 306,836  Sh= 0.98  Hold= 4.6m
+  ULTRA-FAST (>0.25)           N=   42  WR= 52.4%  PF= 1.93  Total=$   205,468  $/tr=$  4,892  DD=$  66,330  Sh= 1.92  Hold= 5.0m
+  FAST (0.10-0.25)             N=  153  WR= 58.8%  PF= 3.55  Total=$ 1,302,090  $/tr=$  8,510  DD=$  54,551  Sh= 1.54  Hold= 5.0m
+  MEDIUM (0.05-0.10)           N=  567  WR= 42.9%  PF= 1.68  Total=$ 1,661,582  $/tr=$  2,930  DD=$ 225,762  Sh= 1.22  Hold= 4.6m
+  SLOW (<0.05)                 N=  360  WR= 35.0%  PF= 0.75  Total=$  -446,690  $/tr=$ -1,241  DD=$ 536,552  Sh=-1.16  Hold= 4.4m
+
+    ── tr10 sl30 ts30 ──
+  ALL VELOCITIES               N= 1122  WR= 42.5%  PF= 1.50  Total=$ 2,668,398  $/tr=$  2,378  DD=$ 341,196  Sh= 0.89  Hold= 5.7m
+  ULTRA-FAST (>0.25)           N=   42  WR= 54.8%  PF= 2.09  Total=$   217,892  $/tr=$  5,188  DD=$  66,330  Sh= 2.40  Hold= 5.7m
+  FAST (0.10-0.25)             N=  153  WR= 56.9%  PF= 3.48  Total=$ 1,353,317  $/tr=$  8,845  DD=$  81,581  Sh= 1.31  Hold= 6.5m
+  MEDIUM (0.05-0.10)           N=  567  WR= 41.6%  PF= 1.61  Total=$ 1,631,903  $/tr=$  2,878  DD=$ 270,202  Sh= 1.15  Hold= 5.7m
+  SLOW (<0.05)                 N=  360  WR= 36.4%  PF= 0.72  Total=$  -534,714  $/tr=$ -1,485  DD=$ 604,362  Sh=-1.26  Hold= 5.4m
+
+    ── tr10 sl30 ts60 ──
+  ALL VELOCITIES               N= 1122  WR= 42.4%  PF= 1.49  Total=$ 2,678,435  $/tr=$  2,387  DD=$ 341,196  Sh= 0.90  Hold= 6.0m
+  ULTRA-FAST (>0.25)           N=   42  WR= 54.8%  PF= 2.09  Total=$   217,892  $/tr=$  5,188  DD=$  66,330  Sh= 2.40  Hold= 5.7m
+  FAST (0.10-0.25)             N=  153  WR= 56.9%  PF= 3.50  Total=$ 1,366,908  $/tr=$  8,934  DD=$  81,581  Sh= 1.37  Hold= 6.8m
+  MEDIUM (0.05-0.10)           N=  567  WR= 41.6%  PF= 1.61  Total=$ 1,663,943  $/tr=$  2,935  DD=$ 270,202  Sh= 1.12  Hold= 6.0m
+  SLOW (<0.05)                 N=  360  WR= 36.1%  PF= 0.71  Total=$  -570,308  $/tr=$ -1,584  DD=$ 639,956  Sh=-1.27  Hold= 5.6m
+
+    ── tr10 sl30 ts5 ──
+  ALL VELOCITIES               N= 1122  WR= 46.8%  PF= 1.60  Total=$ 2,716,770  $/tr=$  2,421  DD=$ 267,972  Sh= 1.02  Hold= 3.4m
+  ULTRA-FAST (>0.25)           N=   42  WR= 61.9%  PF= 2.56  Total=$   288,535  $/tr=$  6,870  DD=$  54,290  Sh= 2.56  Hold= 3.7m
+  FAST (0.10-0.25)             N=  153  WR= 64.7%  PF= 4.21  Total=$ 1,341,074  $/tr=$  8,765  DD=$  48,661  Sh= 1.64  Hold= 3.6m
+  MEDIUM (0.05-0.10)           N=  567  WR= 45.3%  PF= 1.58  Total=$ 1,316,685  $/tr=$  2,322  DD=$ 200,315  Sh= 1.13  Hold= 3.4m
+  SLOW (<0.05)                 N=  360  WR= 39.7%  PF= 0.86  Total=$  -229,524  $/tr=$   -638  DD=$ 395,003  Sh=-0.66  Hold= 3.2m
+
+    ── tr10 sl30 ts15 ──
+  ALL VELOCITIES               N= 1122  WR= 42.5%  PF= 1.50  Total=$ 2,663,312  $/tr=$  2,374  DD=$ 315,576  Sh= 0.89  Hold= 5.2m
+  ULTRA-FAST (>0.25)           N=   42  WR= 54.8%  PF= 2.19  Total=$   238,463  $/tr=$  5,678  DD=$  66,330  Sh= 2.26  Hold= 5.4m
+  FAST (0.10-0.25)             N=  153  WR= 57.5%  PF= 3.73  Total=$ 1,440,856  $/tr=$  9,417  DD=$  62,556  Sh= 1.36  Hold= 5.8m
+  MEDIUM (0.05-0.10)           N=  567  WR= 42.0%  PF= 1.58  Total=$ 1,523,955  $/tr=$  2,688  DD=$ 264,742  Sh= 1.10  Hold= 5.2m
+  SLOW (<0.05)                 N=  360  WR= 35.6%  PF= 0.72  Total=$  -539,962  $/tr=$ -1,500  DD=$ 623,886  Sh=-1.36  Hold= 4.9m
+
+    ── tr10 sl30 ts30 pt50 ──
+  ALL VELOCITIES               N= 1122  WR= 42.5%  PF= 1.40  Total=$ 2,149,435  $/tr=$  1,916  DD=$ 328,422  Sh= 0.90  Hold= 5.2m
+  ULTRA-FAST (>0.25)           N=   42  WR= 54.8%  PF= 2.14  Total=$   228,787  $/tr=$  5,447  DD=$  66,330  Sh= 2.32  Hold= 5.0m
+  FAST (0.10-0.25)             N=  153  WR= 56.9%  PF= 3.36  Total=$ 1,291,370  $/tr=$  8,440  DD=$  81,581  Sh= 1.46  Hold= 5.5m
+  MEDIUM (0.05-0.10)           N=  567  WR= 41.6%  PF= 1.44  Total=$ 1,172,523  $/tr=$  2,068  DD=$ 258,292  Sh= 1.17  Hold= 5.2m
+  SLOW (<0.05)                 N=  360  WR= 36.4%  PF= 0.72  Total=$  -543,245  $/tr=$ -1,509  DD=$ 619,757  Sh=-1.51  Hold= 5.2m
+
+    ── tr10 sl30 ts30 pt100 ──
+  ALL VELOCITIES               N= 1122  WR= 42.5%  PF= 1.47  Total=$ 2,511,873  $/tr=$  2,239  DD=$ 341,196  Sh= 0.89  Hold= 5.6m
+  ULTRA-FAST (>0.25)           N=   42  WR= 54.8%  PF= 2.07  Total=$   214,394  $/tr=$  5,105  DD=$  66,330  Sh= 2.41  Hold= 5.5m
+  FAST (0.10-0.25)             N=  153  WR= 56.9%  PF= 3.55  Total=$ 1,392,067  $/tr=$  9,098  DD=$  81,581  Sh= 1.32  Hold= 6.4m
+  MEDIUM (0.05-0.10)           N=  567  WR= 41.6%  PF= 1.55  Total=$ 1,470,015  $/tr=$  2,593  DD=$ 270,202  Sh= 1.18  Hold= 5.6m
+  SLOW (<0.05)                 N=  360  WR= 36.4%  PF= 0.71  Total=$  -564,603  $/tr=$ -1,568  DD=$ 604,362  Sh=-1.39  Hold= 5.4m
+
+    ── tr15 sl40 ts30 ──
+  ALL VELOCITIES               N= 1122  WR= 42.2%  PF= 1.68  Total=$ 4,469,201  $/tr=$  3,983  DD=$ 195,935  Sh= 1.18  Hold= 9.3m
+  ULTRA-FAST (>0.25)           N=   42  WR= 50.0%  PF= 1.71  Total=$   183,027  $/tr=$  4,358  DD=$  82,500  Sh= 1.16  Hold= 8.5m
+  FAST (0.10-0.25)             N=  153  WR= 60.1%  PF= 4.15  Total=$ 1,924,890  $/tr=$ 12,581  DD=$  88,969  Sh= 1.40  Hold=10.4m
+  MEDIUM (0.05-0.10)           N=  567  WR= 41.8%  PF= 1.69  Total=$ 2,310,365  $/tr=$  4,075  DD=$ 181,248  Sh= 1.46  Hold= 9.0m
+  SLOW (<0.05)                 N=  360  WR= 34.4%  PF= 1.02  Total=$    50,919  $/tr=$    141  DD=$ 354,344  Sh= 0.09  Hold= 9.4m
+
+    ── tr5 sl20 ts10 ──
+  ALL VELOCITIES               N= 1122  WR= 43.3%  PF= 0.97  Total=$  -142,934  $/tr=$   -127  DD=$1,053,435  Sh=-0.13  Hold= 2.4m
+  ULTRA-FAST (>0.25)           N=   42  WR= 38.1%  PF= 0.78  Total=$   -62,423  $/tr=$ -1,486  DD=$ 107,563  Sh=-0.71  Hold= 2.6m
+  FAST (0.10-0.25)             N=  153  WR= 56.2%  PF= 1.95  Total=$   522,958  $/tr=$  3,418  DD=$  66,045  Sh= 1.35  Hold= 2.6m
+  MEDIUM (0.05-0.10)           N=  567  WR= 42.7%  PF= 1.01  Total=$    24,875  $/tr=$     44  DD=$ 482,456  Sh= 0.04  Hold= 2.4m
+  SLOW (<0.05)                 N=  360  WR= 39.4%  PF= 0.57  Total=$  -628,344  $/tr=$ -1,745  DD=$ 699,470  Sh=-2.12  Hold= 2.4m
+
+    ── tr20 sl50 ts60 ──
+  ALL VELOCITIES               N= 1122  WR= 40.1%  PF= 1.60  Total=$ 5,067,409  $/tr=$  4,516  DD=$ 342,465  Sh= 1.18  Hold=15.6m
+  ULTRA-FAST (>0.25)           N=   42  WR= 40.5%  PF= 1.91  Total=$   311,576  $/tr=$  7,418  DD=$  96,780  Sh= 1.19  Hold=13.2m
+  FAST (0.10-0.25)             N=  153  WR= 58.2%  PF= 3.95  Total=$ 2,137,084  $/tr=$ 13,968  DD=$  88,838  Sh= 1.35  Hold=16.9m
+  MEDIUM (0.05-0.10)           N=  567  WR= 39.9%  PF= 1.63  Total=$ 2,652,280  $/tr=$  4,678  DD=$ 261,600  Sh= 1.50  Hold=15.4m
+  SLOW (<0.05)                 N=  360  WR= 32.8%  PF= 0.99  Total=$   -33,531  $/tr=$    -93  DD=$ 314,105  Sh=-0.04  Hold=15.6m
+
+    ── tr10 sl30 ts90 ──
+  ALL VELOCITIES               N= 1122  WR= 42.4%  PF= 1.50  Total=$ 2,694,983  $/tr=$  2,402  DD=$ 341,196  Sh= 0.91  Hold= 6.0m
+  ULTRA-FAST (>0.25)           N=   42  WR= 54.8%  PF= 2.09  Total=$   217,892  $/tr=$  5,188  DD=$  66,330  Sh= 2.40  Hold= 5.7m
+  FAST (0.10-0.25)             N=  153  WR= 56.9%  PF= 3.62  Total=$ 1,432,566  $/tr=$  9,363  DD=$  81,581  Sh= 1.43  Hold= 7.0m
+  MEDIUM (0.05-0.10)           N=  567  WR= 41.6%  PF= 1.59  Total=$ 1,614,833  $/tr=$  2,848  DD=$ 270,202  Sh= 1.10  Hold= 6.1m
+  SLOW (<0.05)                 N=  360  WR= 36.1%  PF= 0.71  Total=$  -570,308  $/tr=$ -1,584  DD=$ 639,956  Sh=-1.27  Hold= 5.6m
+
+    ── tr5 sl20 ts5 ──
+  ALL VELOCITIES               N= 1122  WR= 44.0%  PF= 0.97  Total=$  -109,657  $/tr=$    -98  DD=$1,044,246  Sh=-0.09  Hold= 2.1m
+  ULTRA-FAST (>0.25)           N=   42  WR= 38.1%  PF= 0.83  Total=$   -47,023  $/tr=$ -1,120  DD=$  90,523  Sh=-0.70  Hold= 2.2m
+  FAST (0.10-0.25)             N=  153  WR= 57.5%  PF= 2.18  Total=$   597,407  $/tr=$  3,905  DD=$  66,045  Sh= 1.50  Hold= 2.3m
+  MEDIUM (0.05-0.10)           N=  567  WR= 43.4%  PF= 0.96  Total=$   -80,943  $/tr=$   -143  DD=$ 447,422  Sh=-0.13  Hold= 2.0m
+  SLOW (<0.05)                 N=  360  WR= 40.0%  PF= 0.60  Total=$  -579,098  $/tr=$ -1,609  DD=$ 668,367  Sh=-1.77  Hold= 2.0m
+
+    ── tr10 sl30 ts10 pt50 ──
+  ALL VELOCITIES               N= 1122  WR= 42.9%  PF= 1.46  Total=$ 2,278,649  $/tr=$  2,031  DD=$ 291,122  Sh= 0.98  Hold= 4.5m
+  ULTRA-FAST (>0.25)           N=   42  WR= 52.4%  PF= 1.92  Total=$   204,813  $/tr=$  4,876  DD=$  66,330  Sh= 1.90  Hold= 4.6m
+  FAST (0.10-0.25)             N=  153  WR= 58.8%  PF= 3.39  Total=$ 1,218,500  $/tr=$  7,964  DD=$  54,551  Sh= 1.57  Hold= 4.8m
+  MEDIUM (0.05-0.10)           N=  567  WR= 42.9%  PF= 1.56  Total=$ 1,377,478  $/tr=$  2,429  DD=$ 213,852  Sh= 1.35  Hold= 4.4m
+  SLOW (<0.05)                 N=  360  WR= 35.0%  PF= 0.71  Total=$  -522,142  $/tr=$ -1,450  DD=$ 557,562  Sh=-1.47  Hold= 4.4m
+
+    ── tr10 sl30 ts60 pt100 ──
+  ALL VELOCITIES               N= 1122  WR= 42.4%  PF= 1.46  Total=$ 2,472,451  $/tr=$  2,204  DD=$ 341,196  Sh= 0.90  Hold= 5.8m
+  ULTRA-FAST (>0.25)           N=   42  WR= 54.8%  PF= 2.07  Total=$   214,394  $/tr=$  5,105  DD=$  66,330  Sh= 2.41  Hold= 5.5m
+  FAST (0.10-0.25)             N=  153  WR= 56.9%  PF= 3.57  Total=$ 1,405,658  $/tr=$  9,187  DD=$  81,581  Sh= 1.38  Hold= 6.7m
+  MEDIUM (0.05-0.10)           N=  567  WR= 41.6%  PF= 1.53  Total=$ 1,452,596  $/tr=$  2,562  DD=$ 270,202  Sh= 1.17  Hold= 5.7m
+  SLOW (<0.05)                 N=  360  WR= 36.1%  PF= 0.69  Total=$  -600,197  $/tr=$ -1,667  DD=$ 639,956  Sh=-1.39  Hold= 5.6m
+
+  ══ Drop >= 0.50% ══
+    ── tr10 sl30 ts10 ──
+  ALL VELOCITIES               N=  559  WR= 44.4%  PF= 1.86  Total=$ 2,167,503  $/tr=$  3,877  DD=$ 210,046  Sh= 1.06  Hold= 4.7m
+  ULTRA-FAST (>0.25)           N=   36  WR= 52.8%  PF= 1.99  Total=$   191,981  $/tr=$  5,333  DD=$  66,330  Sh= 1.92  Hold= 5.1m
+  FAST (0.10-0.25)             N=  117  WR= 54.7%  PF= 2.82  Total=$   795,047  $/tr=$  6,795  DD=$  70,869  Sh= 1.29  Hold= 5.0m
+  MEDIUM (0.05-0.10)           N=  406  WR= 40.6%  PF= 1.63  Total=$ 1,180,475  $/tr=$  2,908  DD=$ 212,378  Sh= 1.09  Hold= 4.6m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts30 ──
+  ALL VELOCITIES               N=  559  WR= 42.9%  PF= 1.86  Total=$ 2,300,953  $/tr=$  4,116  DD=$ 236,536  Sh= 1.01  Hold= 5.9m
+  ULTRA-FAST (>0.25)           N=   36  WR= 55.6%  PF= 2.19  Total=$   204,405  $/tr=$  5,678  DD=$  66,330  Sh= 2.44  Hold= 5.9m
+  FAST (0.10-0.25)             N=  117  WR= 53.0%  PF= 3.07  Total=$   917,917  $/tr=$  7,845  DD=$  70,869  Sh= 1.18  Hold= 6.5m
+  MEDIUM (0.05-0.10)           N=  406  WR= 38.9%  PF= 1.57  Total=$ 1,178,631  $/tr=$  2,903  DD=$ 238,868  Sh= 1.07  Hold= 5.7m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts60 ──
+  ALL VELOCITIES               N=  559  WR= 42.9%  PF= 1.88  Total=$ 2,371,686  $/tr=$  4,243  DD=$ 236,536  Sh= 1.04  Hold= 6.1m
+  ULTRA-FAST (>0.25)           N=   36  WR= 55.6%  PF= 2.19  Total=$   204,405  $/tr=$  5,678  DD=$  66,330  Sh= 2.44  Hold= 5.9m
+  FAST (0.10-0.25)             N=  117  WR= 53.0%  PF= 3.10  Total=$   931,508  $/tr=$  7,962  DD=$  70,869  Sh= 1.25  Hold= 6.8m
+  MEDIUM (0.05-0.10)           N=  406  WR= 38.9%  PF= 1.59  Total=$ 1,235,773  $/tr=$  3,044  DD=$ 238,868  Sh= 1.07  Hold= 5.9m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts5 ──
+  ALL VELOCITIES               N=  559  WR= 47.4%  PF= 1.86  Total=$ 1,969,089  $/tr=$  3,523  DD=$ 213,239  Sh= 1.04  Hold= 3.5m
+  ULTRA-FAST (>0.25)           N=   36  WR= 66.7%  PF= 3.01  Total=$   301,804  $/tr=$  8,383  DD=$  54,290  Sh= 2.98  Hold= 3.8m
+  FAST (0.10-0.25)             N=  117  WR= 60.7%  PF= 3.31  Total=$   847,073  $/tr=$  7,240  DD=$  48,661  Sh= 1.49  Hold= 3.6m
+  MEDIUM (0.05-0.10)           N=  406  WR= 41.9%  PF= 1.46  Total=$   820,212  $/tr=$  2,020  DD=$ 206,363  Sh= 0.94  Hold= 3.4m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts15 ──
+  ALL VELOCITIES               N=  559  WR= 43.3%  PF= 1.85  Total=$ 2,258,605  $/tr=$  4,040  DD=$ 236,536  Sh= 0.99  Hold= 5.3m
+  ULTRA-FAST (>0.25)           N=   36  WR= 55.6%  PF= 2.31  Total=$   224,976  $/tr=$  6,249  DD=$  66,330  Sh= 2.29  Hold= 5.5m
+  FAST (0.10-0.25)             N=  117  WR= 53.0%  PF= 3.12  Total=$   938,402  $/tr=$  8,021  DD=$  70,869  Sh= 1.22  Hold= 5.6m
+  MEDIUM (0.05-0.10)           N=  406  WR= 39.4%  PF= 1.53  Total=$ 1,095,227  $/tr=$  2,698  DD=$ 238,868  Sh= 1.02  Hold= 5.2m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts30 pt50 ──
+  ALL VELOCITIES               N=  559  WR= 42.9%  PF= 1.65  Total=$ 1,741,209  $/tr=$  3,115  DD=$ 236,226  Sh= 1.03  Hold= 5.2m
+  ULTRA-FAST (>0.25)           N=   36  WR= 55.6%  PF= 2.25  Total=$   215,300  $/tr=$  5,981  DD=$  66,330  Sh= 2.35  Hold= 5.1m
+  FAST (0.10-0.25)             N=  117  WR= 53.0%  PF= 2.84  Total=$   815,587  $/tr=$  6,971  DD=$  70,869  Sh= 1.30  Hold= 5.4m
+  MEDIUM (0.05-0.10)           N=  406  WR= 38.9%  PF= 1.34  Total=$   710,322  $/tr=$  1,750  DD=$ 238,558  Sh= 1.05  Hold= 5.2m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts30 pt100 ──
+  ALL VELOCITIES               N=  559  WR= 42.9%  PF= 1.80  Total=$ 2,155,459  $/tr=$  3,856  DD=$ 236,536  Sh= 1.01  Hold= 5.7m
+  ULTRA-FAST (>0.25)           N=   36  WR= 55.6%  PF= 2.17  Total=$   200,907  $/tr=$  5,581  DD=$  66,330  Sh= 2.45  Hold= 5.6m
+  FAST (0.10-0.25)             N=  117  WR= 53.0%  PF= 3.16  Total=$   956,667  $/tr=$  8,177  DD=$  70,869  Sh= 1.20  Hold= 6.3m
+  MEDIUM (0.05-0.10)           N=  406  WR= 38.9%  PF= 1.48  Total=$   997,885  $/tr=$  2,458  DD=$ 238,868  Sh= 1.08  Hold= 5.5m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr15 sl40 ts30 ──
+  ALL VELOCITIES               N=  559  WR= 44.7%  PF= 1.97  Total=$ 3,287,282  $/tr=$  5,881  DD=$ 242,875  Sh= 1.12  Hold= 9.3m
+  ULTRA-FAST (>0.25)           N=   36  WR= 50.0%  PF= 1.93  Total=$   203,580  $/tr=$  5,655  DD=$  82,500  Sh= 1.40  Hold= 8.8m
+  FAST (0.10-0.25)             N=  117  WR= 57.3%  PF= 3.79  Total=$ 1,471,497  $/tr=$ 12,577  DD=$ 119,360  Sh= 1.42  Hold=10.7m
+  MEDIUM (0.05-0.10)           N=  406  WR= 40.6%  PF= 1.61  Total=$ 1,612,205  $/tr=$  3,971  DD=$ 171,814  Sh= 1.17  Hold= 8.9m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr5 sl20 ts10 ──
+  ALL VELOCITIES               N=  559  WR= 44.2%  PF= 1.09  Total=$   207,782  $/tr=$    372  DD=$ 413,491  Sh= 0.30  Hold= 2.5m
+  ULTRA-FAST (>0.25)           N=   36  WR= 38.9%  PF= 0.76  Total=$   -60,143  $/tr=$ -1,671  DD=$  92,083  Sh=-0.78  Hold= 2.7m
+  FAST (0.10-0.25)             N=  117  WR= 55.6%  PF= 1.82  Total=$   373,738  $/tr=$  3,194  DD=$  92,734  Sh= 1.25  Hold= 2.7m
+  MEDIUM (0.05-0.10)           N=  406  WR= 41.4%  PF= 0.93  Total=$  -105,813  $/tr=$   -261  DD=$ 372,094  Sh=-0.23  Hold= 2.4m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr20 sl50 ts60 ──
+  ALL VELOCITIES               N=  559  WR= 42.8%  PF= 1.87  Total=$ 3,679,101  $/tr=$  6,582  DD=$ 218,712  Sh= 1.11  Hold=15.5m
+  ULTRA-FAST (>0.25)           N=   36  WR= 44.4%  PF= 2.23  Total=$   355,739  $/tr=$  9,882  DD=$  96,780  Sh= 1.49  Hold=13.5m
+  FAST (0.10-0.25)             N=  117  WR= 55.6%  PF= 3.77  Total=$ 1,644,980  $/tr=$ 14,060  DD=$  88,466  Sh= 1.29  Hold=17.2m
+  MEDIUM (0.05-0.10)           N=  406  WR= 38.9%  PF= 1.50  Total=$ 1,678,382  $/tr=$  4,134  DD=$ 259,173  Sh= 1.26  Hold=15.2m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts90 ──
+  ALL VELOCITIES               N=  559  WR= 42.9%  PF= 1.89  Total=$ 2,388,234  $/tr=$  4,272  DD=$ 236,536  Sh= 1.05  Hold= 6.2m
+  ULTRA-FAST (>0.25)           N=   36  WR= 55.6%  PF= 2.19  Total=$   204,405  $/tr=$  5,678  DD=$  66,330  Sh= 2.44  Hold= 5.9m
+  FAST (0.10-0.25)             N=  117  WR= 53.0%  PF= 3.25  Total=$   997,166  $/tr=$  8,523  DD=$  70,869  Sh= 1.32  Hold= 7.1m
+  MEDIUM (0.05-0.10)           N=  406  WR= 38.9%  PF= 1.57  Total=$ 1,186,663  $/tr=$  2,923  DD=$ 238,868  Sh= 1.05  Hold= 6.0m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr5 sl20 ts5 ──
+  ALL VELOCITIES               N=  559  WR= 44.9%  PF= 1.10  Total=$   234,683  $/tr=$    420  DD=$ 398,617  Sh= 0.32  Hold= 2.1m
+  ULTRA-FAST (>0.25)           N=   36  WR= 41.7%  PF= 0.96  Total=$    -8,497  $/tr=$   -236  DD=$  75,043  Sh=-0.13  Hold= 2.3m
+  FAST (0.10-0.25)             N=  117  WR= 57.3%  PF= 2.04  Total=$   437,157  $/tr=$  3,736  DD=$  79,164  Sh= 1.51  Hold= 2.3m
+  MEDIUM (0.05-0.10)           N=  406  WR= 41.6%  PF= 0.88  Total=$  -193,977  $/tr=$   -478  DD=$ 370,370  Sh=-0.47  Hold= 2.0m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts10 pt50 ──
+  ALL VELOCITIES               N=  559  WR= 44.4%  PF= 1.72  Total=$ 1,798,210  $/tr=$  3,217  DD=$ 209,736  Sh= 1.10  Hold= 4.5m
+  ULTRA-FAST (>0.25)           N=   36  WR= 52.8%  PF= 1.98  Total=$   191,326  $/tr=$  5,315  DD=$  66,330  Sh= 1.89  Hold= 4.5m
+  FAST (0.10-0.25)             N=  117  WR= 54.7%  PF= 2.64  Total=$   718,348  $/tr=$  6,140  DD=$  70,869  Sh= 1.30  Hold= 4.7m
+  MEDIUM (0.05-0.10)           N=  406  WR= 40.6%  PF= 1.47  Total=$   888,536  $/tr=$  2,189  DD=$ 212,068  Sh= 1.19  Hold= 4.5m
+  SLOW (<0.05)                 — insufficient data
+
+    ── tr10 sl30 ts60 pt100 ──
+  ALL VELOCITIES               N=  559  WR= 42.9%  PF= 1.80  Total=$ 2,154,902  $/tr=$  3,855  DD=$ 236,536  Sh= 1.04  Hold= 5.8m
+  ULTRA-FAST (>0.25)           N=   36  WR= 55.6%  PF= 2.17  Total=$   200,907  $/tr=$  5,581  DD=$  66,330  Sh= 2.45  Hold= 5.6m
+  FAST (0.10-0.25)             N=  117  WR= 53.0%  PF= 3.19  Total=$   970,258  $/tr=$  8,293  DD=$  70,869  Sh= 1.26  Hold= 6.7m
+  MEDIUM (0.05-0.10)           N=  406  WR= 38.9%  PF= 1.47  Total=$   983,737  $/tr=$  2,423  DD=$ 238,868  Sh= 1.07  Hold= 5.6m
+  SLOW (<0.05)                 — insufficient data
+
+─── 2B: SUMMARY — Best Edge by Velocity Bucket ───
+
+For each velocity bucket, find the param combo with highest Sharpe:
+
+  ALL
+    Best: d>=0.2 tr20 sl50 ts60
+                               N= 5823  WR= 39.9%  PF= 1.48  Total=$19,438,772  $/tr=$  3,338  DD=$ 859,780  Sh= 2.35  Hold=15.9m
+
+  ULTRA-FAST (>0.25)
+    Best: d>=0.5 tr10 sl30 ts5
+                               N=   36  WR= 66.7%  PF= 3.01  Total=$   301,804  $/tr=$  8,383  DD=$  54,290  Sh= 2.98  Hold= 3.8m
+
+  FAST (0.10-0.25)
+    Best: d>=0.4 tr10 sl30 ts5
+                               N=  153  WR= 64.7%  PF= 4.21  Total=$ 1,341,074  $/tr=$  8,765  DD=$  48,661  Sh= 1.64  Hold= 3.6m
+
+  MEDIUM (0.05-0.10)
+    Best: d>=0.2 tr20 sl50 ts60
+                               N= 1056  WR= 45.4%  PF= 2.14  Total=$ 7,292,828  $/tr=$  6,906  DD=$ 348,611  Sh= 2.05  Hold=15.8m
+
+  SLOW (<0.05)
+    Best: d>=0.2 tr20 sl50 ts60
+                               N= 4366  WR= 37.7%  PF= 1.28  Total=$ 9,000,572  $/tr=$  2,062  DD=$ 873,610  Sh= 2.19  Hold=15.9m
+
+====================================================================================================
+PHASE 3: ELAPSED TIME BUCKETS — RAW MINUTES FROM PEAK TO TROUGH
+====================================================================================================
+
+  ── Drop >= 0.20% ──
+  ALL ELAPSED                  N= 5823  WR= 42.2%  PF= 1.28  Total=$ 7,346,430  $/tr=$  1,262  DD=$2,998,892  Sh= 0.99  Hold= 5.6m
+  1-2 min (flash)              N=  213  WR= 56.8%  PF= 2.38  Total=$ 1,080,074  $/tr=$  5,071  DD=$  54,833  Sh= 1.29  Hold= 5.8m
+  3-4 min (fast)               N=  398  WR= 58.5%  PF= 2.80  Total=$ 2,234,165  $/tr=$  5,613  DD=$  92,153  Sh= 1.49  Hold= 5.3m
+  5-6 min (moderate)           N=  568  WR= 56.3%  PF= 3.17  Total=$ 3,566,943  $/tr=$  6,280  DD=$  64,233  Sh= 1.98  Hold= 6.0m
+  7-8 min (gradual)            N=  880  WR= 49.9%  PF= 2.13  Total=$ 3,240,183  $/tr=$  3,682  DD=$ 244,157  Sh= 1.67  Hold= 5.7m
+  9-10 min (slow)              N= 3764  WR= 35.7%  PF= 0.86  Total=$-2,774,935  $/tr=$   -737  DD=$4,210,345  Sh=-1.08  Hold= 5.5m
+
+  ── Drop >= 0.30% ──
+  ALL ELAPSED                  N= 2442  WR= 42.2%  PF= 1.35  Total=$ 4,008,982  $/tr=$  1,642  DD=$1,071,226  Sh= 0.93  Hold= 5.7m
+  1-2 min (flash)              N=   78  WR= 66.7%  PF= 3.16  Total=$   628,454  $/tr=$  8,057  DD=$  64,500  Sh= 2.26  Hold= 5.7m
+  3-4 min (fast)               N=  139  WR= 56.1%  PF= 2.15  Total=$   632,488  $/tr=$  4,550  DD=$  70,528  Sh= 1.56  Hold= 5.3m
+  5-6 min (moderate)           N=  182  WR= 55.5%  PF= 4.11  Total=$ 1,290,681  $/tr=$  7,092  DD=$  31,817  Sh= 1.80  Hold= 5.4m
+  7-8 min (gradual)            N=  365  WR= 51.0%  PF= 2.68  Total=$ 1,824,771  $/tr=$  4,999  DD=$ 120,601  Sh= 1.23  Hold= 5.6m
+  9-10 min (slow)              N= 1678  WR= 36.6%  PF= 0.96  Total=$  -367,412  $/tr=$   -219  DD=$1,495,944  Sh=-0.22  Hold= 5.7m
+
+  ── Drop >= 0.50% ──
+  ALL ELAPSED                  N=  559  WR= 42.9%  PF= 1.86  Total=$ 2,300,953  $/tr=$  4,116  DD=$ 236,536  Sh= 1.01  Hold= 5.9m
+  1-2 min (flash)              N=   19  WR= 63.2%  PF= 3.08  Total=$   196,996  $/tr=$ 10,368  DD=$  66,190  Sh= 2.05  Hold= 7.2m
+  3-4 min (fast)               N=   41  WR= 56.1%  PF= 2.29  Total=$   214,922  $/tr=$  5,242  DD=$  48,180  Sh= 1.84  Hold= 4.6m
+  5-6 min (moderate)           N=   41  WR= 58.5%  PF= 7.22  Total=$   498,878  $/tr=$ 12,168  DD=$  16,465  Sh= 4.55  Hold= 8.0m
+  7-8 min (gradual)            N=   75  WR= 53.3%  PF= 4.63  Total=$   724,891  $/tr=$  9,665  DD=$  47,108  Sh= 0.98  Hold= 4.7m
+  9-10 min (slow)              N=  383  WR= 36.8%  PF= 1.31  Total=$   665,266  $/tr=$  1,737  DD=$ 290,168  Sh= 0.66  Hold= 5.9m
+
+====================================================================================================
+PHASE 4: VELOCITY × VIX INTERACTION
+====================================================================================================
+
+Does velocity matter MORE in high-VIX vs low-VIX?
+Fixed: drop>=0.25%, tr10 sl30 ts30
+
+  ── Low VIX (<18) ──
+  ALL VELOCITIES               N=  939  WR= 36.0%  PF= 0.76  Total=$-1,118,315  $/tr=$ -1,191  DD=$1,273,350  Sh=-1.54  Hold= 3.3m
+  ULTRA-FAST (>0.25)           N=    6  WR= 33.3%  PF= 0.71  Total=$   -11,402  $/tr=$ -1,900  DD=$  39,582  Sh=-0.50  Hold= 3.1m
+  FAST (0.10-0.25)             N=   13  WR= 61.5%  PF= 2.66  Total=$    63,026  $/tr=$  4,848  DD=$  20,020  Sh= 1.22  Hold= 1.1m
+  MEDIUM (0.05-0.10)           N=  149  WR= 44.3%  PF= 1.14  Total=$    84,354  $/tr=$    566  DD=$ 178,576  Sh= 0.30  Hold= 2.6m
+  SLOW (<0.05)                 N=  771  WR= 34.0%  PF= 0.68  Total=$-1,254,293  $/tr=$ -1,627  DD=$1,287,681  Sh=-2.30  Hold= 3.5m
+
+  ── Normal VIX (18-25) ──
+  ALL VELOCITIES               N= 1730  WR= 41.8%  PF= 1.24  Total=$ 1,836,165  $/tr=$  1,061  DD=$ 614,760  Sh= 1.37  Hold= 5.7m
+  ULTRA-FAST (>0.25)           N=   23  WR= 60.9%  PF= 2.25  Total=$   130,533  $/tr=$  5,675  DD=$  47,383  Sh= 1.26  Hold= 5.4m
+  FAST (0.10-0.25)             N=   82  WR= 53.7%  PF= 2.59  Total=$   467,345  $/tr=$  5,699  DD=$  38,931  Sh= 1.88  Hold= 6.3m
+  MEDIUM (0.05-0.10)           N=  387  WR= 47.5%  PF= 1.94  Total=$ 1,347,251  $/tr=$  3,481  DD=$  77,455  Sh= 2.29  Hold= 5.7m
+  SLOW (<0.05)                 N= 1238  WR= 38.9%  PF= 0.98  Total=$  -108,964  $/tr=$    -88  DD=$ 768,639  Sh=-0.14  Hold= 5.7m
+
+  ── High VIX (25+) ──
+  ALL VELOCITIES               N= 1043  WR= 48.7%  PF= 1.96  Total=$ 4,720,622  $/tr=$  4,526  DD=$ 214,344  Sh= 2.14  Hold= 7.7m
+  ULTRA-FAST (>0.25)           N=   49  WR= 59.2%  PF= 2.20  Total=$   238,925  $/tr=$  4,876  DD=$  61,008  Sh= 2.78  Hold= 5.4m
+  FAST (0.10-0.25)             N=  133  WR= 60.9%  PF= 3.82  Total=$ 1,297,590  $/tr=$  9,756  DD=$  63,468  Sh= 1.90  Hold= 7.2m
+  MEDIUM (0.05-0.10)           N=  340  WR= 46.5%  PF= 2.27  Total=$ 1,949,508  $/tr=$  5,734  DD=$ 155,756  Sh= 2.04  Hold= 6.9m
+  SLOW (<0.05)                 N=  521  WR= 46.1%  PF= 1.46  Total=$ 1,234,599  $/tr=$  2,370  DD=$ 236,198  Sh= 2.44  Hold= 8.6m
+
+====================================================================================================
+PHASE 5: RAW SPX MEAN REVERSION BY VELOCITY (underlying, no options)
+====================================================================================================
+
+Simpler test: after a drop, how much does SPX recover in N minutes?
+Uses the spike metadata already collected.
+
+Reloading intraday for forward-looking analysis...
+  ── Drop >= 0.20% ──
+    5m fwd — ALL: N= 5829  Bounce%= 70.4  AvgChg=+0.0636%
+      ULTRA-FAST (>0.25)           N=   78  Bounce%= 87.2  AvgChg=+0.2898%
+      FAST (0.10-0.25)             N=  323  Bounce%= 80.5  AvgChg=+0.1722%
+      MEDIUM (0.05-0.10)           N= 1058  Bounce%= 73.0  AvgChg=+0.0853%
+      SLOW (<0.05)                 N= 4370  Bounce%= 68.8  AvgChg=+0.0463%
+
+    10m fwd — ALL: N= 5827  Bounce%= 64.5  AvgChg=+0.0644%
+      ULTRA-FAST (>0.25)           N=   78  Bounce%= 66.7  AvgChg=+0.2818%
+      FAST (0.10-0.25)             N=  323  Bounce%= 71.2  AvgChg=+0.1873%
+      MEDIUM (0.05-0.10)           N= 1058  Bounce%= 67.6  AvgChg=+0.0890%
+      SLOW (<0.05)                 N= 4368  Bounce%= 63.2  AvgChg=+0.0455%
+
+    30m fwd — ALL: N= 5819  Bounce%= 59.0  AvgChg=+0.0705%
+      ULTRA-FAST (>0.25)           N=   78  Bounce%= 69.2  AvgChg=+0.2454%
+      FAST (0.10-0.25)             N=  323  Bounce%= 61.0  AvgChg=+0.2044%
+      MEDIUM (0.05-0.10)           N= 1055  Bounce%= 59.2  AvgChg=+0.0919%
+      SLOW (<0.05)                 N= 4363  Bounce%= 58.7  AvgChg=+0.0522%
+
+  ── Drop >= 0.30% ──
+    5m fwd — ALL: N= 2445  Bounce%= 68.7  AvgChg=+0.0786%
+      ULTRA-FAST (>0.25)           N=   60  Bounce%= 86.7  AvgChg=+0.3423%
+      FAST (0.10-0.25)             N=  206  Bounce%= 79.6  AvgChg=+0.2035%
+      MEDIUM (0.05-0.10)           N=  741  Bounce%= 69.9  AvgChg=+0.0849%
+      SLOW (<0.05)                 N= 1438  Bounce%= 65.7  AvgChg=+0.0464%
+
+    10m fwd — ALL: N= 2445  Bounce%= 63.9  AvgChg=+0.0830%
+      ULTRA-FAST (>0.25)           N=   60  Bounce%= 61.7  AvgChg=+0.3266%
+      FAST (0.10-0.25)             N=  206  Bounce%= 70.4  AvgChg=+0.2214%
+      MEDIUM (0.05-0.10)           N=  741  Bounce%= 65.6  AvgChg=+0.0906%
+      SLOW (<0.05)                 N= 1438  Bounce%= 62.2  AvgChg=+0.0492%
+
+    30m fwd — ALL: N= 2443  Bounce%= 57.6  AvgChg=+0.0866%
+      ULTRA-FAST (>0.25)           N=   60  Bounce%= 66.7  AvgChg=+0.3032%
+      FAST (0.10-0.25)             N=  206  Bounce%= 63.6  AvgChg=+0.2570%
+      MEDIUM (0.05-0.10)           N=  739  Bounce%= 57.2  AvgChg=+0.0928%
+      SLOW (<0.05)                 N= 1438  Bounce%= 56.6  AvgChg=+0.0499%
+
+  ── Drop >= 0.50% ──
+    5m fwd — ALL: N=  560  Bounce%= 68.8  AvgChg=+0.1372%
+      ULTRA-FAST (>0.25)           N=   36  Bounce%= 83.3  AvgChg=+0.4299%
+      FAST (0.10-0.25)             N=  117  Bounce%= 78.6  AvgChg=+0.2358%
+      MEDIUM (0.05-0.10)           N=  407  Bounce%= 64.6  AvgChg=+0.0830%
+      SLOW (<0.05)                 N=    0  (too few)
+
+    10m fwd — ALL: N=  560  Bounce%= 62.5  AvgChg=+0.1541%
+      ULTRA-FAST (>0.25)           N=   36  Bounce%= 58.3  AvgChg=+0.4157%
+      FAST (0.10-0.25)             N=  117  Bounce%= 70.9  AvgChg=+0.2867%
+      MEDIUM (0.05-0.10)           N=  407  Bounce%= 60.4  AvgChg=+0.0928%
+      SLOW (<0.05)                 N=    0  (too few)
+
+    30m fwd — ALL: N=  559  Bounce%= 55.1  AvgChg=+0.1524%
+      ULTRA-FAST (>0.25)           N=   36  Bounce%= 58.3  AvgChg=+0.3931%
+      FAST (0.10-0.25)             N=  117  Bounce%= 65.0  AvgChg=+0.3495%
+      MEDIUM (0.05-0.10)           N=  406  Bounce%= 52.0  AvgChg=+0.0743%
+      SLOW (<0.05)                 N=    0  (too few)
+
+====================================================================================================
+SUMMARY
+====================================================================================================
+
+Compare the metrics above across velocity buckets to determine:
+  1. Do FAST drops (high velocity) produce better mean reversion edge?
+  2. Is the effect consistent across VIX regimes?
+  3. Does raw SPX bounce rate differ by velocity?
+  4. Should velocity be a FILTER in the live trading strategy?
+

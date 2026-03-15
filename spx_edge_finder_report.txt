@@ -1,0 +1,631 @@
+==========================================================================================
+SPX Opening Print — Comprehensive Edge Finder
+==========================================================================================
+
+Loading data...
+  SPX intraday: 2053 days
+  SPX daily: 2056 days
+  VIX daily: 2083 days
+
+Building day features...
+  2003 tradeable days
+  Bullish 1st bar: 1076  Bearish: 927
+
+
+==========================================================================================
+TEST 1: DIRECTION & BAR SELECTION
+==========================================================================================
+Testing: bullish buy, bearish buy, bearish sell, all buy, 5-min bar buy
+Baseline: buy at 9:30 open, PT=5pts SL=3pts TS=30 bars
+
+  All days LONG                            N=2003  P&L=  +1,104.7pts  WR= 45.1%  PF= 1.34  Sharpe= 6.311  MaxDD=      52.0pts
+  Bullish 1st bar LONG                     N=1076  P&L=  +2,727.3pts  WR= 70.0%  PF= 3.86  Sharpe=22.882  MaxDD=      16.0pts
+  Bearish 1st bar LONG                     N= 927  P&L=  -1,622.6pts  WR= 16.3%  PF= 0.29  Sharpe=-18.988  MaxDD=   1,622.6pts
+  Bearish 1st bar SHORT                    N= 927  P&L=  +2,081.5pts  WR= 66.8%  PF= 3.34  Sharpe=18.483  MaxDD=      29.0pts
+  All days SHORT                           N=2003  P&L=    +105.8pts  WR= 38.9%  PF= 1.03  Sharpe= 0.619  MaxDD=     218.1pts
+  Bullish 5m bar LONG (enter at bar 5)     N= 756  P&L=    +120.0pts  WR= 40.6%  PF= 1.09  Sharpe= 1.143  MaxDD=      87.3pts
+
+
+==========================================================================================
+TEST 2: PT/SL GRID (bullish 1st bar, SPX points)
+==========================================================================================
+Testing PT from 2-50pts, SL from 2-30pts, TS=30/120/240/390 bars
+
+    PT   SL   TS   Sharpe       Total     N
+     2    2   30   35.422    +1,578.7  1076
+     2    2  120   35.262    +1,576.0  1076
+     2    2  240   35.262    +1,576.0  1076
+     2    2  390   35.262    +1,576.0  1076
+     2    3   30   31.596    +1,585.7  1076
+     2    3  240   31.547    +1,587.0  1076
+     2    3  390   31.547    +1,587.0  1076
+     2    3  120   31.506    +1,585.3  1076
+     3    2   30   30.065    +2,041.5  1076
+     3    2  120   30.043    +2,043.0  1076
+     3    2  240   30.043    +2,043.0  1076
+     3    2  390   30.043    +2,043.0  1076
+     2    5   30   27.488    +1,608.1  1076
+     3    3  240   26.736    +2,040.0  1076
+     3    3  390   26.736    +2,040.0  1076
+     3    3   30   26.704    +2,031.0  1076
+     3    3  120   26.698    +2,037.3  1076
+     2    5  240   26.416    +1,592.0  1076
+     2    5  390   26.416    +1,592.0  1076
+     2    5  120   26.384    +1,590.3  1076
+     5    2   30   25.751    +2,781.6  1076
+     5    2  120   25.569    +2,790.0  1076
+     5    2  240   25.569    +2,790.0  1076
+     5    2  390   25.569    +2,790.0  1076
+     2    8   30   24.300    +1,621.6  1076
+
+
+==========================================================================================
+TEST 3: ENTRY TIMING
+==========================================================================================
+Testing entry at bar 0 (9:30), bar 1 (9:31), bar 2, bar 5, bar 10, bar 30
+
+  Entry bar 0 (~09:30)                     N=1076  P&L=    +457.7pts  WR= 43.7%  PF= 1.26  Sharpe= 3.598  MaxDD=      50.1pts
+  Entry bar 1 (~09:31)                     N=1076  P&L=    +404.7pts  WR= 43.4%  PF= 1.22  Sharpe= 3.190  MaxDD=      70.1pts
+  Entry bar 2 (~09:32)                     N=1076  P&L=    +210.6pts  WR= 40.9%  PF= 1.11  Sharpe= 1.674  MaxDD=     112.2pts
+  Entry bar 5 (~09:35)                     N=1076  P&L=    +384.2pts  WR= 43.1%  PF= 1.21  Sharpe= 3.050  MaxDD=      89.6pts
+  Entry bar 10 (~09:40)                    N=1076  P&L=    +109.3pts  WR= 39.8%  PF= 1.06  Sharpe= 0.874  MaxDD=      59.1pts
+  Entry bar 30 (~10:00)                    N=1076  P&L=    -235.2pts  WR= 36.3%  PF= 0.88  Sharpe=-1.959  MaxDD=     277.7pts
+
+
+==========================================================================================
+TEST 4: TRAILING STOPS (SPX, bullish 1st bar)
+==========================================================================================
+Testing trail_pct + hard SL combos, various time stops
+
+   Trail%   SL   TS   Sharpe       Total     WR     N
+     0.02   15   15   32.946    +4,512.4   95.1  1076
+     0.02   15   30   32.946    +4,512.4   95.1  1076
+     0.02   15   60   32.946    +4,512.4   95.1  1076
+     0.02   15  120   32.946    +4,512.4   95.1  1076
+     0.02   15  240   32.946    +4,512.4   95.1  1076
+     0.02   20   15   32.946    +4,512.4   95.1  1076
+     0.02   20   30   32.946    +4,512.4   95.1  1076
+     0.02   20   60   32.946    +4,512.4   95.1  1076
+     0.02   20  120   32.946    +4,512.4   95.1  1076
+     0.02   20  240   32.946    +4,512.4   95.1  1076
+     0.02   30   15   32.946    +4,512.4   95.1  1076
+     0.02   30   30   32.946    +4,512.4   95.1  1076
+     0.02   30   60   32.946    +4,512.4   95.1  1076
+     0.02   30  120   32.946    +4,512.4   95.1  1076
+     0.02   30  240   32.946    +4,512.4   95.1  1076
+     0.02   10   15   32.207    +4,477.2   94.9  1076
+     0.02   10   30   32.207    +4,477.2   94.9  1076
+     0.02   10   60   32.207    +4,477.2   94.9  1076
+     0.02   10  120   32.207    +4,477.2   94.9  1076
+     0.02   10  240   32.207    +4,477.2   94.9  1076
+     0.02    8   15   31.421    +4,430.6   94.4  1076
+     0.02    8   30   31.421    +4,430.6   94.4  1076
+     0.02    8   60   31.421    +4,430.6   94.4  1076
+     0.02    8  120   31.421    +4,430.6   94.4  1076
+     0.02    8  240   31.421    +4,430.6   94.4  1076
+     0.02    5   15   30.380    +4,350.9   93.1  1076
+     0.02    5   30   30.380    +4,350.9   93.1  1076
+     0.02    5   60   30.380    +4,350.9   93.1  1076
+     0.02    5  120   30.380    +4,350.9   93.1  1076
+     0.02    5  240   30.380    +4,350.9   93.1  1076
+
+
+==========================================================================================
+TEST 5: FIRST BAR SIZE (bullish bars only)
+==========================================================================================
+Does the SIZE of the first bar predict edge?
+
+  Using best grid exit: PT=2 SL=2 TS=30
+  Also with best trail: trail=0.02% SL=15 TS=15
+
+  First bar return distribution (bullish): p25=0.024% p50=0.051% p75=0.094%
+  In SPX points (at 5000): p25=1.2 p50=2.6 p75=4.7
+
+  fb_ret > 0.00%:
+    Fixed PT/SL                            N=1076  P&L=  +1,578.7pts  WR= 86.7%  PF= 6.52  Sharpe=35.422  MaxDD=      10.0pts
+    Trailing stop                          N=1076  P&L=  +4,512.4pts  WR= 95.1%  PF=270.62  Sharpe=32.946  MaxDD=       1.3pts
+  fb_ret > 0.02%:
+    Fixed PT/SL                            N= 853  P&L=  +1,500.7pts  WR= 94.0%  PF=15.71  Sharpe=54.105  MaxDD=       4.0pts
+    Trailing stop                          N= 853  P&L=  +4,245.9pts  WR= 99.8%  PF=7783.63  Sharpe=34.045  MaxDD=       0.3pts
+  fb_ret > 0.05%:
+    Fixed PT/SL                            N= 550  P&L=  +1,092.0pts  WR= 99.6%  PF=274.00  Sharpe=193.216  MaxDD=       2.0pts
+    Trailing stop                          N= 550  P&L=  +3,524.5pts  WR=100.0%  PF=999.00  Sharpe=33.284  MaxDD=       0.0pts
+  fb_ret > 0.08%:
+    Fixed PT/SL                            N= 346  P&L=    +692.0pts  WR=100.0%  PF=999.00  Sharpe= 0.000  MaxDD=       0.0pts
+    Trailing stop                          N= 346  P&L=  +2,779.8pts  WR=100.0%  PF=999.00  Sharpe=30.812  MaxDD=       0.0pts
+  fb_ret > 0.10%:
+    Fixed PT/SL                            N= 237  P&L=    +474.0pts  WR=100.0%  PF=999.00  Sharpe= 0.000  MaxDD=       0.0pts
+    Trailing stop                          N= 237  P&L=  +2,247.0pts  WR=100.0%  PF=999.00  Sharpe=28.894  MaxDD=       0.0pts
+  fb_ret > 0.15%:
+    Fixed PT/SL                            N=  99  P&L=    +198.0pts  WR=100.0%  PF=999.00  Sharpe= 0.000  MaxDD=       0.0pts
+    Trailing stop                          N=  99  P&L=  +1,230.0pts  WR=100.0%  PF=999.00  Sharpe=19.724  MaxDD=       0.0pts
+  fb_ret > 0.20%:
+    Fixed PT/SL                            N=  55  P&L=    +110.0pts  WR=100.0%  PF=999.00  Sharpe= 0.000  MaxDD=       0.0pts
+    Trailing stop                          N=  55  P&L=    +810.3pts  WR=100.0%  PF=999.00  Sharpe=15.352  MaxDD=       0.0pts
+  fb_ret > 0.30%:
+    Fixed PT/SL                            N=  15  P&L=     +30.0pts  WR=100.0%  PF=999.00  Sharpe= 0.000  MaxDD=       0.0pts
+    Trailing stop                          N=  15  P&L=    +322.2pts  WR=100.0%  PF=999.00  Sharpe= 8.685  MaxDD=       0.0pts
+  fb_ret > 0.50%:
+    Fixed PT/SL                            N=   3  P&L=      +6.0pts  WR=100.0%  PF=999.00  Sharpe= 0.000  MaxDD=       0.0pts
+    Trailing stop                          N=   3  P&L=    +104.4pts  WR=100.0%  PF=999.00  Sharpe= 6.152  MaxDD=       0.0pts
+
+
+==========================================================================================
+TEST 6: INDIVIDUAL FILTERS (bullish 1st bar)
+==========================================================================================
+  Using best trail: trail=0.02% SL=15 TS=15
+
+  ALL bullish days                         N=1076  P&L=  +4,512.4pts  WR= 95.1%  PF=270.62  Sharpe=32.946  MaxDD=       1.3pts
+  VIX >= 15                                N= 838  P&L=  +3,849.5pts  WR= 96.3%  PF=360.45  Sharpe=30.278  MaxDD=       1.3pts
+  VIX < 15                                 N= 238  P&L=    +663.0pts  WR= 90.8%  PF=111.00  Sharpe=14.826  MaxDD=       0.8pts
+  VIX >= 18                                N= 561  P&L=  +2,793.6pts  WR= 97.1%  PF=569.93  Sharpe=25.477  MaxDD=       0.7pts
+  VIX < 18                                 N= 515  P&L=  +1,718.8pts  WR= 92.8%  PF=146.34  Sharpe=22.140  MaxDD=       1.3pts
+  VIX >= 20                                N= 429  P&L=  +2,206.5pts  WR= 97.4%  PF=684.26  Sharpe=22.525  MaxDD=       0.7pts
+  VIX < 20                                 N= 647  P&L=  +2,306.0pts  WR= 93.5%  PF=171.73  Sharpe=24.955  MaxDD=       1.3pts
+  VIX >= 25                                N= 199  P&L=  +1,187.0pts  WR= 98.0%  PF=1384.51  Sharpe=15.445  MaxDD=       0.3pts
+  VIX < 25                                 N= 877  P&L=  +3,325.4pts  WR= 94.4%  PF=210.43  Sharpe=30.215  MaxDD=       1.3pts
+  VIX >= 30                                N=  92  P&L=    +609.6pts  WR=100.0%  PF=999.00  Sharpe= 9.688  MaxDD=       0.0pts
+  VIX < 30                                 N= 984  P&L=  +3,902.9pts  WR= 94.6%  PF=234.20  Sharpe=32.700  MaxDD=       1.3pts
+  Gap up (>0)                              N= 686  P&L=  +2,972.4pts  WR= 94.3%  PF=277.79  Sharpe=25.806  MaxDD=       0.7pts
+  Gap down (<0)                            N= 390  P&L=  +1,540.0pts  WR= 96.4%  PF=257.78  Sharpe=20.820  MaxDD=       1.3pts
+  Big gap up (>0.3%)                       N= 363  P&L=  +1,790.7pts  WR= 95.0%  PF=406.64  Sharpe=18.353  MaxDD=       0.7pts
+  Big gap down (<-0.3%)                    N= 186  P&L=    +891.8pts  WR= 99.5%  PF=699.11  Sharpe=15.216  MaxDD=       1.3pts
+  Prior green                              N= 545  P&L=  +2,174.1pts  WR= 95.2%  PF=318.21  Sharpe=21.213  MaxDD=       0.9pts
+  Prior red                                N= 528  P&L=  +2,334.0pts  WR= 94.9%  PF=237.19  Sharpe=25.776  MaxDD=       1.3pts
+  Prior big red (<-1%)                     N= 123  P&L=    +711.8pts  WR= 98.4%  PF=1114.10  Sharpe=16.153  MaxDD=       0.3pts
+  Prior big green (>1%)                    N=  95  P&L=    +486.9pts  WR= 95.8%  PF=295.58  Sharpe= 7.105  MaxDD=       0.6pts
+  2d ret > 0                               N= 574  P&L=  +2,234.8pts  WR= 95.5%  PF=270.49  Sharpe=22.984  MaxDD=       1.3pts
+  2d ret < 0                               N= 500  P&L=  +2,271.4pts  WR= 94.6%  PF=270.02  Sharpe=23.672  MaxDD=       0.9pts
+  5d ret > 0                               N= 630  P&L=  +2,307.2pts  WR= 94.3%  PF=180.19  Sharpe=26.934  MaxDD=       1.3pts
+  5d ret < 0                               N= 445  P&L=  +2,205.3pts  WR= 96.4%  PF=581.75  Sharpe=21.040  MaxDD=       0.9pts
+  Above MA50                               N= 759  P&L=  +2,734.9pts  WR= 93.9%  PF=180.78  Sharpe=28.916  MaxDD=       1.3pts
+  Below MA50                               N= 317  P&L=  +1,777.5pts  WR= 97.8%  PF=1167.70  Sharpe=18.801  MaxDD=       0.6pts
+  Above MA20                               N= 720  P&L=  +2,581.3pts  WR= 93.3%  PF=169.41  Sharpe=27.653  MaxDD=       1.3pts
+  Below MA20                               N= 356  P&L=  +1,931.2pts  WR= 98.6%  PF=1371.48  Sharpe=20.068  MaxDD=       0.6pts
+  Monday                                   N= 228  P&L=  +1,034.8pts  WR= 97.8%  PF=844.96  Sharpe=17.572  MaxDD=       0.6pts
+  Tuesday                                  N= 203  P&L=    +721.8pts  WR= 91.6%  PF=126.07  Sharpe=11.893  MaxDD=       1.1pts
+  Wednesday                                N= 211  P&L=    +900.2pts  WR= 93.4%  PF=187.28  Sharpe=12.421  MaxDD=       1.3pts
+  Thursday                                 N= 216  P&L=    +902.6pts  WR= 96.3%  PF=422.38  Sharpe=16.688  MaxDD=       0.7pts
+  Friday                                   N= 218  P&L=    +953.1pts  WR= 95.9%  PF=345.75  Sharpe=16.388  MaxDD=       0.6pts
+  Open in bottom 25% prior range           N= 258  P&L=  +1,135.7pts  WR= 96.9%  PF=289.11  Sharpe=16.618  MaxDD=       1.3pts
+  Open in top 25% prior range              N= 474  P&L=  +1,904.4pts  WR= 93.9%  PF=272.62  Sharpe=19.609  MaxDD=       0.7pts
+  Open in middle 50% prior range           N= 344  P&L=  +1,472.4pts  WR= 95.3%  PF=255.60  Sharpe=21.561  MaxDD=       0.9pts
+
+
+==========================================================================================
+TEST 7: BEARISH FIRST BAR STRATEGIES
+==========================================================================================
+Is there a mean-reversion play after bearish first bars?
+
+  Bear→Buy bar1 PT=2 SL=3 TS=15            N= 927  P&L=     +79.7pts  WR= 61.4%  PF= 1.08  Sharpe= 1.089  MaxDD=      46.0pts
+  Bear→Buy bar1 PT=2 SL=3 TS=30            N= 927  P&L=     +74.1pts  WR= 61.4%  PF= 1.07  Sharpe= 1.005  MaxDD=      51.4pts
+  Bear→Buy bar1 PT=2 SL=3 TS=60            N= 927  P&L=     +80.7pts  WR= 61.7%  PF= 1.08  Sharpe= 1.091  MaxDD=      52.3pts
+  Bear→Buy bar1 PT=2 SL=3 TS=120           N= 927  P&L=     +83.6pts  WR= 61.8%  PF= 1.08  Sharpe= 1.130  MaxDD=      50.0pts
+  Bear→Buy bar1 PT=2 SL=5 TS=15            N= 927  P&L=     +88.5pts  WR= 70.4%  PF= 1.07  Sharpe= 0.972  MaxDD=      72.8pts
+  Bear→Buy bar1 PT=2 SL=5 TS=30            N= 927  P&L=     +34.1pts  WR= 71.0%  PF= 1.03  Sharpe= 0.361  MaxDD=     101.4pts
+  Bear→Buy bar1 PT=2 SL=5 TS=60            N= 927  P&L=     +41.8pts  WR= 71.8%  PF= 1.03  Sharpe= 0.439  MaxDD=     103.6pts
+  Bear→Buy bar1 PT=2 SL=5 TS=120           N= 927  P&L=     +37.0pts  WR= 72.0%  PF= 1.03  Sharpe= 0.387  MaxDD=     105.4pts
+  Bear→Buy bar1 PT=2 SL=8 TS=15            N= 927  P&L=     +93.6pts  WR= 75.4%  PF= 1.07  Sharpe= 0.863  MaxDD=     111.7pts
+  Bear→Buy bar1 PT=2 SL=8 TS=60            N= 927  P&L=     +51.8pts  WR= 79.3%  PF= 1.04  Sharpe= 0.439  MaxDD=     134.9pts
+  Bear→Buy bar1 PT=2 SL=8 TS=120           N= 927  P&L=     +58.5pts  WR= 79.9%  PF= 1.04  Sharpe= 0.490  MaxDD=     118.6pts
+  Bear→Buy bar1 PT=2 SL=10 TS=15           N= 927  P&L=     +54.6pts  WR= 76.2%  PF= 1.04  Sharpe= 0.466  MaxDD=     111.1pts
+  Bear→Buy bar1 PT=2 SL=15 TS=15           N= 927  P&L=     +74.4pts  WR= 77.5%  PF= 1.06  Sharpe= 0.579  MaxDD=     147.8pts
+  Bear→Buy bar1 PT=2 SL=15 TS=120          N= 927  P&L=     +56.0pts  WR= 86.0%  PF= 1.04  Sharpe= 0.356  MaxDD=     158.0pts
+  Bear→Buy bar1 PT=3 SL=3 TS=15            N= 927  P&L=    +106.0pts  WR= 51.8%  PF= 1.08  Sharpe= 1.189  MaxDD=      59.5pts
+  Bear→Buy bar1 PT=3 SL=3 TS=30            N= 927  P&L=    +103.8pts  WR= 51.6%  PF= 1.08  Sharpe= 1.150  MaxDD=      63.0pts
+  Bear→Buy bar1 PT=3 SL=3 TS=60            N= 927  P&L=     +98.7pts  WR= 51.8%  PF= 1.07  Sharpe= 1.084  MaxDD=      63.0pts
+  Bear→Buy bar1 PT=3 SL=3 TS=120           N= 927  P&L=    +110.5pts  WR= 52.0%  PF= 1.08  Sharpe= 1.211  MaxDD=      63.0pts
+  Bear→Buy bar1 PT=3 SL=5 TS=15            N= 927  P&L=     +58.1pts  WR= 60.7%  PF= 1.04  Sharpe= 0.525  MaxDD=      86.5pts
+  Bear→Buy bar1 PT=3 SL=8 TS=15            N= 927  P&L=     +71.2pts  WR= 66.6%  PF= 1.04  Sharpe= 0.543  MaxDD=     107.3pts
+  Bear→Buy bar1 PT=5 SL=3 TS=30            N= 927  P&L=     +43.1pts  WR= 39.3%  PF= 1.03  Sharpe= 0.375  MaxDD=      86.0pts
+  Bear→Buy bar1 PT=5 SL=3 TS=60            N= 927  P&L=     +78.2pts  WR= 39.1%  PF= 1.05  Sharpe= 0.665  MaxDD=      86.0pts
+  Bear→Buy bar1 PT=5 SL=3 TS=120           N= 927  P&L=     +89.0pts  WR= 38.8%  PF= 1.05  Sharpe= 0.752  MaxDD=      86.0pts
+  Bear→Buy bar1 PT=5 SL=8 TS=15            N= 927  P&L=     +51.5pts  WR= 56.4%  PF= 1.02  Sharpe= 0.322  MaxDD=     161.0pts
+  Bear→Buy bar1 PT=5 SL=8 TS=120           N= 927  P&L=     +97.4pts  WR= 61.4%  PF= 1.04  Sharpe= 0.521  MaxDD=     121.6pts
+  Bear→Buy bar1 PT=5 SL=15 TS=120          N= 927  P&L=    +128.1pts  WR= 71.0%  PF= 1.04  Sharpe= 0.527  MaxDD=     258.2pts
+  Bear→Buy bar1 PT=8 SL=3 TS=15            N= 927  P&L=     +50.3pts  WR= 34.6%  PF= 1.03  Sharpe= 0.382  MaxDD=     119.0pts
+  Bear→Buy bar1 PT=8 SL=3 TS=30            N= 927  P&L=     +85.6pts  WR= 31.7%  PF= 1.05  Sharpe= 0.603  MaxDD=     119.0pts
+  Bear→Buy bar1 PT=8 SL=3 TS=60            N= 927  P&L=    +122.6pts  WR= 30.6%  PF= 1.06  Sharpe= 0.838  MaxDD=     119.0pts
+  Bear→Buy bar1 PT=8 SL=3 TS=120           N= 927  P&L=    +132.9pts  WR= 29.7%  PF= 1.07  Sharpe= 0.893  MaxDD=     119.0pts
+  Bear→Buy bar1 PT=8 SL=8 TS=15            N= 927  P&L=    +123.6pts  WR= 51.5%  PF= 1.05  Sharpe= 0.669  MaxDD=     139.6pts
+  Bear→Buy bar1 PT=8 SL=8 TS=60            N= 927  P&L=    +116.1pts  WR= 51.8%  PF= 1.04  Sharpe= 0.518  MaxDD=     164.3pts
+  Bear→Buy bar1 PT=8 SL=8 TS=120           N= 927  P&L=    +285.6pts  WR= 52.2%  PF= 1.09  Sharpe= 1.232  MaxDD=     128.0pts
+  Bear→Buy bar1 PT=8 SL=10 TS=120          N= 927  P&L=    +158.9pts  WR= 56.0%  PF= 1.04  Sharpe= 0.621  MaxDD=     190.0pts
+  Bear→Buy bar1 PT=8 SL=15 TS=120          N= 927  P&L=    +224.9pts  WR= 62.2%  PF= 1.06  Sharpe= 0.752  MaxDD=     162.1pts
+  Bear→Buy bar1 PT=10 SL=3 TS=15           N= 927  P&L=     +69.4pts  WR= 33.5%  PF= 1.04  Sharpe= 0.495  MaxDD=     127.0pts
+  Bear→Buy bar1 PT=10 SL=3 TS=30           N= 927  P&L=     +52.0pts  WR= 29.1%  PF= 1.03  Sharpe= 0.340  MaxDD=     139.8pts
+  Bear→Buy bar1 PT=10 SL=3 TS=60           N= 927  P&L=    +118.0pts  WR= 27.4%  PF= 1.06  Sharpe= 0.734  MaxDD=     129.0pts
+  Bear→Buy bar1 PT=10 SL=3 TS=120          N= 927  P&L=    +131.5pts  WR= 26.0%  PF= 1.06  Sharpe= 0.798  MaxDD=     131.0pts
+  Bear→Buy bar1 PT=10 SL=8 TS=15           N= 927  P&L=    +133.2pts  WR= 50.1%  PF= 1.05  Sharpe= 0.681  MaxDD=     135.2pts
+  Bear→Buy bar1 PT=10 SL=8 TS=60           N= 927  P&L=     +81.9pts  WR= 47.8%  PF= 1.02  Sharpe= 0.335  MaxDD=     156.5pts
+  Bear→Buy bar1 PT=10 SL=8 TS=120          N= 927  P&L=    +233.1pts  WR= 47.4%  PF= 1.06  Sharpe= 0.912  MaxDD=     156.0pts
+  Bear→Buy bar1 PT=10 SL=10 TS=120         N= 927  P&L=    +176.7pts  WR= 51.7%  PF= 1.04  Sharpe= 0.629  MaxDD=     177.1pts
+  Bear→Buy bar1 PT=10 SL=15 TS=120         N= 927  P&L=    +168.1pts  WR= 57.7%  PF= 1.04  Sharpe= 0.514  MaxDD=     231.6pts
+
+  Selling after bearish first bar:
+  Bear→Sell PT=2 SL=3 TS=30                N= 927  P&L=  +1,343.9pts  WR= 88.9%  PF= 5.44  Sharpe=28.333  MaxDD=      12.0pts
+  Bear→Sell PT=2 SL=5 TS=30                N= 927  P&L=  +1,309.3pts  WR= 91.0%  PF= 4.47  Sharpe=22.646  MaxDD=      11.0pts
+  Bear→Sell PT=2 SL=8 TS=30                N= 927  P&L=  +1,262.0pts  WR= 92.3%  PF= 3.82  Sharpe=17.932  MaxDD=      18.0pts
+  Bear→Sell PT=2 SL=10 TS=30               N= 927  P&L=  +1,295.5pts  WR= 93.3%  PF= 3.99  Sharpe=17.664  MaxDD=      16.0pts
+  Bear→Sell PT=3 SL=3 TS=30                N= 927  P&L=  +1,649.2pts  WR= 79.7%  PF= 4.03  Sharpe=22.736  MaxDD=      14.7pts
+  Bear→Sell PT=3 SL=5 TS=30                N= 927  P&L=  +1,686.6pts  WR= 84.6%  PF= 3.66  Sharpe=20.238  MaxDD=      20.0pts
+  Bear→Sell PT=3 SL=8 TS=30                N= 927  P&L=  +1,618.2pts  WR= 86.6%  PF= 3.13  Sharpe=16.323  MaxDD=      22.0pts
+  Bear→Sell PT=3 SL=10 TS=30               N= 927  P&L=  +1,658.7pts  WR= 87.9%  PF= 3.21  Sharpe=16.016  MaxDD=      24.0pts
+  Bear→Sell PT=5 SL=3 TS=30                N= 927  P&L=  +2,081.5pts  WR= 66.8%  PF= 3.34  Sharpe=18.483  MaxDD=      29.0pts
+  Bear→Sell PT=5 SL=5 TS=30                N= 927  P&L=  +2,143.1pts  WR= 73.1%  PF= 2.96  Sharpe=16.784  MaxDD=      21.0pts
+  Bear→Sell PT=5 SL=8 TS=30                N= 927  P&L=  +2,119.7pts  WR= 76.9%  PF= 2.67  Sharpe=14.635  MaxDD=      34.0pts
+  Bear→Sell PT=5 SL=10 TS=30               N= 927  P&L=  +2,163.0pts  WR= 78.5%  PF= 2.68  Sharpe=14.269  MaxDD=      40.0pts
+  Bear→Sell PT=8 SL=3 TS=30                N= 927  P&L=  +2,422.0pts  WR= 55.6%  PF= 3.04  Sharpe=15.302  MaxDD=      41.0pts
+  Bear→Sell PT=8 SL=5 TS=30                N= 927  P&L=  +2,558.5pts  WR= 63.4%  PF= 2.71  Sharpe=14.472  MaxDD=      28.1pts
+  Bear→Sell PT=8 SL=8 TS=30                N= 927  P&L=  +2,542.9pts  WR= 67.6%  PF= 2.45  Sharpe=12.979  MaxDD=      39.6pts
+  Bear→Sell PT=8 SL=10 TS=30               N= 927  P&L=  +2,597.7pts  WR= 69.4%  PF= 2.44  Sharpe=12.712  MaxDD=      51.6pts
+
+
+==========================================================================================
+TEST 8: SCALP STRATEGIES (tight stops, fast exits)
+==========================================================================================
+Testing very tight PT/SL with short time stops
+
+    PT   SL   TS   Sharpe       Total     WR
+     1    1    5   60.497      +946.0   94.0
+     1    1   10   60.497      +946.0   94.0
+     1    1   15   60.497      +946.0   94.0
+     1    2    5   44.254      +919.3   95.0
+     1    2   10   44.185      +922.3   95.2
+     1    2   15   44.120      +923.0   95.3
+     2    1    5   43.847    +1,605.9   83.5
+     2    1   10   43.504    +1,605.5   83.1
+     2    1   15   43.338    +1,603.0   83.0
+     1    3    5   37.567      +911.3   95.7
+     1    3   15   36.567      +912.5   96.1
+     2    2    5   36.454    +1,581.4   87.0
+     1    3   10   36.258      +908.9   95.9
+     3    1    5   35.979    +2,060.2   74.3
+     3    1   10   35.711    +2,069.0   73.4
+     2    2   10   35.636    +1,576.9   86.7
+     3    1   15   35.590    +2,069.2   73.1
+     2    2   15   35.514    +1,578.0   86.7
+     2    3    5   32.929    +1,575.7   88.8
+     2    3   10   31.983    +1,580.1   89.1
+
+
+==========================================================================================
+TEST 9: COMBINED FILTERS (best from above)
+==========================================================================================
+Testing combinations of top-performing filters
+
+  Combo                                                    Sharpe      Total    N
+  fb>0.05% + above_MA50 [fixed]                           179.500     +718.0  361
+  fb>0.05% + gap_up [fixed]                               176.000     +704.0  354
+  fb>0.05% + VIX<20 [fixed]                               143.000     +572.0  288
+  fb>0.05% + 5d_down [fixed]                              128.500     +514.0  259
+  fb>0.05% + VIX>=18 [fixed]                              115.080     +650.0  329
+  fb>0.05% + prev_red [fixed]                             104.827     +592.0  300
+  fb>0.05% + gap_dn [fixed]                                97.000     +388.0  196
+  fb>0.05% + below_MA50 [fixed]                            93.500     +374.0  189
+  fb>0.05% + VIX>=25 [fixed]                               65.500     +262.0  133
+  fb>0.05% + Mon [fixed]                                   57.000     +228.0  116
+  fb>0.05% + above_MA50                                    29.849   +2,050.2  361
+  fb>0.05% + fb>0.10%                                      28.894   +2,247.0  237
+  fb>0.05% + prev_red                                      28.145   +1,920.8  300
+  fb>0.10% + prev_red                                      27.644   +1,307.4  146
+  fb>0.05% + gap_up                                        26.933   +2,392.6  354
+  fb>0.10% + above_MA50                                    26.583   +1,199.6  138
+  VIX>=25 + below_MA50 [fixed]                             26.202     +252.0  138
+  VIX>=18 + 5d_down [fixed]                                25.566     +490.0  295
+  fb>0.05% + VIX>=18                                       25.541   +2,275.9  329
+  fb>0.05% + VIX<20                                        25.415   +1,713.7  288
+  fb>0.10% + gap_up                                        25.335   +1,643.0  168
+  VIX>=18 + VIX>=25 [fixed]                                24.753     +346.0  199
+  gap_up + 5d_down [fixed]                                 24.678     +490.7  300
+  fb>0.10% + VIX<20                                        24.622   +1,071.5  115
+  VIX>=18 + prev_red [fixed]                               24.615     +480.0  292
+  VIX>=25 + gap_dn [fixed]                                 23.948     +164.0   88
+  fb>0.10% + Mon                                           23.583     +590.0   63
+  VIX<20 + above_MA50                                      23.287   +1,928.8  551
+  prev_red + 5d_down [fixed]                               23.127     +458.0  283
+  VIX<20 + above_MA50 [fixed]                              23.098     +772.7  551
+
+
+==========================================================================================
+TEST 10: SPX AS QQQ-STYLE SCALP
+==========================================================================================
+Testing QQQ-identical setup: big bullish bar + tight trail
+
+  fb>0.00% trail=0.02% SL=3pts TS=30  Sharpe=28.523  P&L=  +4,173.6  WR=89.8%  N=1076
+  fb>0.00% trail=0.02% SL=5pts TS=30  Sharpe=30.380  P&L=  +4,350.9  WR=93.1%  N=1076
+  fb>0.00% trail=0.02% SL=8pts TS=30  Sharpe=31.421  P&L=  +4,430.6  WR=94.4%  N=1076
+  fb>0.00% trail=0.02% SL=10pts TS=30  Sharpe=32.207  P&L=  +4,477.2  WR=94.9%  N=1076
+  fb>0.00% trail=0.02% SL=15pts TS=30  Sharpe=32.946  P&L=  +4,512.4  WR=95.1%  N=1076
+  fb>0.00% trail=0.03% SL=3pts TS=30  Sharpe=26.118  P&L=  +3,756.0  WR=86.2%  N=1076
+  fb>0.00% trail=0.03% SL=5pts TS=30  Sharpe=27.681  P&L=  +3,914.7  WR=89.3%  N=1076
+  fb>0.00% trail=0.03% SL=8pts TS=30  Sharpe=28.584  P&L=  +3,988.0  WR=90.5%  N=1076
+  fb>0.00% trail=0.03% SL=10pts TS=30  Sharpe=29.297  P&L=  +4,033.0  WR=91.0%  N=1076
+  fb>0.00% trail=0.03% SL=15pts TS=30  Sharpe=29.959  P&L=  +4,066.3  WR=91.2%  N=1076
+  fb>0.00% trail=0.05% SL=3pts TS=30  Sharpe=22.227  P&L=  +3,104.0  WR=78.2%  N=1076
+  fb>0.00% trail=0.05% SL=5pts TS=30  Sharpe=23.347  P&L=  +3,230.2  WR=80.4%  N=1076
+  fb>0.00% trail=0.05% SL=8pts TS=30  Sharpe=24.139  P&L=  +3,298.0  WR=81.1%  N=1076
+  fb>0.00% trail=0.05% SL=10pts TS=30  Sharpe=24.744  P&L=  +3,339.7  WR=81.6%  N=1076
+  fb>0.00% trail=0.05% SL=15pts TS=30  Sharpe=25.288  P&L=  +3,369.5  WR=81.7%  N=1076
+  fb>0.00% trail=0.08% SL=3pts TS=30  Sharpe=18.632  P&L=  +2,938.9  WR=70.0%  N=1076
+  fb>0.00% trail=0.08% SL=5pts TS=30  Sharpe=19.319  P&L=  +3,058.8  WR=71.9%  N=1076
+  fb>0.00% trail=0.08% SL=8pts TS=30  Sharpe=19.866  P&L=  +3,116.8  WR=72.4%  N=1076
+  fb>0.00% trail=0.08% SL=10pts TS=30  Sharpe=20.320  P&L=  +3,156.9  WR=72.7%  N=1076
+  fb>0.00% trail=0.08% SL=15pts TS=30  Sharpe=20.651  P&L=  +3,181.2  WR=72.8%  N=1076
+  fb>0.00% trail=0.10% SL=3pts TS=30  Sharpe=16.664  P&L=  +2,994.9  WR=66.0%  N=1076
+  fb>0.00% trail=0.10% SL=5pts TS=30  Sharpe=17.182  P&L=  +3,102.5  WR=68.0%  N=1076
+  fb>0.00% trail=0.10% SL=8pts TS=30  Sharpe=17.537  P&L=  +3,148.7  WR=68.4%  N=1076
+  fb>0.00% trail=0.10% SL=10pts TS=30  Sharpe=17.857  P&L=  +3,184.2  WR=68.6%  N=1076
+  fb>0.00% trail=0.10% SL=15pts TS=30  Sharpe=18.077  P&L=  +3,204.9  WR=68.7%  N=1076
+  fb>0.02% trail=0.02% SL=3pts TS=30  Sharpe=29.953  P&L=  +3,993.7  WR=94.6%  N=853
+  fb>0.02% trail=0.02% SL=5pts TS=30  Sharpe=31.668  P&L=  +4,127.5  WR=97.9%  N=853
+  fb>0.02% trail=0.02% SL=8pts TS=30  Sharpe=32.298  P&L=  +4,170.8  WR=98.9%  N=853
+  fb>0.02% trail=0.02% SL=10pts TS=30  Sharpe=33.368  P&L=  +4,219.4  WR=99.5%  N=853
+  fb>0.02% trail=0.02% SL=15pts TS=30  Sharpe=34.045  P&L=  +4,245.9  WR=99.8%  N=853
+  fb>0.02% trail=0.03% SL=3pts TS=30  Sharpe=27.866  P&L=  +3,654.9  WR=93.7%  N=853
+  fb>0.02% trail=0.03% SL=5pts TS=30  Sharpe=29.349  P&L=  +3,777.6  WR=97.0%  N=853
+  fb>0.02% trail=0.03% SL=8pts TS=30  Sharpe=29.882  P&L=  +3,816.7  WR=97.9%  N=853
+  fb>0.02% trail=0.03% SL=10pts TS=30  Sharpe=30.860  P&L=  +3,863.7  WR=98.5%  N=853
+  fb>0.02% trail=0.03% SL=15pts TS=30  Sharpe=31.477  P&L=  +3,889.1  WR=98.7%  N=853
+  fb>0.02% trail=0.05% SL=3pts TS=30  Sharpe=24.376  P&L=  +3,110.2  WR=87.3%  N=853
+  fb>0.02% trail=0.05% SL=5pts TS=30  Sharpe=25.431  P&L=  +3,209.3  WR=89.7%  N=853
+  fb>0.02% trail=0.05% SL=8pts TS=30  Sharpe=25.942  P&L=  +3,247.4  WR=90.3%  N=853
+  fb>0.02% trail=0.05% SL=10pts TS=30  Sharpe=26.777  P&L=  +3,291.2  WR=90.9%  N=853
+  fb>0.02% trail=0.05% SL=15pts TS=30  Sharpe=27.299  P&L=  +3,314.3  WR=91.0%  N=853
+  fb>0.02% trail=0.08% SL=3pts TS=30  Sharpe=20.885  P&L=  +3,016.2  WR=78.7%  N=853
+  fb>0.02% trail=0.08% SL=5pts TS=30  Sharpe=21.720  P&L=  +3,109.7  WR=80.9%  N=853
+  fb>0.02% trail=0.08% SL=8pts TS=30  Sharpe=22.051  P&L=  +3,139.9  WR=81.2%  N=853
+  fb>0.02% trail=0.08% SL=10pts TS=30  Sharpe=22.619  P&L=  +3,178.7  WR=81.6%  N=853
+  fb>0.02% trail=0.08% SL=15pts TS=30  Sharpe=22.958  P&L=  +3,198.4  WR=81.7%  N=853
+  fb>0.02% trail=0.10% SL=3pts TS=30  Sharpe=18.317  P&L=  +3,027.7  WR=73.0%  N=853
+  fb>0.02% trail=0.10% SL=5pts TS=30  Sharpe=19.085  P&L=  +3,128.4  WR=75.1%  N=853
+  fb>0.02% trail=0.10% SL=8pts TS=30  Sharpe=19.246  P&L=  +3,148.2  WR=75.5%  N=853
+  fb>0.02% trail=0.10% SL=10pts TS=30  Sharpe=19.649  P&L=  +3,183.7  WR=75.7%  N=853
+  fb>0.02% trail=0.10% SL=15pts TS=30  Sharpe=19.879  P&L=  +3,201.2  WR=75.8%  N=853
+  fb>0.05% trail=0.02% SL=3pts TS=30  Sharpe=29.862  P&L=  +3,371.2  WR=96.2%  N=550
+  fb>0.05% trail=0.02% SL=5pts TS=30  Sharpe=31.284  P&L=  +3,453.8  WR=98.5%  N=550
+  fb>0.05% trail=0.02% SL=8pts TS=30  Sharpe=31.719  P&L=  +3,476.7  WR=99.3%  N=550
+  fb>0.05% trail=0.02% SL=10pts TS=30  Sharpe=32.754  P&L=  +3,509.4  WR=99.8%  N=550
+  fb>0.05% trail=0.02% SL=15pts TS=30  Sharpe=33.284  P&L=  +3,524.5  WR=100.0%  N=550
+  fb>0.05% trail=0.03% SL=3pts TS=30  Sharpe=28.182  P&L=  +3,139.2  WR=96.2%  N=550
+  fb>0.05% trail=0.03% SL=5pts TS=30  Sharpe=29.438  P&L=  +3,216.8  WR=98.5%  N=550
+  fb>0.05% trail=0.03% SL=8pts TS=30  Sharpe=29.814  P&L=  +3,237.9  WR=99.3%  N=550
+  fb>0.05% trail=0.03% SL=10pts TS=30  Sharpe=30.764  P&L=  +3,269.6  WR=99.8%  N=550
+  fb>0.05% trail=0.03% SL=15pts TS=30  Sharpe=31.253  P&L=  +3,284.1  WR=100.0%  N=550
+  fb>0.05% trail=0.05% SL=3pts TS=30  Sharpe=25.612  P&L=  +2,774.2  WR=95.8%  N=550
+  fb>0.05% trail=0.05% SL=5pts TS=30  Sharpe=26.610  P&L=  +2,841.8  WR=98.2%  N=550
+  fb>0.05% trail=0.05% SL=8pts TS=30  Sharpe=26.891  P&L=  +2,859.4  WR=98.9%  N=550
+  fb>0.05% trail=0.05% SL=10pts TS=30  Sharpe=27.721  P&L=  +2,889.0  WR=99.5%  N=550
+  fb>0.05% trail=0.05% SL=15pts TS=30  Sharpe=28.149  P&L=  +2,902.4  WR=99.6%  N=550
+  fb>0.05% trail=0.08% SL=3pts TS=30  Sharpe=22.089  P&L=  +2,656.7  WR=89.8%  N=550
+  fb>0.05% trail=0.08% SL=5pts TS=30  Sharpe=23.074  P&L=  +2,731.0  WR=92.5%  N=550
+  fb>0.05% trail=0.08% SL=8pts TS=30  Sharpe=23.222  P&L=  +2,743.4  WR=93.1%  N=550
+  fb>0.05% trail=0.08% SL=10pts TS=30  Sharpe=23.799  P&L=  +2,769.7  WR=93.6%  N=550
+  fb>0.05% trail=0.08% SL=15pts TS=30  Sharpe=24.094  P&L=  +2,781.6  WR=93.8%  N=550
+  fb>0.05% trail=0.10% SL=3pts TS=30  Sharpe=18.946  P&L=  +2,640.9  WR=83.6%  N=550
+  fb>0.05% trail=0.10% SL=5pts TS=30  Sharpe=19.891  P&L=  +2,727.1  WR=86.5%  N=550
+  fb>0.05% trail=0.10% SL=8pts TS=30  Sharpe=20.030  P&L=  +2,739.8  WR=87.1%  N=550
+  fb>0.05% trail=0.10% SL=10pts TS=30  Sharpe=20.424  P&L=  +2,764.1  WR=87.5%  N=550
+  fb>0.05% trail=0.10% SL=15pts TS=30  Sharpe=20.621  P&L=  +2,774.9  WR=87.6%  N=550
+  fb>0.08% trail=0.02% SL=3pts TS=30  Sharpe=27.143  P&L=  +2,661.1  WR=95.7%  N=346
+  fb>0.08% trail=0.02% SL=5pts TS=30  Sharpe=28.635  P&L=  +2,725.2  WR=98.3%  N=346
+  fb>0.08% trail=0.02% SL=8pts TS=30  Sharpe=29.142  P&L=  +2,743.4  WR=99.1%  N=346
+  fb>0.08% trail=0.02% SL=10pts TS=30  Sharpe=30.067  P&L=  +2,764.8  WR=99.7%  N=346
+  fb>0.08% trail=0.02% SL=15pts TS=30  Sharpe=30.812  P&L=  +2,779.8  WR=100.0%  N=346
+  fb>0.08% trail=0.03% SL=3pts TS=30  Sharpe=25.995  P&L=  +2,513.2  WR=95.7%  N=346
+  fb>0.08% trail=0.03% SL=5pts TS=30  Sharpe=27.341  P&L=  +2,574.1  WR=98.3%  N=346
+  fb>0.08% trail=0.03% SL=8pts TS=30  Sharpe=27.792  P&L=  +2,591.2  WR=99.1%  N=346
+  fb>0.08% trail=0.03% SL=10pts TS=30  Sharpe=28.652  P&L=  +2,612.0  WR=99.7%  N=346
+  fb>0.08% trail=0.03% SL=15pts TS=30  Sharpe=29.346  P&L=  +2,626.5  WR=100.0%  N=346
+  fb>0.08% trail=0.05% SL=3pts TS=30  Sharpe=24.110  P&L=  +2,264.1  WR=95.7%  N=346
+  fb>0.08% trail=0.05% SL=5pts TS=30  Sharpe=25.218  P&L=  +2,318.7  WR=98.3%  N=346
+  fb>0.08% trail=0.05% SL=8pts TS=30  Sharpe=25.581  P&L=  +2,333.6  WR=99.1%  N=346
+  fb>0.08% trail=0.05% SL=10pts TS=30  Sharpe=26.341  P&L=  +2,353.2  WR=99.7%  N=346
+  fb>0.08% trail=0.05% SL=15pts TS=30  Sharpe=26.955  P&L=  +2,366.6  WR=100.0%  N=346
+  fb>0.08% trail=0.08% SL=3pts TS=30  Sharpe=21.364  P&L=  +2,179.9  WR=94.5%  N=346
+  fb>0.08% trail=0.08% SL=5pts TS=30  Sharpe=22.483  P&L=  +2,240.2  WR=98.0%  N=346
+  fb>0.08% trail=0.08% SL=8pts TS=30  Sharpe=22.714  P&L=  +2,252.0  WR=98.8%  N=346
+  fb>0.08% trail=0.08% SL=10pts TS=30  Sharpe=23.267  P&L=  +2,269.7  WR=99.4%  N=346
+  fb>0.08% trail=0.08% SL=15pts TS=30  Sharpe=23.707  P&L=  +2,281.5  WR=99.7%  N=346
+  fb>0.08% trail=0.10% SL=3pts TS=30  Sharpe=18.447  P&L=  +2,198.0  WR=93.1%  N=346
+  fb>0.08% trail=0.10% SL=5pts TS=30  Sharpe=19.255  P&L=  +2,254.6  WR=95.7%  N=346
+  fb>0.08% trail=0.10% SL=8pts TS=30  Sharpe=19.393  P&L=  +2,264.3  WR=96.5%  N=346
+  fb>0.08% trail=0.10% SL=10pts TS=30  Sharpe=19.753  P&L=  +2,280.7  WR=97.1%  N=346
+  fb>0.08% trail=0.10% SL=15pts TS=30  Sharpe=20.030  P&L=  +2,291.5  WR=97.4%  N=346
+  fb>0.10% trail=0.02% SL=3pts TS=30  Sharpe=26.538  P&L=  +2,188.1  WR=97.5%  N=237
+  fb>0.10% trail=0.02% SL=5pts TS=30  Sharpe=26.874  P&L=  +2,210.6  WR=98.3%  N=237
+  fb>0.10% trail=0.02% SL=8pts TS=30  Sharpe=28.098  P&L=  +2,234.8  WR=99.6%  N=237
+  fb>0.10% trail=0.02% SL=10pts TS=30  Sharpe=28.894  P&L=  +2,247.0  WR=100.0%  N=237
+  fb>0.10% trail=0.02% SL=15pts TS=30  Sharpe=28.894  P&L=  +2,247.0  WR=100.0%  N=237
+  fb>0.10% trail=0.03% SL=3pts TS=30  Sharpe=25.513  P&L=  +2,082.0  WR=97.5%  N=237
+  fb>0.10% trail=0.03% SL=5pts TS=30  Sharpe=25.812  P&L=  +2,104.0  WR=98.3%  N=237
+  fb>0.10% trail=0.03% SL=8pts TS=30  Sharpe=26.935  P&L=  +2,127.1  WR=99.6%  N=237
+  fb>0.10% trail=0.03% SL=10pts TS=30  Sharpe=27.681  P&L=  +2,139.1  WR=100.0%  N=237
+  fb>0.10% trail=0.03% SL=15pts TS=30  Sharpe=27.681  P&L=  +2,139.1  WR=100.0%  N=237
+  fb>0.10% trail=0.05% SL=3pts TS=30  Sharpe=23.824  P&L=  +1,901.0  WR=97.5%  N=237
+  fb>0.10% trail=0.05% SL=5pts TS=30  Sharpe=24.066  P&L=  +1,921.8  WR=98.3%  N=237
+  fb>0.10% trail=0.05% SL=8pts TS=30  Sharpe=25.028  P&L=  +1,942.8  WR=99.6%  N=237
+  fb>0.10% trail=0.05% SL=10pts TS=30  Sharpe=25.697  P&L=  +1,954.3  WR=100.0%  N=237
+  fb>0.10% trail=0.05% SL=15pts TS=30  Sharpe=25.697  P&L=  +1,954.3  WR=100.0%  N=237
+  fb>0.10% trail=0.08% SL=3pts TS=30  Sharpe=20.597  P&L=  +1,814.7  WR=97.0%  N=237
+  fb>0.10% trail=0.08% SL=5pts TS=30  Sharpe=21.024  P&L=  +1,841.4  WR=98.3%  N=237
+  fb>0.10% trail=0.08% SL=8pts TS=30  Sharpe=21.658  P&L=  +1,859.2  WR=99.6%  N=237
+  fb>0.10% trail=0.08% SL=10pts TS=30  Sharpe=22.126  P&L=  +1,869.9  WR=100.0%  N=237
+  fb>0.10% trail=0.08% SL=15pts TS=30  Sharpe=22.126  P&L=  +1,869.9  WR=100.0%  N=237
+  fb>0.10% trail=0.10% SL=3pts TS=30  Sharpe=17.827  P&L=  +1,874.9  WR=96.6%  N=237
+  fb>0.10% trail=0.10% SL=5pts TS=30  Sharpe=18.272  P&L=  +1,904.9  WR=98.3%  N=237
+  fb>0.10% trail=0.10% SL=8pts TS=30  Sharpe=18.668  P&L=  +1,920.6  WR=99.6%  N=237
+  fb>0.10% trail=0.10% SL=10pts TS=30  Sharpe=18.971  P&L=  +1,930.9  WR=100.0%  N=237
+  fb>0.10% trail=0.10% SL=15pts TS=30  Sharpe=18.971  P&L=  +1,930.9  WR=100.0%  N=237
+  fb>0.15% trail=0.02% SL=3pts TS=30  Sharpe=18.399  P&L=  +1,203.0  WR=98.0%  N=99
+  fb>0.15% trail=0.02% SL=5pts TS=30  Sharpe=19.004  P&L=  +1,220.8  WR=99.0%  N=99
+  fb>0.15% trail=0.02% SL=8pts TS=30  Sharpe=18.701  P&L=  +1,217.8  WR=99.0%  N=99
+  fb>0.15% trail=0.02% SL=10pts TS=30  Sharpe=19.724  P&L=  +1,230.0  WR=100.0%  N=99
+  fb>0.15% trail=0.02% SL=15pts TS=30  Sharpe=19.724  P&L=  +1,230.0  WR=100.0%  N=99
+  fb>0.15% trail=0.03% SL=3pts TS=30  Sharpe=17.894  P&L=  +1,159.8  WR=98.0%  N=99
+  fb>0.15% trail=0.03% SL=5pts TS=30  Sharpe=18.464  P&L=  +1,177.2  WR=99.0%  N=99
+  fb>0.15% trail=0.03% SL=8pts TS=30  Sharpe=18.170  P&L=  +1,174.2  WR=99.0%  N=99
+  fb>0.15% trail=0.03% SL=10pts TS=30  Sharpe=19.144  P&L=  +1,186.2  WR=100.0%  N=99
+  fb>0.15% trail=0.03% SL=15pts TS=30  Sharpe=19.144  P&L=  +1,186.2  WR=100.0%  N=99
+  fb>0.15% trail=0.05% SL=3pts TS=30  Sharpe=16.884  P&L=  +1,079.8  WR=98.0%  N=99
+  fb>0.15% trail=0.05% SL=5pts TS=30  Sharpe=17.390  P&L=  +1,096.6  WR=99.0%  N=99
+  fb>0.15% trail=0.05% SL=8pts TS=30  Sharpe=17.115  P&L=  +1,093.6  WR=99.0%  N=99
+  fb>0.15% trail=0.05% SL=10pts TS=30  Sharpe=17.990  P&L=  +1,105.1  WR=100.0%  N=99
+  fb>0.15% trail=0.05% SL=15pts TS=30  Sharpe=17.990  P&L=  +1,105.1  WR=100.0%  N=99
+  fb>0.15% trail=0.08% SL=3pts TS=30  Sharpe=15.622  P&L=  +1,017.5  WR=98.0%  N=99
+  fb>0.15% trail=0.08% SL=5pts TS=30  Sharpe=16.059  P&L=  +1,033.5  WR=99.0%  N=99
+  fb>0.15% trail=0.08% SL=8pts TS=30  Sharpe=15.817  P&L=  +1,030.5  WR=99.0%  N=99
+  fb>0.15% trail=0.08% SL=10pts TS=30  Sharpe=16.545  P&L=  +1,041.2  WR=100.0%  N=99
+  fb>0.15% trail=0.08% SL=15pts TS=30  Sharpe=16.545  P&L=  +1,041.2  WR=100.0%  N=99
+  fb>0.15% trail=0.10% SL=3pts TS=30  Sharpe=13.954  P&L=  +1,051.4  WR=98.0%  N=99
+  fb>0.15% trail=0.10% SL=5pts TS=30  Sharpe=14.306  P&L=  +1,066.8  WR=99.0%  N=99
+  fb>0.15% trail=0.10% SL=8pts TS=30  Sharpe=14.133  P&L=  +1,063.8  WR=99.0%  N=99
+  fb>0.15% trail=0.10% SL=10pts TS=30  Sharpe=14.640  P&L=  +1,074.1  WR=100.0%  N=99
+  fb>0.15% trail=0.10% SL=15pts TS=30  Sharpe=14.640  P&L=  +1,074.1  WR=100.0%  N=99
+  fb>0.20% trail=0.02% SL=3pts TS=30  Sharpe=14.211  P&L=    +790.6  WR=98.2%  N=55
+  fb>0.20% trail=0.02% SL=5pts TS=30  Sharpe=15.352  P&L=    +810.3  WR=100.0%  N=55
+  fb>0.20% trail=0.02% SL=8pts TS=30  Sharpe=15.352  P&L=    +810.3  WR=100.0%  N=55
+  fb>0.20% trail=0.02% SL=10pts TS=30  Sharpe=15.352  P&L=    +810.3  WR=100.0%  N=55
+  fb>0.20% trail=0.02% SL=15pts TS=30  Sharpe=15.352  P&L=    +810.3  WR=100.0%  N=55
+  fb>0.20% trail=0.03% SL=3pts TS=30  Sharpe=13.890  P&L=    +767.0  WR=98.2%  N=55
+  fb>0.20% trail=0.03% SL=5pts TS=30  Sharpe=14.980  P&L=    +786.5  WR=100.0%  N=55
+  fb>0.20% trail=0.03% SL=8pts TS=30  Sharpe=14.980  P&L=    +786.5  WR=100.0%  N=55
+  fb>0.20% trail=0.03% SL=10pts TS=30  Sharpe=14.980  P&L=    +786.5  WR=100.0%  N=55
+  fb>0.20% trail=0.03% SL=15pts TS=30  Sharpe=14.980  P&L=    +786.5  WR=100.0%  N=55
+  fb>0.20% trail=0.05% SL=3pts TS=30  Sharpe=13.334  P&L=    +726.2  WR=98.2%  N=55
+  fb>0.20% trail=0.05% SL=5pts TS=30  Sharpe=14.341  P&L=    +745.0  WR=100.0%  N=55
+  fb>0.20% trail=0.05% SL=8pts TS=30  Sharpe=14.341  P&L=    +745.0  WR=100.0%  N=55
+  fb>0.20% trail=0.05% SL=10pts TS=30  Sharpe=14.341  P&L=    +745.0  WR=100.0%  N=55
+  fb>0.20% trail=0.05% SL=15pts TS=30  Sharpe=14.341  P&L=    +745.0  WR=100.0%  N=55
+  fb>0.20% trail=0.08% SL=3pts TS=30  Sharpe=12.534  P&L=    +690.9  WR=98.2%  N=55
+  fb>0.20% trail=0.08% SL=5pts TS=30  Sharpe=13.417  P&L=    +708.9  WR=100.0%  N=55
+  fb>0.20% trail=0.08% SL=8pts TS=30  Sharpe=13.417  P&L=    +708.9  WR=100.0%  N=55
+  fb>0.20% trail=0.08% SL=10pts TS=30  Sharpe=13.417  P&L=    +708.9  WR=100.0%  N=55
+  fb>0.20% trail=0.08% SL=15pts TS=30  Sharpe=13.417  P&L=    +708.9  WR=100.0%  N=55
+  fb>0.20% trail=0.10% SL=3pts TS=30  Sharpe=11.395  P&L=    +688.7  WR=98.2%  N=55
+  fb>0.20% trail=0.10% SL=5pts TS=30  Sharpe=12.100  P&L=    +706.1  WR=100.0%  N=55
+  fb>0.20% trail=0.10% SL=8pts TS=30  Sharpe=12.100  P&L=    +706.1  WR=100.0%  N=55
+  fb>0.20% trail=0.10% SL=10pts TS=30  Sharpe=12.100  P&L=    +706.1  WR=100.0%  N=55
+  fb>0.20% trail=0.10% SL=15pts TS=30  Sharpe=12.100  P&L=    +706.1  WR=100.0%  N=55
+
+
+==========================================================================================
+TEST 11: CAN WE IMPROVE THE EXISTING SPX STRATEGY?
+==========================================================================================
+The current strategy uses 6 PT/SL/TS combos based on score.
+Testing: what if we used trailing stops + the existing signal system?
+
+  Current strategy trades: 319 days
+  Bullish days NOT traded: 757 days
+
+  Trailing stop on CURRENTLY TRADED days:
+    trail=0.05% SL=5 TS=30  Sharpe=13.759  P&L=    +975.6  WR=81.8%  N=319
+    trail=0.05% SL=5 TS=120  Sharpe=13.759  P&L=    +975.6  WR=81.8%  N=319
+    trail=0.05% SL=5 TS=240  Sharpe=13.759  P&L=    +975.6  WR=81.8%  N=319
+    trail=0.05% SL=5 TS=390  Sharpe=13.759  P&L=    +975.6  WR=81.8%  N=319
+    trail=0.05% SL=10 TS=30  Sharpe=14.136  P&L=    +994.5  WR=82.8%  N=319
+    trail=0.05% SL=10 TS=120  Sharpe=14.136  P&L=    +994.5  WR=82.8%  N=319
+    trail=0.05% SL=10 TS=240  Sharpe=14.136  P&L=    +994.5  WR=82.8%  N=319
+    trail=0.05% SL=10 TS=390  Sharpe=14.136  P&L=    +994.5  WR=82.8%  N=319
+    trail=0.05% SL=15 TS=30  Sharpe=14.811  P&L=  +1,010.8  WR=82.8%  N=319
+    trail=0.05% SL=15 TS=120  Sharpe=14.811  P&L=  +1,010.8  WR=82.8%  N=319
+    trail=0.05% SL=15 TS=240  Sharpe=14.811  P&L=  +1,010.8  WR=82.8%  N=319
+    trail=0.05% SL=15 TS=390  Sharpe=14.811  P&L=  +1,010.8  WR=82.8%  N=319
+    trail=0.05% SL=20 TS=30  Sharpe=14.811  P&L=  +1,010.8  WR=82.8%  N=319
+    trail=0.05% SL=20 TS=120  Sharpe=14.811  P&L=  +1,010.8  WR=82.8%  N=319
+    trail=0.05% SL=20 TS=240  Sharpe=14.811  P&L=  +1,010.8  WR=82.8%  N=319
+    trail=0.05% SL=20 TS=390  Sharpe=14.811  P&L=  +1,010.8  WR=82.8%  N=319
+    trail=0.08% SL=5 TS=30  Sharpe=10.954  P&L=    +965.4  WR=74.0%  N=319
+    trail=0.08% SL=5 TS=120  Sharpe=11.085  P&L=    +957.7  WR=74.0%  N=319
+    trail=0.08% SL=5 TS=240  Sharpe=11.085  P&L=    +957.7  WR=74.0%  N=319
+    trail=0.08% SL=5 TS=390  Sharpe=11.085  P&L=    +957.7  WR=74.0%  N=319
+    trail=0.08% SL=10 TS=30  Sharpe=11.278  P&L=    +985.0  WR=74.6%  N=319
+    trail=0.08% SL=10 TS=120  Sharpe=11.417  P&L=    +977.2  WR=74.6%  N=319
+    trail=0.08% SL=10 TS=240  Sharpe=11.417  P&L=    +977.2  WR=74.6%  N=319
+    trail=0.08% SL=10 TS=390  Sharpe=11.417  P&L=    +977.2  WR=74.6%  N=319
+    trail=0.08% SL=15 TS=30  Sharpe=11.607  P&L=    +997.4  WR=74.6%  N=319
+    trail=0.08% SL=15 TS=120  Sharpe=11.760  P&L=    +989.7  WR=74.6%  N=319
+    trail=0.08% SL=15 TS=240  Sharpe=11.760  P&L=    +989.7  WR=74.6%  N=319
+    trail=0.08% SL=15 TS=390  Sharpe=11.760  P&L=    +989.7  WR=74.6%  N=319
+    trail=0.08% SL=20 TS=30  Sharpe=11.607  P&L=    +997.4  WR=74.6%  N=319
+    trail=0.08% SL=20 TS=120  Sharpe=11.760  P&L=    +989.7  WR=74.6%  N=319
+    trail=0.08% SL=20 TS=240  Sharpe=11.760  P&L=    +989.7  WR=74.6%  N=319
+    trail=0.08% SL=20 TS=390  Sharpe=11.760  P&L=    +989.7  WR=74.6%  N=319
+    trail=0.10% SL=5 TS=30  Sharpe=9.563  P&L=  +1,027.1  WR=70.8%  N=319
+    trail=0.10% SL=5 TS=120  Sharpe=9.598  P&L=  +1,023.1  WR=70.8%  N=319
+    trail=0.10% SL=5 TS=240  Sharpe=9.597  P&L=  +1,023.2  WR=70.8%  N=319
+    trail=0.10% SL=5 TS=390  Sharpe=9.597  P&L=  +1,023.2  WR=70.8%  N=319
+    trail=0.10% SL=10 TS=30  Sharpe=9.744  P&L=  +1,041.7  WR=71.5%  N=319
+    trail=0.10% SL=10 TS=120  Sharpe=9.780  P&L=  +1,037.7  WR=71.5%  N=319
+    trail=0.10% SL=10 TS=240  Sharpe=9.779  P&L=  +1,037.8  WR=71.5%  N=319
+    trail=0.10% SL=10 TS=390  Sharpe=9.779  P&L=  +1,037.8  WR=71.5%  N=319
+    trail=0.10% SL=15 TS=30  Sharpe=9.927  P&L=  +1,051.5  WR=71.5%  N=319
+    trail=0.10% SL=15 TS=120  Sharpe=9.965  P&L=  +1,047.5  WR=71.5%  N=319
+    trail=0.10% SL=15 TS=240  Sharpe=9.964  P&L=  +1,047.7  WR=71.5%  N=319
+    trail=0.10% SL=15 TS=390  Sharpe=9.964  P&L=  +1,047.7  WR=71.5%  N=319
+    trail=0.10% SL=20 TS=30  Sharpe=9.927  P&L=  +1,051.5  WR=71.5%  N=319
+    trail=0.10% SL=20 TS=120  Sharpe=9.965  P&L=  +1,047.5  WR=71.5%  N=319
+    trail=0.10% SL=20 TS=240  Sharpe=9.964  P&L=  +1,047.7  WR=71.5%  N=319
+    trail=0.10% SL=20 TS=390  Sharpe=9.964  P&L=  +1,047.7  WR=71.5%  N=319
+    trail=0.15% SL=5 TS=30  Sharpe=7.639  P&L=  +1,080.9  WR=58.6%  N=319
+    trail=0.15% SL=5 TS=120  Sharpe=7.684  P&L=  +1,228.7  WR=58.6%  N=319
+    trail=0.15% SL=5 TS=240  Sharpe=7.451  P&L=  +1,224.5  WR=58.3%  N=319
+    trail=0.15% SL=5 TS=390  Sharpe=7.384  P&L=  +1,202.2  WR=58.0%  N=319
+    trail=0.15% SL=10 TS=30  Sharpe=7.983  P&L=  +1,128.3  WR=60.5%  N=319
+    trail=0.15% SL=10 TS=120  Sharpe=8.084  P&L=  +1,301.0  WR=60.5%  N=319
+    trail=0.15% SL=10 TS=240  Sharpe=7.783  P&L=  +1,290.2  WR=60.2%  N=319
+    trail=0.15% SL=10 TS=390  Sharpe=7.663  P&L=  +1,272.1  WR=59.9%  N=319
+    trail=0.15% SL=15 TS=30  Sharpe=8.244  P&L=  +1,154.3  WR=60.8%  N=319
+    trail=0.15% SL=15 TS=120  Sharpe=8.309  P&L=  +1,327.0  WR=60.8%  N=319
+    trail=0.15% SL=15 TS=240  Sharpe=7.943  P&L=  +1,311.2  WR=60.5%  N=319
+    trail=0.15% SL=15 TS=390  Sharpe=7.767  P&L=  +1,288.1  WR=60.2%  N=319
+    trail=0.15% SL=20 TS=30  Sharpe=8.244  P&L=  +1,154.3  WR=60.8%  N=319
+    trail=0.15% SL=20 TS=120  Sharpe=8.309  P&L=  +1,327.0  WR=60.8%  N=319
+    trail=0.15% SL=20 TS=240  Sharpe=8.171  P&L=  +1,345.3  WR=60.8%  N=319
+    trail=0.15% SL=20 TS=390  Sharpe=8.205  P&L=  +1,349.9  WR=60.8%  N=319
+    trail=0.20% SL=5 TS=30  Sharpe=7.449  P&L=  +1,191.4  WR=58.0%  N=319
+    trail=0.20% SL=5 TS=120  Sharpe=7.102  P&L=  +1,320.8  WR=55.5%  N=319
+    trail=0.20% SL=5 TS=240  Sharpe=6.924  P&L=  +1,368.6  WR=54.9%  N=319
+    trail=0.20% SL=5 TS=390  Sharpe=6.766  P&L=  +1,345.8  WR=54.5%  N=319
+    trail=0.20% SL=10 TS=30  Sharpe=7.747  P&L=  +1,260.3  WR=61.8%  N=319
+    trail=0.20% SL=10 TS=120  Sharpe=7.288  P&L=  +1,396.4  WR=58.3%  N=319
+    trail=0.20% SL=10 TS=240  Sharpe=7.065  P&L=  +1,438.7  WR=57.7%  N=319
+    trail=0.20% SL=10 TS=390  Sharpe=6.885  P&L=  +1,420.7  WR=57.4%  N=319
+    trail=0.20% SL=15 TS=30  Sharpe=7.929  P&L=  +1,281.8  WR=62.1%  N=319
+    trail=0.20% SL=15 TS=120  Sharpe=7.460  P&L=  +1,420.9  WR=58.6%  N=319
+    trail=0.20% SL=15 TS=240  Sharpe=7.184  P&L=  +1,458.3  WR=58.0%  N=319
+    trail=0.20% SL=15 TS=390  Sharpe=6.964  P&L=  +1,435.2  WR=57.7%  N=319
+    trail=0.20% SL=20 TS=30  Sharpe=7.929  P&L=  +1,281.8  WR=62.1%  N=319
+    trail=0.20% SL=20 TS=120  Sharpe=7.460  P&L=  +1,420.9  WR=58.6%  N=319
+    trail=0.20% SL=20 TS=240  Sharpe=7.362  P&L=  +1,490.1  WR=58.3%  N=319
+    trail=0.20% SL=20 TS=390  Sharpe=7.292  P&L=  +1,492.6  WR=58.3%  N=319
+    trail=0.30% SL=5 TS=30  Sharpe=6.710  P&L=  +1,207.4  WR=52.0%  N=319
+    trail=0.30% SL=5 TS=120  Sharpe=5.940  P&L=  +1,345.7  WR=42.0%  N=319
+    trail=0.30% SL=5 TS=240  Sharpe=5.422  P&L=  +1,290.1  WR=39.8%  N=319
+    trail=0.30% SL=5 TS=390  Sharpe=4.978  P&L=  +1,197.8  WR=38.6%  N=319
+    trail=0.30% SL=10 TS=30  Sharpe=6.348  P&L=  +1,222.1  WR=58.0%  N=319
+    trail=0.30% SL=10 TS=120  Sharpe=5.755  P&L=  +1,447.5  WR=47.3%  N=319
+    trail=0.30% SL=10 TS=240  Sharpe=5.191  P&L=  +1,400.9  WR=44.8%  N=319
+    trail=0.30% SL=10 TS=390  Sharpe=4.669  P&L=  +1,272.1  WR=43.3%  N=319
+    trail=0.30% SL=15 TS=30  Sharpe=6.442  P&L=  +1,241.6  WR=58.3%  N=319
+    trail=0.30% SL=15 TS=120  Sharpe=5.721  P&L=  +1,448.1  WR=48.0%  N=319
+    trail=0.30% SL=15 TS=240  Sharpe=5.151  P&L=  +1,402.1  WR=45.8%  N=319
+    trail=0.30% SL=15 TS=390  Sharpe=4.459  P&L=  +1,232.3  WR=43.9%  N=319
+    trail=0.30% SL=20 TS=30  Sharpe=6.511  P&L=  +1,250.2  WR=58.3%  N=319
+    trail=0.30% SL=20 TS=120  Sharpe=5.779  P&L=  +1,458.9  WR=48.0%  N=319
+    trail=0.30% SL=20 TS=240  Sharpe=5.293  P&L=  +1,436.3  WR=46.1%  N=319
+    trail=0.30% SL=20 TS=390  Sharpe=4.602  P&L=  +1,271.3  WR=44.5%  N=319
+
+  Edge on MISSED bullish days (757):
+  PT=5 SL=3 TS=30                          N= 757  P&L=  +1,884.3pts  WR= 69.7%  PF= 3.80  Sharpe=18.883  MaxDD=      19.0pts
+  PT=10 SL=5 TS=60                         N= 757  P&L=  +2,099.9pts  WR= 56.5%  PF= 2.32  Sharpe=10.907  MaxDD=      53.6pts
+  PT=20 SL=10 TS=120                       N= 757  P&L=  +1,734.7pts  WR= 49.1%  PF= 1.51  Sharpe= 5.042  MaxDD=     161.5pts
+  PT=50 SL=10 TS=240                       N= 757  P&L=  +1,893.9pts  WR= 42.0%  PF= 1.46  Sharpe= 3.974  MaxDD=     218.2pts
+  Trail=0.05% SL=10 TS=120 (missed days)   N= 757  P&L=  +2,345.3pts  WR= 81.1%  PF=21.75  Sharpe=20.348  MaxDD=      10.0pts
+  Trail=0.1% SL=10 TS=120 (missed days)    N= 757  P&L=  +2,141.4pts  WR= 67.2%  PF= 6.19  Sharpe=14.701  MaxDD=      13.7pts
+  Trail=0.2% SL=10 TS=120 (missed days)    N= 757  P&L=  +2,301.8pts  WR= 54.0%  PF= 2.89  Sharpe= 9.566  MaxDD=      52.8pts
+
+
+==========================================================================================
+SCAN COMPLETE
+==========================================================================================

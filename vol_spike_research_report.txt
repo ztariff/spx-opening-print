@@ -1,0 +1,290 @@
+================================================================================
+INTRADAY VOL SPIKE MEAN REVERSION RESEARCH
+================================================================================
+
+Loading data...
+  SPX 1-min days: 2053
+  Date range: 2018-01-02 to 2026-03-04
+  VIX daily: 2083 days
+
+================================================================================
+PHASE 1: CHARACTERIZE INTRADAY DROPS
+================================================================================
+
+Max intraday drop from 10-min rolling high (% of SPX):
+  Mean: 0.507%
+  Median: 0.383%
+  Stdev: 0.453%
+  P25: 0.265%
+  P75: 0.587%
+  P90: 0.867%
+  P95: 1.248%
+
+  VIX low (1051 days): mean=0.321%  median=0.283%  P90=0.496%
+  VIX mid (651 days): mean=0.523%  median=0.458%  P90=0.797%
+  VIX high (351 days): mean=1.034%  median=0.762%  P90=2.020%
+
+  Days with >= 0.15% drop: 1985 (96.7%)
+  Days with >= 0.20% drop: 1829 (89.1%)
+  Days with >= 0.25% drop: 1605 (78.2%)
+  Days with >= 0.30% drop: 1366 (66.5%)
+  Days with >= 0.40% drop: 956 (46.6%)
+  Days with >= 0.50% drop: 672 (32.7%)
+  Days with >= 0.75% drop: 298 (14.5%)
+  Days with >= 1.00% drop: 146 (7.1%)
+
+================================================================================
+PHASE 2: MEAN REVERSION AFTER DROPS
+================================================================================
+
+--- Drop threshold: >= 0.20% from 10-min rolling high ---
+  Spikes found: 18922
+  5m bounce: mean=+0.0761%  win_rate=72.2%  median=+0.0575%
+  10m bounce: mean=+0.0757%  win_rate=65.3%  median=+0.0577%
+  15m bounce: mean=+0.0766%  win_rate=62.7%  median=+0.0619%
+  30m bounce: mean=+0.0771%  win_rate=59.4%  median=+0.0643%
+
+--- Drop threshold: >= 0.30% from 10-min rolling high ---
+  Spikes found: 9111
+  5m bounce: mean=+0.0923%  win_rate=70.7%  median=+0.0688%
+  10m bounce: mean=+0.0930%  win_rate=64.2%  median=+0.0704%
+  15m bounce: mean=+0.0939%  win_rate=61.5%  median=+0.0712%
+  30m bounce: mean=+0.0942%  win_rate=58.5%  median=+0.0728%
+
+--- Drop threshold: >= 0.40% from 10-min rolling high ---
+  Spikes found: 4783
+  5m bounce: mean=+0.1067%  win_rate=69.1%  median=+0.0747%
+  10m bounce: mean=+0.1091%  win_rate=63.0%  median=+0.0772%
+  15m bounce: mean=+0.1083%  win_rate=60.0%  median=+0.0748%
+  30m bounce: mean=+0.1121%  win_rate=57.1%  median=+0.0729%
+
+--- Drop threshold: >= 0.50% from 10-min rolling high ---
+  Spikes found: 2701
+  5m bounce: mean=+0.1291%  win_rate=68.9%  median=+0.0886%
+  10m bounce: mean=+0.1393%  win_rate=63.3%  median=+0.0930%
+  15m bounce: mean=+0.1406%  win_rate=61.0%  median=+0.0905%
+  30m bounce: mean=+0.1474%  win_rate=57.1%  median=+0.0858%
+
+================================================================================
+PHASE 3: FULL TRADE SIMULATION — BUY CALL ON INTRADAY DIP
+================================================================================
+
+Sweeping 864 parameter combinations...
+
+Completed sweep. 864 valid combinations.
+
+TOP 20 BY SHARPE:
+ Drop  LB  Trail     SL  TS | Trades   Win%    Total P&L   $/Trade  Sharpe
+-------------------------------------------------------------------------------------
+ 0.50   5   0.20   0.10  60 |   1498   0.3%   -2,061,429    -1,376   -2.03
+ 0.50   5   0.20   0.10  15 |   1498   0.3%   -2,061,600    -1,376   -2.03
+ 0.50   5   0.20   0.10  30 |   1498   0.3%   -2,062,487    -1,377   -2.03
+ 0.50   5   0.20   0.15  60 |   1498   0.3%   -2,063,103    -1,377   -2.03
+ 0.50   5   0.20   0.15  15 |   1498   0.3%   -2,062,095    -1,377   -2.03
+ 0.50   5   0.20   0.15  30 |   1498   0.3%   -2,064,065    -1,378   -2.03
+ 0.50   5   0.20   0.20  60 |   1498   0.3%   -2,062,982    -1,377   -2.03
+ 0.50   5   0.20   0.20  15 |   1498   0.3%   -2,062,149    -1,377   -2.03
+ 0.50   5   0.20   0.20  30 |   1498   0.3%   -2,064,088    -1,378   -2.03
+ 0.50   5   0.20   0.30  60 |   1498   0.3%   -2,057,153    -1,373   -2.03
+ 0.50   5   0.20   0.30  15 |   1498   0.3%   -2,056,430    -1,373   -2.03
+ 0.50   5   0.20   0.30  30 |   1498   0.3%   -2,058,140    -1,374   -2.03
+ 0.50   5   0.15   0.10  60 |   1498   0.3%   -2,061,763    -1,376   -2.05
+ 0.50   5   0.15   0.10  15 |   1498   0.3%   -2,062,621    -1,377   -2.05
+ 0.50   5   0.15   0.10  30 |   1498   0.3%   -2,062,150    -1,377   -2.05
+ 0.50   5   0.15   0.15  60 |   1498   0.3%   -2,058,592    -1,374   -2.05
+ 0.50   5   0.15   0.15  15 |   1498   0.3%   -2,059,290    -1,375   -2.05
+ 0.50   5   0.15   0.15  30 |   1498   0.3%   -2,059,011    -1,375   -2.05
+ 0.50   5   0.15   0.20  60 |   1498   0.3%   -2,056,411    -1,373   -2.06
+ 0.50   5   0.15   0.20  15 |   1498   0.3%   -2,057,125    -1,373   -2.06
+
+TOP 20 BY TOTAL P&L:
+ Drop  LB  Trail     SL  TS | Trades   Win%    Total P&L   $/Trade  Sharpe
+-------------------------------------------------------------------------------------
+ 0.50   5   0.05   0.30  15 |   1498   0.3%   -1,982,053    -1,323   -2.16
+ 0.50   5   0.05   0.30  30 |   1498   0.3%   -1,982,078    -1,323   -2.16
+ 0.50   5   0.05   0.30  60 |   1498   0.3%   -1,982,157    -1,323   -2.16
+ 0.50   5   0.05   0.20  15 |   1498   0.3%   -1,989,184    -1,328   -2.14
+ 0.50   5   0.05   0.20  60 |   1498   0.3%   -1,989,231    -1,328   -2.14
+ 0.50   5   0.05   0.20  30 |   1498   0.3%   -1,989,272    -1,328   -2.14
+ 0.50   5   0.05   0.15  60 |   1498   0.3%   -1,995,126    -1,332   -2.13
+ 0.50   5   0.05   0.15  15 |   1498   0.3%   -1,995,146    -1,332   -2.13
+ 0.50   5   0.05   0.15  30 |   1498   0.3%   -1,995,166    -1,332   -2.13
+ 0.50   5   0.05   0.10  15 |   1498   0.3%   -2,007,611    -1,340   -2.11
+ 0.50   5   0.05   0.10  30 |   1498   0.3%   -2,007,631    -1,340   -2.11
+ 0.50   5   0.05   0.10  60 |   1498   0.3%   -2,007,638    -1,340   -2.11
+ 0.50   5   0.10   0.30  15 |   1498   0.3%   -2,026,761    -1,353   -2.11
+ 0.50   5   0.10   0.30  60 |   1498   0.3%   -2,027,024    -1,353   -2.11
+ 0.50   5   0.10   0.30  30 |   1498   0.3%   -2,027,075    -1,353   -2.11
+ 0.50   5   0.10   0.20  15 |   1498   0.3%   -2,032,380    -1,357   -2.10
+ 0.50   5   0.10   0.20  60 |   1498   0.3%   -2,032,586    -1,357   -2.10
+ 0.50   5   0.10   0.20  30 |   1498   0.3%   -2,032,757    -1,357   -2.10
+ 0.50   5   0.10   0.15  15 |   1498   0.3%   -2,036,388    -1,359   -2.09
+ 0.50   5   0.10   0.15  60 |   1498   0.3%   -2,036,527    -1,359   -2.09
+
+================================================================================
+PHASE 4: DEEP DIVE ON BEST EDGES
+================================================================================
+
+Edge 1: drop>=0.50% LB=5m trail=0.20% SL=0.10% TS=60m
+  Trades: 1498  Win rate: 0.3%  Total P&L: $-2,061,429  Sharpe: -2.03
+  Avg win: $285  Avg loss: $-1,382  Per trade: $-1,376
+  Yearly breakdown:
+    2018:  140 trades    0.0% win  $    -258,045
+    2019:   46 trades    0.0% win  $    -122,711
+    2020:  702 trades    0.4% win  $    -671,305
+    2021:   53 trades    0.0% win  $    -104,865
+    2022:  346 trades    0.3% win  $    -563,384
+    2023:   45 trades    0.0% win  $    -104,101
+    2024:   13 trades    0.0% win  $     -28,409
+    2025:  148 trades    0.7% win  $    -197,778
+    2026:    5 trades    0.0% win  $     -10,831
+  By VIX regime:
+    VIX<18: 68 trades  0.0% win  $    -199,663 total  $-2,936/trade
+    18≤VIX<25: 218 trades  0.0% win  $    -463,112 total  $-2,124/trade
+    VIX≥25: 1212 trades  0.4% win  $  -1,398,653 total  $-1,154/trade
+  By exit reason:
+    Stop Loss: 605 trades  $    -905,914
+    Time Stop: 22 trades  $     -56,974
+    Trailing Stop: 871 trades  $  -1,098,541
+  By time of day:
+    9:35-10:30: 477 trades  0.2% win  $    -694,836
+    10:30-13:00: 565 trades  0.4% win  $    -740,417
+    13:00-15:00: 456 trades  0.4% win  $    -626,176
+  Max drawdown: $2,061,429
+
+Edge 2: drop>=0.50% LB=5m trail=0.20% SL=0.10% TS=15m
+  Trades: 1498  Win rate: 0.3%  Total P&L: $-2,061,600  Sharpe: -2.03
+  Avg win: $285  Avg loss: $-1,382  Per trade: $-1,376
+  Yearly breakdown:
+    2018:  140 trades    0.0% win  $    -258,333
+    2019:   46 trades    0.0% win  $    -123,658
+    2020:  702 trades    0.4% win  $    -671,280
+    2021:   53 trades    0.0% win  $    -104,459
+    2022:  346 trades    0.3% win  $    -562,647
+    2023:   45 trades    0.0% win  $    -104,218
+    2024:   13 trades    0.0% win  $     -28,385
+    2025:  148 trades    0.7% win  $    -197,786
+    2026:    5 trades    0.0% win  $     -10,831
+  By VIX regime:
+    VIX<18: 68 trades  0.0% win  $    -199,882 total  $-2,939/trade
+    18≤VIX<25: 218 trades  0.0% win  $    -463,912 total  $-2,128/trade
+    VIX≥25: 1212 trades  0.4% win  $  -1,397,806 total  $-1,153/trade
+  By exit reason:
+    Stop Loss: 588 trades  $    -864,806
+    Time Stop: 99 trades  $    -204,984
+    Trailing Stop: 811 trades  $    -991,810
+  By time of day:
+    9:35-10:30: 477 trades  0.2% win  $    -694,500
+    10:30-13:00: 565 trades  0.4% win  $    -741,650
+    13:00-15:00: 456 trades  0.4% win  $    -625,450
+  Max drawdown: $2,061,600
+
+Edge 3: drop>=0.50% LB=5m trail=0.20% SL=0.10% TS=30m
+  Trades: 1498  Win rate: 0.3%  Total P&L: $-2,062,487  Sharpe: -2.03
+  Avg win: $285  Avg loss: $-1,382  Per trade: $-1,377
+  Yearly breakdown:
+    2018:  140 trades    0.0% win  $    -258,572
+    2019:   46 trades    0.0% win  $    -123,751
+    2020:  702 trades    0.4% win  $    -671,177
+    2021:   53 trades    0.0% win  $    -104,681
+    2022:  346 trades    0.3% win  $    -563,303
+    2023:   45 trades    0.0% win  $    -104,067
+    2024:   13 trades    0.0% win  $     -28,252
+    2025:  148 trades    0.7% win  $    -197,852
+    2026:    5 trades    0.0% win  $     -10,831
+  By VIX regime:
+    VIX<18: 68 trades  0.0% win  $    -199,773 total  $-2,938/trade
+    18≤VIX<25: 218 trades  0.0% win  $    -464,228 total  $-2,129/trade
+    VIX≥25: 1212 trades  0.4% win  $  -1,398,487 total  $-1,154/trade
+  By exit reason:
+    Stop Loss: 599 trades  $    -888,819
+    Time Stop: 45 trades  $    -107,190
+    Trailing Stop: 854 trades  $  -1,066,478
+  By time of day:
+    9:35-10:30: 477 trades  0.2% win  $    -694,717
+    10:30-13:00: 565 trades  0.4% win  $    -741,087
+    13:00-15:00: 456 trades  0.4% win  $    -626,684
+  Max drawdown: $2,062,487
+
+Edge 4: drop>=0.50% LB=5m trail=0.20% SL=0.15% TS=60m
+  Trades: 1498  Win rate: 0.3%  Total P&L: $-2,063,103  Sharpe: -2.03
+  Avg win: $285  Avg loss: $-1,383  Per trade: $-1,377
+  Yearly breakdown:
+    2018:  140 trades    0.0% win  $    -257,929
+    2019:   46 trades    0.0% win  $    -123,104
+    2020:  702 trades    0.4% win  $    -671,211
+    2021:   53 trades    0.0% win  $    -104,996
+    2022:  346 trades    0.3% win  $    -564,280
+    2023:   45 trades    0.0% win  $    -104,195
+    2024:   13 trades    0.0% win  $     -28,437
+    2025:  148 trades    0.7% win  $    -198,120
+    2026:    5 trades    0.0% win  $     -10,831
+  By VIX regime:
+    VIX<18: 68 trades  0.0% win  $    -200,060 total  $-2,942/trade
+    18≤VIX<25: 218 trades  0.0% win  $    -463,848 total  $-2,128/trade
+    VIX≥25: 1212 trades  0.4% win  $  -1,399,196 total  $-1,154/trade
+  By exit reason:
+    Stop Loss: 351 trades  $    -530,735
+    Time Stop: 25 trades  $     -65,555
+    Trailing Stop: 1122 trades  $  -1,466,814
+  By time of day:
+    9:35-10:30: 477 trades  0.2% win  $    -696,241
+    10:30-13:00: 565 trades  0.4% win  $    -740,614
+    13:00-15:00: 456 trades  0.4% win  $    -626,249
+  Max drawdown: $2,063,103
+
+Edge 5: drop>=0.50% LB=5m trail=0.20% SL=0.15% TS=15m
+  Trades: 1498  Win rate: 0.3%  Total P&L: $-2,062,095  Sharpe: -2.03
+  Avg win: $285  Avg loss: $-1,382  Per trade: $-1,377
+  Yearly breakdown:
+    2018:  140 trades    0.0% win  $    -257,831
+    2019:   46 trades    0.0% win  $    -124,063
+    2020:  702 trades    0.4% win  $    -671,330
+    2021:   53 trades    0.0% win  $    -104,528
+    2022:  346 trades    0.3% win  $    -562,658
+    2023:   45 trades    0.0% win  $    -104,312
+    2024:   13 trades    0.0% win  $     -28,413
+    2025:  148 trades    0.7% win  $    -198,129
+    2026:    5 trades    0.0% win  $     -10,831
+  By VIX regime:
+    VIX<18: 68 trades  0.0% win  $    -200,080 total  $-2,942/trade
+    18≤VIX<25: 218 trades  0.0% win  $    -464,352 total  $-2,130/trade
+    VIX≥25: 1212 trades  0.4% win  $  -1,397,663 total  $-1,153/trade
+  By exit reason:
+    Stop Loss: 342 trades  $    -510,688
+    Time Stop: 117 trades  $    -237,451
+    Trailing Stop: 1039 trades  $  -1,313,957
+  By time of day:
+    9:35-10:30: 477 trades  0.2% win  $    -695,698
+    10:30-13:00: 565 trades  0.4% win  $    -741,415
+    13:00-15:00: 456 trades  0.4% win  $    -624,982
+  Max drawdown: $2,062,095
+
+================================================================================
+PHASE 5: ALTERNATIVE — SHORT VOL ON SPIKE (sell put at spike)
+================================================================================
+
+Testing: When SPX drops sharply, sell OTM put (short vol) expecting mean reversion
+Risk: defined by buying further OTM put as hedge (spread)
+
+  Drop>=0.20%: 12206 trades  Win=94.3%  Total=$613,868,342  $/trade=$50,292  Sharpe=1.64
+  Drop>=0.30%: 5161 trades  Win=93.0%  Total=$309,768,346  $/trade=$60,021  Sharpe=1.31
+  Drop>=0.40%: 2516 trades  Win=92.1%  Total=$169,409,292  $/trade=$67,333  Sharpe=1.13
+  Drop>=0.50%: 1366 trades  Win=92.7%  Total=$93,157,098  $/trade=$68,197  Sharpe=1.13
+
+================================================================================
+SUMMARY
+================================================================================
+
+Best long-call edge (by Sharpe):
+  Trigger: SPX drops >= 0.50% from 5-min rolling high
+  Action:  BUY ATM CALL
+  Exit:    Trail 0.20% / SL 0.10% / TS 60m
+  Results: 1498 trades | 0.3% win | $-2,061,429 total | Sharpe -2.03
+
+Best credit spread edge (by Sharpe):
+  Trigger: SPX drops >= 0.20% from rolling high
+  Action:  SELL ATM PUT / BUY 20pt OTM PUT (credit spread)
+  Results: 12206 trades | 94.3% win | $613868342 total | Sharpe 1.64
+
+Script complete.

@@ -1,0 +1,171 @@
+Loading data...
+QQQ intraday days: 2057
+
+================================================================================
+STEP 1: DOES THE FIRST BAR EDGE EXIST ON QQQ?
+================================================================================
+
+  Total trading days: 2057
+  Bullish first bars: 1060 (51.5%)
+  Bearish first bars: 997 (48.5%)
+
+  Bullish 1st bar -> EOD return: avg 0.174%, stdev 1.215%
+  Bearish 1st bar -> EOD return: avg -0.113%, stdev 1.108%
+  All days -> EOD return: avg 0.035%
+
+  Bullish first bar — return by hold time:
+     15min: avg 0.099%, WR 65.8%, stdev 0.364%
+     30min: avg 0.102%, WR 60.9%, stdev 0.485%
+     60min: avg 0.119%, WR 61.0%, stdev 0.620%
+    120min: avg 0.138%, WR 60.0%, stdev 0.777%
+    240min: avg 0.143%, WR 61.6%, stdev 0.940%
+    390min: avg 0.174%, WR 60.6%, stdev 1.215%
+
+================================================================================
+STEP 2: OPTIMAL PT/SL FOR QQQ (on bullish first bar days)
+================================================================================
+
+  Testing PT/SL combinations (percentage of QQQ price):
+    PT%   SL%   TS |    N    WR    PF   Mean%  StDev%  Sharpe   Total%  MaxDD%
+  -------------------------------------------------------------------------------------
+   0.20  0.10   30 | 1060  62.4  3.29  0.0858   0.145   0.593    90.95   0.600 <-- BEST
+   0.20  0.10   60 | 1060  61.7  3.23  0.0851   0.146   0.584    90.16   0.700
+   0.20  0.10  120 | 1060  61.7  3.22  0.0850   0.146   0.583    90.14   0.700
+   0.20  0.10  240 | 1060  61.7  3.22  0.0849   0.146   0.582    90.03   0.700
+   0.20  0.10  390 | 1060  61.6  3.21  0.0848   0.146   0.581    89.90   0.700
+   0.20  0.15   30 | 1060  66.9  2.71  0.0829   0.163   0.509    87.92   1.294
+   0.30  0.10   30 | 1060  52.0  3.06  0.0984   0.194   0.506   104.31   0.700
+   0.20  0.15   60 | 1060  66.6  2.67  0.0826   0.164   0.503    87.60   1.350
+   0.20  0.15  120 | 1060  66.5  2.65  0.0828   0.165   0.501    87.75   1.350
+   0.20  0.15  240 | 1060  66.5  2.64  0.0826   0.165   0.500    87.58   1.350
+   0.20  0.15  390 | 1060  66.4  2.64  0.0825   0.165   0.499    87.40   1.450
+   0.30  0.10   60 | 1060  50.1  2.96  0.0970   0.198   0.491   102.85   1.000
+   0.30  0.10  120 | 1060  49.2  2.88  0.0954   0.199   0.478   101.11   1.000
+   0.30  0.10  240 | 1060  48.9  2.86  0.0952   0.200   0.476   100.91   1.000
+   0.30  0.10  390 | 1060  48.8  2.86  0.0951   0.200   0.475   100.80   1.000
+   0.20  0.20   30 | 1060  70.5  2.46  0.0814   0.178   0.458    86.30   1.894
+   0.40  0.10   30 | 1060  46.1  2.97  0.1056   0.233   0.453   111.90   1.278
+   0.20  0.20   60 | 1060  70.0  2.35  0.0796   0.182   0.438    84.42   2.000
+   0.20  0.20  120 | 1060  70.0  2.34  0.0798   0.183   0.437    84.62   2.000
+   0.20  0.20  240 | 1060  70.0  2.33  0.0798   0.183   0.435    84.63   2.000
+   0.20  0.20  390 | 1060  69.9  2.32  0.0796   0.184   0.434    84.40   2.200
+   0.30  0.15   30 | 1060  56.4  2.46  0.0929   0.216   0.431    98.48   1.285
+   0.40  0.10   60 | 1060  42.6  2.80  0.1026   0.240   0.428   108.80   1.341
+   0.20  0.30   30 | 1060  75.7  2.37  0.0843   0.199   0.425    89.37   2.189
+   0.40  0.10  120 | 1060  41.2  2.75  0.1027   0.244   0.421   108.82   1.300
+
+================================================================================
+STEP 3: WHICH FILTERS MATTER FOR QQQ?
+  (Using best PT/SL from above: PT=0.2%, SL=0.1%, TS=30)
+================================================================================
+
+  --- VIX Filters ---
+  No VIX filter (baseline)                : N=1060 WR= 62.4% PF= 3.29 Sharpe= 0.593 (+0.000) Total=  90.95%
+  VIX >= 14                               : N= 892 WR= 62.9% PF= 3.36 Sharpe= 0.604 (+0.011) Total=  77.95%
+  VIX >= 16                               : N= 732 WR= 63.3% PF= 3.43 Sharpe= 0.616 (+0.024) Total=  65.24%
+  VIX >= 18                               : N= 552 WR= 65.8% PF= 3.83 Sharpe= 0.681 (+0.088) Total=  53.55%
+  VIX >= 20                               : N= 429 WR= 66.0% PF= 3.87 Sharpe= 0.686 (+0.093) Total=  41.85%
+  VIX <= 25                               : N= 861 WR= 61.2% PF= 3.13 Sharpe= 0.564 (-0.028) Total=  70.65%
+  VIX <= 28                               : N= 922 WR= 61.9% PF= 3.23 Sharpe= 0.582 (-0.011) Total=  77.75%
+  VIX <= 30                               : N= 967 WR= 62.2% PF= 3.26 Sharpe= 0.587 (-0.006) Total=  82.25%
+  VIX 16-25                               : N= 534 WR= 61.8% PF= 3.21 Sharpe= 0.580 (-0.012) Total=  45.14%
+  VIX 16-28                               : N= 595 WR= 62.9% PF= 3.36 Sharpe= 0.606 (+0.013) Total=  52.24%
+  VIX 16-30                               : N= 640 WR= 63.1% PF= 3.40 Sharpe= 0.613 (+0.020) Total=  56.74%
+  VIX 18-25                               : N= 354 WR= 65.0% PF= 3.70 Sharpe= 0.660 (+0.067) Total=  33.45%
+  VIX 18-28                               : N= 415 WR= 66.0% PF= 3.88 Sharpe= 0.687 (+0.094) Total=  40.55%
+  VIX 14-25                               : N= 694 WR= 61.7% PF= 3.17 Sharpe= 0.573 (-0.020) Total=  57.85%
+  VIX 14-28                               : N= 755 WR= 62.5% PF= 3.30 Sharpe= 0.594 (+0.001) Total=  64.95%
+
+  --- MA Filters ---
+  Above SMA50                             : N= 709 WR= 61.1% PF= 3.11 Sharpe= 0.561 (-0.031) Total=  57.91%
+  Below SMA50                             : N= 323 WR= 65.0% PF= 3.72 Sharpe= 0.663 (+0.071) Total=  30.70%
+  Above SMA200                            : N= 724 WR= 61.0% PF= 3.11 Sharpe= 0.561 (-0.032) Total=  59.11%
+  Below SMA200                            : N= 228 WR= 68.0% PF= 4.25 Sharpe= 0.741 (+0.148) Total=  23.70%
+
+  --- RSI Filters ---
+  RSI 30-70                               : N= 769 WR= 62.2% PF= 3.26 Sharpe= 0.588 (-0.005) Total=  65.65%
+  RSI 35-65                               : N= 589 WR= 63.8% PF= 3.50 Sharpe= 0.627 (+0.034) Total=  53.15%
+  RSI 35-70                               : N= 705 WR= 62.1% PF= 3.25 Sharpe= 0.587 (-0.006) Total=  60.05%
+  RSI 40-60                               : N= 390 WR= 66.2% PF= 3.87 Sharpe= 0.684 (+0.092) Total=  37.86%
+  RSI 40-70                               : N= 626 WR= 62.8% PF= 3.34 Sharpe= 0.601 (+0.009) Total=  54.45%
+  RSI > 50                                : N= 671 WR= 60.2% PF= 3.00 Sharpe= 0.541 (-0.052) Total=  52.98%
+  RSI 50-70                               : N= 452 WR= 59.7% PF= 2.93 Sharpe= 0.529 (-0.063) Total=  35.10%
+
+  --- Gap Filters ---
+  Gap up                                  : N= 588 WR= 60.4% PF= 3.01 Sharpe= 0.543 (-0.049) Total=  46.63%
+  Gap down                                : N= 468 WR= 65.2% PF= 3.74 Sharpe= 0.665 (+0.072) Total=  44.43%
+  Gap up > 0.1%                           : N= 512 WR= 60.7% PF= 3.06 Sharpe= 0.552 (-0.041) Total=  41.15%
+  Gap up > 0.3%                           : N= 366 WR= 61.2% PF= 3.12 Sharpe= 0.561 (-0.031) Total=  29.88%
+  Small gap (< 0.3%)                      : N= 390 WR= 56.7% PF= 2.59 Sharpe= 0.463 (-0.130) Total=  26.67%
+  No large gap down (> -0.5%)             : N= 855 WR= 59.2% PF= 2.87 Sharpe= 0.518 (-0.075) Total=  64.95%
+
+  --- Day of Week ---
+  Monday                                  : N= 220 WR= 65.0% PF= 3.74 Sharpe= 0.665 (+0.072) Total=  20.89%
+  Tuesday                                 : N= 206 WR= 55.8% PF= 2.50 Sharpe= 0.445 (-0.147) Total=  13.65%
+  Wednesday                               : N= 211 WR= 61.1% PF= 3.09 Sharpe= 0.557 (-0.036) Total=  17.13%
+  Thursday                                : N= 211 WR= 65.4% PF= 3.71 Sharpe= 0.659 (+0.066) Total=  19.81%
+  Friday                                  : N= 212 WR= 64.2% PF= 3.59 Sharpe= 0.641 (+0.048) Total=  19.47%
+  Exclude Tuesday                         : N= 854 WR= 63.9% PF= 3.52 Sharpe= 0.631 (+0.038) Total=  77.31%
+  Exclude Thursday                        : N= 849 WR= 61.6% PF= 3.19 Sharpe= 0.576 (-0.016) Total=  71.14%
+  Exclude Tue+Thu                         : N= 643 WR= 63.5% PF= 3.47 Sharpe= 0.621 (+0.029) Total=  57.49%
+  Mon+Wed+Fri only                        : N= 643 WR= 63.5% PF= 3.47 Sharpe= 0.621 (+0.029) Total=  57.49%
+
+  --- Prior Day ---
+  Prior day green                         : N= 543 WR= 60.2% PF= 2.98 Sharpe= 0.537 (-0.056) Total=  42.53%
+  Prior day red                           : N= 515 WR= 64.7% PF= 3.67 Sharpe= 0.655 (+0.063) Total=  48.33%
+  Prior day big red (<-1%)                : N= 179 WR= 73.7% PF= 5.62 Sharpe= 0.916 (+0.323) Total=  21.70%
+  Prior range > 1.5%                      : N= 469 WR= 65.9% PF= 3.86 Sharpe= 0.686 (+0.093) Total=  45.80%
+  Prior range > 2%                        : N= 277 WR= 68.6% PF= 4.37 Sharpe= 0.758 (+0.166) Total=  29.30%
+
+  --- Max Excursion (how far did QQQ go up/down from open?) ---
+  Max up potential > 0.5%                 : N= 669 WR= 74.6% PF= 5.84 Sharpe= 0.942 (+0.350) Total=  82.31%
+  Max down risk < -0.5%                   : N= 554 WR= 70.8% PF= 4.79 Sharpe= 0.813 (+0.221) Total=  61.39%
+
+================================================================================
+STEP 4: COMBINED FILTERS
+================================================================================
+  Above SMA50 + VIX 16-30                      : N= 379 WR= 62.5% PF= 3.31 Sharpe= 0.595 (+0.003) Total=  32.74%
+  Above SMA50 + VIX 16-28                      : N= 363 WR= 61.7% PF= 3.19 Sharpe= 0.575 (-0.017) Total=  30.44%
+  Above SMA50 + VIX 14-28                      : N= 509 WR= 61.3% PF= 3.12 Sharpe= 0.563 (-0.030) Total=  41.73%
+  Above SMA50 + VIX 14-25                      : N= 487 WR= 60.6% PF= 3.02 Sharpe= 0.546 (-0.047) Total=  38.83%
+  Above SMA50 + RSI 35-70                      : N= 490 WR= 61.4% PF= 3.14 Sharpe= 0.567 (-0.026) Total=  40.45%
+  Above SMA50 + RSI 40-70                      : N= 473 WR= 61.9% PF= 3.21 Sharpe= 0.579 (-0.014) Total=  39.75%
+  Above SMA50 + RSI 50-70                      : N= 383 WR= 59.0% PF= 2.84 Sharpe= 0.512 (-0.081) Total=  28.80%
+  SMA50 + VIX 16-28 + RSI 35-70                : N= 259 WR= 63.7% PF= 3.49 Sharpe= 0.626 (+0.033) Total=  23.41%
+  SMA50 + VIX 14-28 + RSI 35-70                : N= 370 WR= 61.6% PF= 3.16 Sharpe= 0.570 (-0.023) Total=  30.70%
+  SMA50 + VIX 16-30 + RSI 35-70                : N= 273 WR= 64.5% PF= 3.61 Sharpe= 0.645 (+0.052) Total=  25.31%
+  SMA50 + VIX 14-25 + RSI 35-70                : N= 354 WR= 61.0% PF= 3.08 Sharpe= 0.556 (-0.037) Total=  28.70%
+  SMA50 + VIX 16-28 + RSI 40-70                : N= 248 WR= 64.1% PF= 3.55 Sharpe= 0.635 (+0.043) Total=  22.71%
+  SMA50 + VIX 14-28 + no Thu                   : N= 410 WR= 61.0% PF= 3.09 Sharpe= 0.558 (-0.035) Total=  33.38%
+  SMA50 + VIX 14-28 + no Tue/Thu               : N= 313 WR= 63.9% PF= 3.50 Sharpe= 0.627 (+0.035) Total=  28.23%
+  SMA50 + RSI 35-70 + gap up                   : N= 291 WR= 59.8% PF= 2.93 Sharpe= 0.530 (-0.063) Total=  22.59%
+  SMA50 + RSI 35-70 + no large gap dn          : N= 419 WR= 57.8% PF= 2.69 Sharpe= 0.483 (-0.110) Total=  29.85%
+  Above SMA200 + VIX 14-28                     : N= 552 WR= 61.2% PF= 3.11 Sharpe= 0.562 (-0.030) Total=  45.23%
+  Above SMA200 + RSI 35-70                     : N= 485 WR= 61.6% PF= 3.17 Sharpe= 0.572 (-0.020) Total=  40.35%
+  SMA50 + VIX 14-28 + RSI 35-70 + no Thu       : N= 305 WR= 60.3% PF= 3.00 Sharpe= 0.542 (-0.051) Total=  24.19%
+
+================================================================================
+TOP 10 COMBINED FILTERS BY SHARPE
+================================================================================
+  #1: Sharpe 0.645 | SMA50 + VIX 16-30 + RSI 35-70
+       N=273 WR=64.5% PF=3.61 Total=25.31% MaxDD=0.600%
+  #2: Sharpe 0.635 | SMA50 + VIX 16-28 + RSI 40-70
+       N=248 WR=64.1% PF=3.55 Total=22.71% MaxDD=0.600%
+  #3: Sharpe 0.627 | SMA50 + VIX 14-28 + no Tue/Thu
+       N=313 WR=63.9% PF=3.50 Total=28.23% MaxDD=0.400%
+  #4: Sharpe 0.626 | SMA50 + VIX 16-28 + RSI 35-70
+       N=259 WR=63.7% PF=3.49 Total=23.41% MaxDD=0.600%
+  #5: Sharpe 0.595 | Above SMA50 + VIX 16-30
+       N=379 WR=62.5% PF=3.31 Total=32.74% MaxDD=0.600%
+  #6: Sharpe 0.579 | Above SMA50 + RSI 40-70
+       N=473 WR=61.9% PF=3.21 Total=39.75% MaxDD=0.600%
+  #7: Sharpe 0.575 | Above SMA50 + VIX 16-28
+       N=363 WR=61.7% PF=3.19 Total=30.44% MaxDD=0.600%
+  #8: Sharpe 0.572 | Above SMA200 + RSI 35-70
+       N=485 WR=61.6% PF=3.17 Total=40.35% MaxDD=0.600%
+  #9: Sharpe 0.570 | SMA50 + VIX 14-28 + RSI 35-70
+       N=370 WR=61.6% PF=3.16 Total=30.70% MaxDD=0.600%
+  #10: Sharpe 0.567 | Above SMA50 + RSI 35-70
+       N=490 WR=61.4% PF=3.14 Total=40.45% MaxDD=0.600%
+
+Report saved to: /Users/nano/Desktop/Opening Print/qqq_analysis_report.txt

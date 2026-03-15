@@ -1,0 +1,105 @@
+================================================================================
+QQQ Opening Print — 10-Second Resolution Validation
+================================================================================
+
+Loaded 539 trades from 1-minute backtest
+Trailing stop params: trail=0.05%, SL=0.1%, TS=30min
+
+  Processing trade 1/539 (2018-01-19)...
+
+  Processing trade 50/539 (2019-07-18)...
+
+  Processing trade 100/539 (2020-11-19)...
+
+  Processing trade 150/539 (2021-09-14)...
+
+  Processing trade 200/539 (2022-03-28)...
+
+  Processing trade 250/539 (2022-09-01)...
+
+  Processing trade 300/539 (2023-01-30)...
+
+  Processing trade 350/539 (2023-07-26)...
+
+  Processing trade 400/539 (2024-02-28)...
+
+  Processing trade 450/539 (2025-02-11)...
+
+  Processing trade 500/539 (2025-10-16)...
+
+
+================================================================================
+VALIDATION RESULTS
+================================================================================
+  Trades validated: 539 / 539
+  Failed (no 10s data): 0
+  API calls made: 1078
+  Cache hits: 0
+
+  1-Minute Total P&L:  $4,460,267
+  10-Second Total P&L: $4,697,469
+  Difference:          $237,202 (+5.3%)
+
+  Per-Trade Differences:
+    Mean diff:    $440
+    Median diff:  $0
+    Std diff:     $11,784
+    Mean |diff|:  $8,765
+    Max better:   $46,800
+    Max worse:    $-60,480
+
+  Exit reason changed: 75 / 539
+    2018-09-06: Stop Loss → Trailing Stop  (PnL: $-11,360 → $-2,272)
+    2018-12-28: Stop Loss → Trailing Stop  (PnL: $-17,040 → $2,556)
+    2019-03-14: Stop Loss → Trailing Stop  (PnL: $-11,206 → $-9,482)
+    2020-02-27: Stop Loss → Trailing Stop  (PnL: $-9,108 → $-6,210)
+    2020-03-27: Stop Loss → Trailing Stop  (PnL: $45,369 → $71,568)
+    2020-04-17: Stop Loss → Trailing Stop  (PnL: $-23,236 → $-5,024)
+    2020-06-05: Stop Loss → Trailing Stop  (PnL: $-2,367 → $4,734)
+    2020-06-26: Stop Loss → Trailing Stop  (PnL: $-23,230 → $5,050)
+    2020-11-13: Stop Loss → Trailing Stop  (PnL: $-9,231 → $-1,086)
+    2020-12-11: Stop Loss → Trailing Stop  (PnL: $-11,875 → $8,750)
+
+  Same exit minute: 37 / 539 (6.9%)
+
+  Top 10 Worst Changes (10s worse than 1m):
+    2020-09-04: $  65,280 → $   4,800  ($ -60,480)  exit: $3.40→$2.14  Trailing Stop→Trailing Stop
+    2022-06-24: $  26,300 → $ -12,098  ($ -38,398)  exit: $2.36→$1.63  Trailing Stop→Trailing Stop
+    2023-07-05: $  32,130 → $   1,836  ($ -30,294)  exit: $1.33→$1.00  Trailing Stop→Trailing Stop
+    2025-11-18: $  19,740 → $ -10,105  ($ -29,845)  exit: $4.02→$2.75  Stop Loss→Stop Loss
+    2022-07-15: $  34,944 → $   5,376  ($ -29,568)  exit: $2.26→$1.82  Trailing Stop→Trailing Stop
+    2022-02-24: $  42,164 → $  13,716  ($ -28,448)  exit: $6.25→$5.13  Trailing Stop→Trailing Stop
+    2022-06-28: $  44,856 → $  18,512  ($ -26,344)  exit: $4.01→$3.27  Trailing Stop→Trailing Stop
+    2023-06-02: $  44,286 → $  20,130  ($ -24,156)  exit: $2.00→$1.64  Trailing Stop→Trailing Stop
+    2022-04-01: $  23,138 → $    -503  ($ -23,641)  exit: $1.95→$1.48  Trailing Stop→Trailing Stop
+    2025-11-26: $  35,910 → $  12,312  ($ -23,598)  exit: $2.16→$1.70  Trailing Stop→Trailing Stop
+
+  Top 10 Best Changes (10s better than 1m):
+    2020-06-26: $ -23,230 → $   5,050  ($ +28,280)  exit: $0.74→$1.02  Stop Loss→Trailing Stop
+    2025-12-23: $  20,124 → $  49,140  ($ +29,016)  exit: $2.35→$2.97  Trailing Stop→Trailing Stop
+    2022-06-27: $ -12,386 → $  17,453  ($ +29,839)  exit: $1.52→$2.05  Stop Loss→Trailing Stop
+    2023-09-15: $ -20,864 → $   9,128  ($ +29,992)  exit: $0.83→$1.29  Stop Loss→Trailing Stop
+    2022-05-12: $  -1,827 → $  28,188  ($ +30,015)  exit: $4.41→$5.56  Stop Loss→Trailing Stop
+    2022-11-07: $ -12,384 → $  18,576  ($ +30,960)  exit: $1.35→$1.75  Stop Loss→Trailing Stop
+    2022-07-01: $ -16,320 → $  15,776  ($ +32,096)  exit: $1.85→$2.44  Stop Loss→Trailing Stop
+    2022-10-31: $ -24,353 → $   7,952  ($ +32,305)  exit: $1.48→$2.13  Stop Loss→Trailing Stop
+    2021-11-29: $ -18,444 → $  13,992  ($ +32,436)  exit: $1.25→$1.76  Trailing Stop→Trailing Stop
+    2020-03-13: $       0 → $  46,800  ($ +46,800)  exit: $2.50→$3.50  Trailing Stop→Trailing Stop
+
+
+================================================================================
+FINAL 10-SECOND VALIDATED STATS
+================================================================================
+  Trades:  539
+  P&L:     $4,697,469
+  WR:      76.8%
+  PF:      8.19
+  Max DD:  $31,710
+  Sharpe:  5.67
+  Calmar:  148.14
+
+  10s Bar Coverage:
+    QQQ bars/trade: min=122, avg=211, max=211
+    Opt bars/trade: min=17, avg=167, max=211
+
+  Saved 539 validated trades to /Users/nano/Desktop/Opening Print/qqq_optimized_trades.json
