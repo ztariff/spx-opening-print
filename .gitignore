@@ -1,0 +1,60 @@
+# ── Large data caches (fetch locally via scripts) ──
+options_cache/
+qqq_options_cache/
+overnight_cache/
+
+# ── Large raw data files (too big for git) ──
+spx_1min_bars.csv
+qqq_1min_bars.csv
+spx_daily.csv
+vix_daily.csv
+
+# ── Generated HTML calendars (too large, regenerate from scripts) ──
+*.html
+
+# ── Backtest results (regenerate from scripts) ──
+backtest_results/
+
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# ── Environment / secrets ──
+.env
+.env.*
+
+# ── Dashboard runtime data ──
+live_dashboard/data/
+
+# ── OS files ──
+.DS_Store
+Thumbs.db
+
+# ── Intermediate results / reports / logs ──
+*.txt
+*.csv
+*.log
+*.json
+
+# ── Whitelist dashboard config files ──
+!live_dashboard/requirements.txt
+!live_dashboard/railway.json
+!live_dashboard/templates/dashboard.html
+morning_rip_*
+today_*
+overnight_low_*
+spx_edges_output/
+vol_spike_output/
+
+# ── Debug / test scripts ──
+test_*.py
+debug_*.py
+fetch_today.py
+
+# ── Claude session / config files ──
+.claude/
+claude.md
+CLAUDE.md

@@ -1,0 +1,6 @@
+# Covered by parent .gitignore, but keeping for standalone use
+__pycache__/
+*.pyc
+data/
+.env
+venv/

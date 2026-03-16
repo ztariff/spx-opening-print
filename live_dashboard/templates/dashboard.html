@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPX 0DTE — Opening Print Live Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: #0a0e17;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+    background: linear-gradient(135deg, #0d1321 0%, #131a2e 100%);
+    border-bottom: 1px solid #1e2a42;
+    padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.header-left { display: flex; align-items: center; gap: 20px; }
+.logo { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+.logo span { color: #3b82f6; }
+.market-status {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: #888;
+}
+.status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #555; animation: pulse 2s infinite;
+}
+.status-dot.live { background: #22c55e; }
+.status-dot.closed { background: #ef4444; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+
+.header-right { display: flex; align-items: center; gap: 24px; }
+.spx-ticker {
+    font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums;
+    color: #fff;
+}
+.spx-change { font-size: 14px; margin-left: 8px; }
+.spx-change.up { color: #22c55e; }
+.spx-change.down { color: #ef4444; }
+.vix-badge {
+    background: #1e2a42; border-radius: 8px; padding: 6px 14px;
+    font-size: 13px; color: #f59e0b; font-weight: 600;
+}
+
+/* ── Main Layout ── */
+.main { display: grid; grid-template-columns: 1fr 380px; gap: 0; min-height: calc(100vh - 72px); }
+.main-left { padding: 20px 24px; overflow-y: auto; }
+.main-right {
+    background: #0d1321; border-left: 1px solid #1e2a42;
+    padding: 20px; overflow-y: auto;
+}
+
+/* ── Context Bar ── */
+.context-bar {
+    display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.ctx-chip {
+    background: #131a2e; border: 1px solid #1e2a42; border-radius: 8px;
+    padding: 8px 14px; font-size: 12px; display: flex; align-items: center; gap: 6px;
+}
+.ctx-label { color: #666; }
+.ctx-val { color: #ccc; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ctx-val.bullish { color: #22c55e; }
+.ctx-val.bearish { color: #ef4444; }
+
+/* ── Section headers ── */
+.section-title {
+    font-size: 13px; font-weight: 600; color: #666;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid #1a1f2e;
+}
+
+/* ── Strategy Cards ── */
+.edge-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+
+.edge-card {
+    background: #0f1525;
+    border: 1px solid #1a2035;
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: grid;
+    grid-template-columns: 8px 200px 90px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s;
+}
+.edge-card:hover { border-color: #2a3555; }
+.edge-card.signal-fired {
+    border-color: #f59e0b;
+    background: #1a1a0e;
+    animation: signalFlash 1s ease-out;
+}
+.edge-card.in-trade {
+    border-color: #3b82f6;
+    background: #0f1525;
+}
+.edge-card.trade-closed {
+    opacity: 0.6;
+}
+
+@keyframes signalFlash {
+    0% { background: #3d3500; border-color: #fbbf24; }
+    100% { background: #1a1a0e; border-color: #f59e0b; }
+}
+
+.edge-color-bar { width: 4px; height: 36px; border-radius: 2px; }
+
+.edge-info {}
+.edge-name { font-size: 14px; font-weight: 600; color: #eee; }
+.edge-meta { font-size: 11px; color: #555; margin-top: 2px; }
+
+.edge-badge {
+    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    border-radius: 6px; text-align: center; white-space: nowrap;
+}
+.badge-watching { background: #1a1f2e; color: #555; }
+.badge-ready { background: #0f2a1a; color: #22c55e; }
+.badge-signal { background: #2d2200; color: #fbbf24; }
+.badge-active { background: #0f1a33; color: #3b82f6; }
+.badge-closed-win { background: #0f2a1a; color: #22c55e; }
+.badge-closed-loss { background: #2a0f0f; color: #ef4444; }
+
+.edge-details { font-size: 12px; color: #888; }
+.edge-details .strike { color: #ccc; font-weight: 500; }
+.edge-details .price { color: #3b82f6; }
+
+.edge-pnl {
+    font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums;
+    min-width: 100px; text-align: right;
+}
+.pnl-pos { color: #22c55e; }
+.pnl-neg { color: #ef4444; }
+.pnl-zero { color: #555; }
+
+/* ── Trade Detail Panel (right side) ── */
+.trade-panel { margin-bottom: 20px; }
+.trade-card {
+    background: #131a2e;
+    border: 1px solid #1e2a42;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+.trade-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+}
+.trade-title { font-size: 15px; font-weight: 600; }
+.trade-status {
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 4px;
+}
+
+.trade-row {
+    display: flex; justify-content: space-between;
+    padding: 5px 0; font-size: 13px;
+    border-bottom: 1px solid #0f1525;
+}
+.trade-row:last-child { border-bottom: none; }
+.trade-label { color: #666; }
+.trade-value { color: #ccc; font-weight: 500; font-variant-numeric: tabular-nums; }
+.trade-value.highlight { color: #fbbf24; font-weight: 700; }
+
+.trade-pnl-big {
+    text-align: center; font-size: 28px; font-weight: 800;
+    padding: 12px 0; font-variant-numeric: tabular-nums;
+}
+
+/* ── Alerts ── */
+.alert-list { display: flex; flex-direction: column; gap: 6px; }
+.alert-item {
+    background: #131a2e;
+    border-left: 3px solid #3b82f6;
+    border-radius: 0 6px 6px 0;
+    padding: 10px 12px;
+    font-size: 12px;
+}
+.alert-item.signal { border-left-color: #f59e0b; }
+.alert-item.exit-win { border-left-color: #22c55e; }
+.alert-item.exit-loss { border-left-color: #ef4444; }
+.alert-time { color: #555; font-size: 11px; }
+.alert-msg { color: #ddd; margin-top: 2px; }
+
+/* ── Summary Bar ── */
+.summary-bar {
+    background: #131a2e; border: 1px solid #1e2a42; border-radius: 10px;
+    padding: 16px 20px; margin-bottom: 20px;
+    display: flex; gap: 32px; align-items: center;
+}
+.summary-item { text-align: center; }
+.summary-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+.summary-value { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+/* ── Audio ── */
+.hidden { display: none; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .main-right { border-left: none; border-top: 1px solid #1e2a42; }
+    .edge-card { grid-template-columns: 8px 1fr auto; }
+    .edge-details { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+        <div class="logo">Opening <span>Print</span></div>
+        <div class="market-status">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">Connecting...</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <div>
+            <span class="spx-ticker" id="spxPrice">---</span>
+            <span class="spx-change" id="spxChange"></span>
+        </div>
+        <div class="vix-badge">VIX <span id="vixValue">--</span></div>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+    <div class="main-left">
+
+        <!-- Context -->
+        <div class="context-bar" id="contextBar">
+            <div class="ctx-chip"><span class="ctx-label">Gap:</span> <span class="ctx-val" id="ctxGap">--</span></div>
+            <div class="ctx-chip"><span class="ctx-label">Prev Day:</span> <span class="ctx-val" id="ctxPrev">--</span></div>
+            <div class="ctx-chip"><span class="ctx-label">Above 20d:</span> <span class="ctx-val" id="ctxTrend">--</span></div>
+            <div class="ctx-chip"><span class="ctx-label">First Bar:</span> <span class="ctx-val" id="ctxFB">--</span></div>
+            <div class="ctx-chip"><span class="ctx-label">FB Ret:</span> <span class="ctx-val" id="ctxFBRet">--</span></div>
+            <div class="ctx-chip"><span class="ctx-label">FB Body:</span> <span class="ctx-val" id="ctxFBBody">--</span></div>
+            <div class="ctx-chip"><span class="ctx-label">Morn Ret:</span> <span class="ctx-val" id="ctxMornRet">--</span></div>
+            <div class="ctx-chip"><span class="ctx-label">CFB:</span> <span class="ctx-val" id="ctxCFB">--</span></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-bar">
+            <div class="summary-item">
+                <div class="summary-label">Today's P&L</div>
+                <div class="summary-value pnl-zero" id="totalPnl">$0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Active</div>
+                <div class="summary-value" id="activeCount" style="color:#3b82f6">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Signals</div>
+                <div class="summary-value" id="signalCount" style="color:#fbbf24">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Closed</div>
+                <div class="summary-value" id="closedCount" style="color:#888">0</div>
+            </div>
+        </div>
+
+        <!-- Opening Edges -->
+        <div class="section-title">Opening Session (9:30 AM)</div>
+        <div class="edge-grid" id="openingEdges"></div>
+
+        <!-- Closing Edges -->
+        <div class="section-title">Closing Session (2:00 PM)</div>
+        <div class="edge-grid" id="closingEdges"></div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="main-right">
+        <div class="section-title">Active Trades</div>
+        <div id="tradePanel"><div style="color:#444;font-size:13px;padding:20px 0;">No active trades</div></div>
+
+        <div class="section-title" style="margin-top:24px;">Alert Log</div>
+        <div class="alert-list" id="alertList">
+            <div style="color:#444;font-size:13px;">Waiting for signals...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Audio for alerts -->
+<audio id="alertSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgip6markup+PCo/W3qQl4+Cf2xkW3KMo6GQfGhYVW6Jnp6RgHBkX2iAmKGWiX5xZmN0jZ6elol9c2loeZahn5KCdmxocIidnZOFe3Fsc4mYl5CFe3JxeIqXlY+De3V2fIqUkYyBe3d5f4mRjoiBe3l7gIiOi4WAe3t9goeLiYN/fH1+goaIhoF+fn+AgoSFg4B+f4CAgYKDgn+AfoCAgIGBgH9+f39/gICAfn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn4=" type="audio/wav">
+</audio>
+
+<script>
+// ── Edge definitions from server ──
+const EDGES = {{ edges | tojson }};
+
+// ── State ──
+let currentState = null;
+let lastAlertCount = 0;
+let audioCtx = null;
+
+// ── Initialize edge cards ──
+function initEdgeCards() {
+    const openDiv = document.getElementById('openingEdges');
+    const closeDiv = document.getElementById('closingEdges');
+
+    EDGES.forEach(e => {
+        const card = document.createElement('div');
+        card.className = 'edge-card';
+        card.id = 'edge-' + e.id;
+        card.innerHTML = `
+            <div class="edge-color-bar" style="background:${e.color}"></div>
+            <div class="edge-info">
+                <div class="edge-name">${e.name}</div>
+                <div class="edge-meta">${e.struct.replace(/_/g,' ').toUpperCase()} · ${e.direction > 0 ? 'BULL' : 'BEAR'} · Sharpe ${e.sharpe.toFixed(2)} · WR ${(e.wr*100).toFixed(0)}%</div>
+            </div>
+            <div class="edge-badge badge-watching" id="badge-${e.id}">WATCHING</div>
+            <div class="edge-details" id="details-${e.id}">
+                <span style="color:#555">PT: ${e.exit.pt_pts || 'HTC'} · SL: ${e.exit.sl_pts || 'HTC'} · Time: ${e.exit.ts_min}min</span>
+            </div>
+            <div class="edge-pnl pnl-zero" id="pnl-${e.id}">—</div>
+        `;
+        if (e.session === 'opening') openDiv.appendChild(card);
+        else closeDiv.appendChild(card);
+    });
+}
+
+// ── Play alert sound ──
+function playAlert() {
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Two-tone chime
+        [800, 1200].forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime + i * 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.3);
+            osc.start(audioCtx.currentTime + i * 0.15);
+            osc.stop(audioCtx.currentTime + i * 0.15 + 0.3);
+        });
+    } catch(e) {}
+}
+
+// ── Update UI from state ──
+function updateUI(data) {
+    currentState = data;
+
+    // SPX Price
+    const spxEl = document.getElementById('spxPrice');
+    if (data.spx) spxEl.textContent = data.spx.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    // VIX
+    if (data.vix) document.getElementById('vixValue').textContent = data.vix.toFixed(1);
+
+    // Market status
+    const dot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    if (data.market_open) {
+        dot.className = 'status-dot live';
+        statusText.textContent = 'LIVE · ' + (data.time || '');
+    } else {
+        dot.className = 'status-dot closed';
+        statusText.textContent = 'Market Closed';
+    }
+
+    // Context chips
+    const f = data.features || {};
+    setCtx('ctxGap', f.gap_pct, v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%', v => v > 0 ? 'bullish' : 'bearish');
+    setCtx('ctxPrev', data.prev_bullish, v => v ? 'Bullish' : 'Bearish', v => v ? 'bullish' : 'bearish');
+    setCtx('ctxTrend', f.above_20d, v => v === true ? 'Yes' : v === false ? 'No' : '--', v => v ? 'bullish' : 'bearish');
+    setCtx('ctxFB', f.fb_bullish, v => v ? 'Bull' : 'Bear', v => v ? 'bullish' : 'bearish');
+    setCtx('ctxFBRet', f.fb_ret, v => (v >= 0 ? '+' : '') + v.toFixed(3) + '%', v => v > 0 ? 'bullish' : 'bearish');
+    setCtx('ctxFBBody', f.fb_body_ratio, v => (v * 100).toFixed(0) + '%');
+    setCtx('ctxMornRet', f.morn_ret, v => (v >= 0 ? '+' : '') + v.toFixed(3) + '%', v => v > 0 ? 'bullish' : 'bearish');
+    setCtx('ctxCFB', f.cfb_bull, v => v === true ? 'Bull' : v === false ? 'Bear' : '--', v => v ? 'bullish' : 'bearish');
+
+    // Update edge cards
+    let totalPnl = 0;
+    let activeCount = 0;
+    let signalCount = Object.keys(data.signals || {}).length;
+    let closedCount = (data.closed || []).length;
+
+    EDGES.forEach(e => {
+        const card = document.getElementById('edge-' + e.id);
+        const badge = document.getElementById('badge-' + e.id);
+        const details = document.getElementById('details-' + e.id);
+        const pnlEl = document.getElementById('pnl-' + e.id);
+        const trade = (data.trades || {})[e.id];
+        const fired = (data.signals || {})[e.id];
+
+        // Reset
+        card.className = 'edge-card';
+
+        if (trade && trade.status === 'active') {
+            card.classList.add('in-trade');
+            badge.className = 'edge-badge badge-active';
+            badge.textContent = 'IN TRADE';
+            activeCount++;
+
+            // Show trade details
+            const legStr = trade.legs.map(l =>
+                `${l.side.toUpperCase()} $${l.strike} ${l.cp}`
+            ).join(' / ');
+            const entryStr = Object.values(trade.entry_prices).map(p => '$' + p.toFixed(2)).join('/');
+            const currStr = Object.values(trade.current_prices).map(p => '$' + p.toFixed(2)).join('/');
+            details.innerHTML = `
+                <span class="strike">${legStr}</span><br>
+                <span class="price">Entry: ${entryStr} · Now: ${currStr}</span><br>
+                <span>Grade ${trade.grade.toFixed(0)} · ${trade.contracts} cts · $${(trade.risk_budget/1000).toFixed(0)}K risk</span>
+            `;
+
+            pnlEl.textContent = '$' + trade.pnl.toLocaleString('en-US', {minimumFractionDigits: 0});
+            pnlEl.className = 'edge-pnl ' + (trade.pnl > 0 ? 'pnl-pos' : trade.pnl < 0 ? 'pnl-neg' : 'pnl-zero');
+            totalPnl += trade.pnl;
+
+        } else if (trade && trade.status === 'closed') {
+            card.classList.add('trade-closed');
+            const win = trade.pnl >= 0;
+            badge.className = 'edge-badge ' + (win ? 'badge-closed-win' : 'badge-closed-loss');
+            badge.textContent = trade.exit_reason ? trade.exit_reason.replace(/_/g,' ').toUpperCase() : 'CLOSED';
+            pnlEl.textContent = '$' + trade.pnl.toLocaleString('en-US', {minimumFractionDigits: 0});
+            pnlEl.className = 'edge-pnl ' + (win ? 'pnl-pos' : 'pnl-neg');
+            totalPnl += trade.pnl;
+
+        } else if (trade && trade.status === 'pending_fill') {
+            card.classList.add('signal-fired');
+            badge.className = 'edge-badge badge-signal';
+            badge.textContent = 'SIGNAL — ENTER';
+            const legStr = trade.legs.map(l => `${l.side.toUpperCase()} $${l.strike} ${l.cp}`).join(' / ');
+            details.innerHTML = `<span class="strike">${legStr}</span><br><span class="price">Getting prices...</span><br><span>Grade ${trade.grade.toFixed(0)} · $${(trade.risk_budget/1000).toFixed(0)}K risk</span>`;
+
+        } else if (fired) {
+            card.classList.add('signal-fired');
+            badge.className = 'edge-badge badge-signal';
+            badge.textContent = 'FIRED ' + fired;
+
+        } else {
+            badge.className = 'edge-badge badge-watching';
+            badge.textContent = 'WATCHING';
+            pnlEl.textContent = '—';
+            pnlEl.className = 'edge-pnl pnl-zero';
+        }
+    });
+
+    // Add closed trade P&L
+    (data.closed || []).forEach(t => { totalPnl += t.pnl; });
+
+    // Summary
+    const totalEl = document.getElementById('totalPnl');
+    totalEl.textContent = '$' + totalPnl.toLocaleString('en-US', {minimumFractionDigits: 0});
+    totalEl.className = 'summary-value ' + (totalPnl > 0 ? 'pnl-pos' : totalPnl < 0 ? 'pnl-neg' : 'pnl-zero');
+    document.getElementById('activeCount').textContent = activeCount;
+    document.getElementById('signalCount').textContent = signalCount;
+    document.getElementById('closedCount').textContent = closedCount;
+
+    // Trade panel (right side)
+    const tradePanel = document.getElementById('tradePanel');
+    const activeTrades = Object.values(data.trades || {}).filter(t => t.status === 'active');
+    if (activeTrades.length === 0) {
+        tradePanel.innerHTML = '<div style="color:#444;font-size:13px;padding:20px 0;">No active trades</div>';
+    } else {
+        tradePanel.innerHTML = activeTrades.map(t => {
+            const legStr = t.legs.map(l => `${l.side.toUpperCase()} $${l.strike} ${l.cp}`).join(' / ');
+            const entryStr = Object.values(t.entry_prices).map(p => '$' + p.toFixed(2)).join(' / ');
+            const currStr = Object.values(t.current_prices).map(p => '$' + p.toFixed(2)).join(' / ');
+            const pnlClass = t.pnl > 0 ? 'pnl-pos' : t.pnl < 0 ? 'pnl-neg' : 'pnl-zero';
+            return `
+                <div class="trade-card">
+                    <div class="trade-header">
+                        <div class="trade-title" style="color:${t.color}">${t.edge_name}</div>
+                        <div class="trade-status badge-active">${t.struct.replace(/_/g,' ').toUpperCase()}</div>
+                    </div>
+                    <div class="trade-pnl-big ${pnlClass}">$${t.pnl.toLocaleString('en-US', {minimumFractionDigits: 0})}</div>
+                    <div class="trade-row"><span class="trade-label">Strikes</span><span class="trade-value">${legStr}</span></div>
+                    <div class="trade-row"><span class="trade-label">Entry</span><span class="trade-value">${entryStr}</span></div>
+                    <div class="trade-row"><span class="trade-label">Current</span><span class="trade-value highlight">${currStr}</span></div>
+                    <div class="trade-row"><span class="trade-label">Contracts</span><span class="trade-value">${t.contracts}</span></div>
+                    <div class="trade-row"><span class="trade-label">Risk</span><span class="trade-value">$${(t.risk_budget/1000).toFixed(0)}K</span></div>
+                    <div class="trade-row"><span class="trade-label">Grade</span><span class="trade-value">${t.grade.toFixed(0)}</span></div>
+                    <div class="trade-row"><span class="trade-label">Entry SPX</span><span class="trade-value">${t.entry_spx.toFixed(2)}</span></div>
+                    <div class="trade-row"><span class="trade-label">PT Level</span><span class="trade-value" style="color:#22c55e">${t.pt_level ? t.pt_level.toFixed(2) : 'HTC'}</span></div>
+                    <div class="trade-row"><span class="trade-label">SL Level</span><span class="trade-value" style="color:#ef4444">${t.sl_level ? t.sl_level.toFixed(2) : 'HTC'}</span></div>
+                    <div class="trade-row"><span class="trade-label">Entered</span><span class="trade-value">${t.entry_time}</span></div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Alerts
+    const alerts = data.alerts || [];
+    if (alerts.length > 0) {
+        const alertList = document.getElementById('alertList');
+        alertList.innerHTML = alerts.slice().reverse().map(a => {
+            let cls = 'alert-item';
+            if (a.type === 'signal') cls += ' signal';
+            else if (a.type === 'exit' && a.trade && a.trade.pnl >= 0) cls += ' exit-win';
+            else cls += ' exit-loss';
+            return `<div class="${cls}"><div class="alert-time">${a.time}</div><div class="alert-msg">${a.message}</div></div>`;
+        }).join('');
+
+        // Play sound for new alerts
+        if (alerts.length > lastAlertCount) {
+            playAlert();
+            // Flash the page title
+            const origTitle = document.title;
+            let flashes = 0;
+            const flashInterval = setInterval(() => {
+                document.title = flashes % 2 === 0 ? '🔔 SIGNAL FIRED' : origTitle;
+                flashes++;
+                if (flashes > 10) { clearInterval(flashInterval); document.title = origTitle; }
+            }, 500);
+        }
+        lastAlertCount = alerts.length;
+    }
+}
+
+function setCtx(id, val, fmt, colorFn) {
+    const el = document.getElementById(id);
+    if (val === null || val === undefined) { el.textContent = '--'; el.className = 'ctx-val'; return; }
+    el.textContent = fmt ? fmt(val) : String(val);
+    if (colorFn) {
+        el.className = 'ctx-val ' + colorFn(val);
+    }
+}
+
+// ── SSE Connection ──
+function connectSSE() {
+    const evtSource = new EventSource('/api/stream');
+    evtSource.onmessage = function(event) {
+        if (event.data.startsWith('{')) {
+            try {
+                const data = JSON.parse(event.data);
+                updateUI(data);
+            } catch(e) {}
+        }
+    };
+    evtSource.onerror = function() {
+        document.getElementById('statusDot').className = 'status-dot closed';
+        document.getElementById('statusText').textContent = 'Reconnecting...';
+        setTimeout(() => { evtSource.close(); connectSSE(); }, 3000);
+    };
+}
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', function() {
+    initEdgeCards();
+
+    // Fetch initial state
+    fetch('/api/state').then(r => r.json()).then(data => {
+        updateUI(data);
+        lastAlertCount = (data.alerts || []).length;  // don't alert on old alerts
+    });
+
+    // Start SSE
+    connectSSE();
+
+    // Enable audio on first click
+    document.body.addEventListener('click', function() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }, { once: true });
+});
+</script>
+</body>
+</html>
