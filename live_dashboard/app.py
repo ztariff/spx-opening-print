@@ -1132,6 +1132,15 @@ def api_state():
     return jsonify(payload)
 
 
+@app.route('/calendar')
+def calendar():
+    """Serve the backtest trade calendar."""
+    cal_path = Path(__file__).parent / 'static' / 'widened_trade_calendar.html'
+    if cal_path.exists():
+        return cal_path.read_text(), 200, {'Content-Type': 'text/html'}
+    return 'Calendar not generated yet. Place widened_trade_calendar.html in live_dashboard/static/', 404
+
+
 @app.route('/api/stream')
 def api_stream():
     """SSE endpoint for real-time updates."""

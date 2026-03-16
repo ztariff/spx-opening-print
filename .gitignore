@@ -43,6 +43,7 @@ Thumbs.db
 !live_dashboard/requirements.txt
 !live_dashboard/railway.json
 !live_dashboard/templates/dashboard.html
+!live_dashboard/static/widened_trade_calendar.html
 morning_rip_*
 today_*
 overnight_low_*
