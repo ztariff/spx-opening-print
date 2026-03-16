@@ -50,26 +50,97 @@ def poly_get(path, params=None):
         return None
 
 def get_spx_snapshot():
-    """Get current SPX price from Polygon snapshot."""
+    """Get current SPX price via multiple fallback methods."""
+    # Method 1: Index snapshot
     data = poly_get('/v3/snapshot', {'ticker.any_of': 'I:SPX', 'type': 'index'})
     if data and data.get('results'):
         r = data['results'][0]
         session = r.get('session', {})
+        price = session.get('close') or session.get('price') or r.get('value')
+        if price:
+            return {
+                'price': price,
+                'open': session.get('open'),
+                'high': session.get('high'),
+                'low': session.get('low'),
+                'prev_close': session.get('previous_close'),
+            }
+
+    # Method 2: Ticker snapshot v3
+    data = poly_get('/v3/snapshot/indices', {'ticker.any_of': 'I:SPX'})
+    if data and data.get('results'):
+        r = data['results'][0]
+        session = r.get('session', {})
+        val = r.get('value') or session.get('close') or session.get('price')
+        if val:
+            return {
+                'price': val,
+                'open': session.get('open'),
+                'high': session.get('high'),
+                'low': session.get('low'),
+                'prev_close': session.get('previous_close'),
+            }
+
+    # Method 3: Latest agg bar
+    today = _today_str()
+    data = poly_get(f'/v2/aggs/ticker/I:SPX/range/1/minute/{today}/{today}',
+                    {'adjusted': 'true', 'sort': 'desc', 'limit': 1})
+    if data and data.get('results'):
+        b = data['results'][0]
         return {
-            'price': session.get('close') or session.get('price') or r.get('value'),
-            'open': session.get('open'),
-            'high': session.get('high'),
-            'low': session.get('low'),
-            'prev_close': session.get('previous_close'),
+            'price': b['c'],
+            'open': None,
+            'high': None,
+            'low': None,
+            'prev_close': None,
         }
+
+    # Method 4: Previous close from daily
+    data = poly_get(f'/v2/aggs/ticker/I:SPX/prev')
+    if data and data.get('results'):
+        b = data['results'][0]
+        return {
+            'price': b['c'],
+            'open': b.get('o'),
+            'high': None,
+            'low': None,
+            'prev_close': b.get('c'),
+        }
+
+    log.error("All SPX price methods failed")
     return None
 
 def get_vix_snapshot():
-    """Get current VIX from Polygon snapshot."""
+    """Get current VIX via multiple fallback methods."""
+    # Method 1: Index snapshot
     data = poly_get('/v3/snapshot', {'ticker.any_of': 'I:VIX', 'type': 'index'})
     if data and data.get('results'):
         session = data['results'][0].get('session', {})
-        return session.get('open') or session.get('close') or session.get('price')
+        val = session.get('open') or session.get('close') or session.get('price')
+        if val:
+            return val
+
+    # Method 2: Indices endpoint
+    data = poly_get('/v3/snapshot/indices', {'ticker.any_of': 'I:VIX'})
+    if data and data.get('results'):
+        r = data['results'][0]
+        val = r.get('value') or r.get('session', {}).get('close')
+        if val:
+            return val
+
+    # Method 3: Latest agg bar
+    today = _today_str()
+    data = poly_get(f'/v2/aggs/ticker/I:VIX/range/1/minute/{today}/{today}',
+                    {'adjusted': 'true', 'sort': 'desc', 'limit': 1})
+    if data and data.get('results'):
+        return data['results'][0]['c']
+
+    # Method 4: Previous close
+    data = poly_get(f'/v2/aggs/ticker/I:VIX/prev')
+    if data and data.get('results'):
+        return data['results'][0]['c']
+
+    log.error("All VIX price methods failed")
     return None
 
 def get_spx_bars_today(date_str, timespan='minute', multiplier=1):
@@ -1130,6 +1201,29 @@ def api_state():
             'exit_time': t.get('exit_time'),
         })
     return jsonify(payload)
+
+
+@app.route('/api/debug')
+def api_debug():
+    """Debug endpoint — raw Polygon responses for troubleshooting."""
+    results = {}
+    today = _today_str()
+
+    # Test each endpoint
+    results['snapshot_v3'] = poly_get('/v3/snapshot', {'ticker.any_of': 'I:SPX', 'type': 'index'})
+    results['snapshot_indices'] = poly_get('/v3/snapshot/indices', {'ticker.any_of': 'I:SPX'})
+    results['aggs_latest'] = poly_get(f'/v2/aggs/ticker/I:SPX/range/1/minute/{today}/{today}',
+                                       {'adjusted': 'true', 'sort': 'desc', 'limit': 2})
+    results['prev_close'] = poly_get(f'/v2/aggs/ticker/I:SPX/prev')
+    results['vix_snapshot'] = poly_get('/v3/snapshot/indices', {'ticker.any_of': 'I:VIX'})
+    results['vix_aggs'] = poly_get(f'/v2/aggs/ticker/I:VIX/range/1/minute/{today}/{today}',
+                                    {'adjusted': 'true', 'sort': 'desc', 'limit': 2})
+    results['today'] = today
+    results['now_mins'] = _now_mins()
+    results['polygon_key_set'] = bool(POLYGON_KEY)
+    results['polygon_key_prefix'] = POLYGON_KEY[:8] + '...' if POLYGON_KEY else 'MISSING'
+
+    return jsonify(results)
 
 
 @app.route('/calendar')
