@@ -235,6 +235,13 @@ def build_option_ticker(date_str, cp, strike):
     dt = datetime.strptime(date_str, '%Y-%m-%d')
     return f"O:SPXW{dt.strftime('%y%m%d')}{cp}{int(strike*1000):08d}"
 
+COMMISSION_PER_CONTRACT = 0.65   # $ per contract per leg per fill
+
+def commission_for_trade(struct, contracts):
+    """Total round-trip commission: $0.65 × legs × 2 (open+close) × contracts."""
+    legs = 1 if struct in ('long_call', 'long_itm_call', 'long_otm_call', 'long_put') else 2
+    return round(COMMISSION_PER_CONTRACT * legs * 2 * contracts, 2)
+
 def gstrike(px, rnd=5):
     """Round to nearest strike increment."""
     return round(px / rnd) * rnd
@@ -758,6 +765,7 @@ def fill_trade_prices(trade):
 
     if trade['per_contract_risk'] and trade['per_contract_risk'] > 0:
         trade['contracts'] = max(1, round(trade['risk_budget'] / trade['per_contract_risk']))
+        trade['commission'] = commission_for_trade(struct, trade['contracts'])
         trade['status'] = 'active'
         return True
 
@@ -806,7 +814,9 @@ def update_trade_pnl(trade):
     else:
         pnl_per = 0
 
-    trade['pnl'] = round(pnl_per * contracts, 2)
+    # Deduct round-trip commissions from P&L
+    comm = trade.get('commission', commission_for_trade(struct, contracts))
+    trade['pnl'] = round(pnl_per * contracts - comm, 2)
 
 
 def check_trade_exit(trade, spx_price):

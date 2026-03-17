@@ -308,15 +308,29 @@ def price_opt(date, em, xm, spx, direction, struct):
     return None, None, None, None
 
 
+COMMISSION_PER_CONTRACT = 0.65   # $ per contract per leg per fill
+
+def legs_for_struct(struct):
+    """Return number of option legs in the structure."""
+    if struct in ('long_call', 'long_itm_call', 'long_otm_call', 'long_put'):
+        return 1
+    return 2   # spreads: bull_call_5, bull_call_10, bear_put_5, credit_call_5
+
+def commission_1lot(struct):
+    """Round-trip commission for 1 contract of this structure."""
+    return COMMISSION_PER_CONTRACT * legs_for_struct(struct) * 2   # open + close
+
 def price_opt_full(date, em, xm, spx, direction, struct):
-    """Like price_opt but also returns (entry_px_str, exit_px_str) for sizing."""
+    """Like price_opt but also returns (entry_px_str, exit_px_str) for sizing.
+    Returned pnl INCLUDES round-trip commissions for 1 contract."""
     atm = gstrike(spx)
+    comm = commission_1lot(struct)
     def single_full(cp, k):
         t = btick(date, cp, k); bars = load_opt(t, date)
         if not bars: return None, t, None, None
         e, x = fbar(bars, em), fbar(bars, xm)
         if not e or not x or e['c'] <= 0: return None, t, None, None
-        return round((x['c']-e['c'])*100, 2), t, e['c'], x['c']
+        return round((x['c']-e['c'])*100 - comm, 2), t, e['c'], x['c']
     def spread_full(cp, lk, sk):
         lt, st = btick(date, cp, lk), btick(date, cp, sk)
         lb, sb = load_opt(lt, date), load_opt(st, date)
@@ -325,7 +339,7 @@ def price_opt_full(date, em, xm, spx, direction, struct):
         se, sx = fbar(sb, em), fbar(sb, xm)
         if not all([le,lx,se,sx]): return None, f"{lt}|{st}", None, None
         d = le['c']-se['c']; c = lx['c']-sx['c']
-        return round((c-d)*100,2), f"{lt}|{st}", f"{le['c']}/{se['c']}", f"{lx['c']}/{sx['c']}"
+        return round((c-d)*100 - comm,2), f"{lt}|{st}", f"{le['c']}/{se['c']}", f"{lx['c']}/{sx['c']}"
     def credit_full(cp, sell_k, buy_k):
         st, lt = btick(date,cp,sell_k), btick(date,cp,buy_k)
         sb, lb = load_opt(st,date), load_opt(lt,date)
@@ -334,7 +348,7 @@ def price_opt_full(date, em, xm, spx, direction, struct):
         le,lx = fbar(lb,em), fbar(lb,xm)
         if not all([se,sx,le,lx]): return None, f"{st}|{lt}", None, None
         cr = se['c']-le['c']; dc = sx['c']-lx['c']
-        return round((cr-dc)*100,2), f"{st}|{lt}", f"{se['c']}/{le['c']}", f"{sx['c']}/{lx['c']}"
+        return round((cr-dc)*100 - comm,2), f"{st}|{lt}", f"{se['c']}/{le['c']}", f"{sx['c']}/{lx['c']}"
 
     if struct == 'long_call': return single_full('C', atm)
     elif struct == 'long_itm_call': return single_full('C', atm-5)
@@ -431,11 +445,14 @@ def grade_and_size_trades(all_trades):
 
         contracts = max(1, round(risk_budget / per_contract_risk))
         actual_risk = contracts * per_contract_risk
+        # opt_pnl already includes round-trip commission for 1 contract,
+        # so scaling by contracts correctly accounts for all commissions
         sized_pnl = t['opt_pnl'] * contracts
 
         t['contracts'] = contracts
         t['risk'] = round(actual_risk, 2)
         t['sized_pnl'] = round(sized_pnl, 2)
+        t['commission'] = round(commission_1lot(t['structure']) * contracts, 2)
 
 
 def make_readable_ticker(ticker_str):
