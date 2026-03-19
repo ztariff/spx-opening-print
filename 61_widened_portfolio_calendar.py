@@ -890,6 +890,19 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans
 }}
 .badge-open {{ background: #0a2a1a; color: #00d4aa; border: 1px solid #1a5a3a; }}
 .badge-close {{ background: #1a0a2a; color: #aa66ff; border: 1px solid #3a1a5a; }}
+.refresh-wrap {{ position: absolute; top: 18px; right: 32px; text-align: right; }}
+.refresh-btn {{
+    background: #1a1a2e; border: 1px solid #3a3a5a; color: #ccc; padding: 10px 20px;
+    border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
+    transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+}}
+.refresh-btn:hover {{ background: #2a2a4e; border-color: #5a5a8a; color: #fff; }}
+.refresh-btn.running {{ color: #ffaa33; cursor: wait; }}
+.refresh-btn.done {{ color: #00d4aa; border-color: #00d4aa; }}
+.refresh-status {{ font-size: 11px; color: #666; margin-top: 4px; }}
+.refresh-status.ok {{ color: #00d4aa; }}
+.refresh-status.err {{ color: #ff4466; }}
+.header {{ position: relative; }}
 .tabs {{
     display: flex; flex-wrap: wrap; gap: 0; padding: 0 32px; background: #111118; border-bottom: 1px solid #1a1a2a;
 }}
@@ -982,7 +995,11 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans
     <div class="subtitle">
         <span class="badge badge-open">OPENING 5 edges</span>
         <span class="badge badge-close">CLOSING 7 edges</span>
-        <span>{total_n} trades &mdash; {len(unique_dates)} dates &mdash; {unique_dates[0]} to {unique_dates[-1]}</span>
+        <span id="tradeCount">{total_n} trades &mdash; {len(unique_dates)} dates &mdash; {unique_dates[0]} to {unique_dates[-1]}</span>
+    </div>
+    <div class="refresh-wrap">
+        <button class="refresh-btn" id="refreshBtn" onclick="refreshCalendar()">&#8635; Refresh Data</button>
+        <div class="refresh-status" id="refreshStatus"></div>
     </div>
 </div>
 
@@ -1453,6 +1470,93 @@ function prevMonth() {{ currentMonth--; if (currentMonth < 0) {{ currentMonth = 
 function nextMonth() {{ currentMonth++; if (currentMonth > 11) {{ currentMonth = 0; currentYear++; }} drawCalendar(getFiltered()); }}
 
 init();
+
+// ── Refresh Calendar — fetch new trades from Polygon via backend ──
+function refreshCalendar() {{
+    var btn = document.getElementById('refreshBtn');
+    var status = document.getElementById('refreshStatus');
+    if (btn.classList.contains('running')) return;
+
+    var prevCount = allTrades.length;
+    btn.classList.add('running');
+    btn.innerHTML = '&#8635; Refreshing&hellip;';
+    status.textContent = 'Fetching new data from Polygon...';
+    status.className = 'refresh-status';
+
+    fetch('/api/refresh_calendar', {{ method: 'POST' }})
+        .then(function(r) {{ return r.json(); }})
+        .then(function(data) {{
+            if (data.ok) {{
+                var newTrades = data.trades || [];
+                if (newTrades.length > 0) {{
+                    for (var i = 0; i < newTrades.length; i++) {{ allTrades.push(newTrades[i]); }}
+                    updateAll();
+                    var dates = {{}};
+                    allTrades.forEach(function(t) {{ dates[t.date] = true; }});
+                    var sortedDates = Object.keys(dates).sort();
+                    document.getElementById('tradeCount').textContent =
+                        allTrades.length + ' trades \\u2014 ' + sortedDates.length +
+                        ' dates \\u2014 ' + sortedDates[0] + ' to ' + sortedDates[sortedDates.length - 1];
+                }}
+                var diff = allTrades.length - prevCount;
+                var msg = data.message || (diff > 0 ? '+' + diff + ' new trades' : 'No new trades');
+                status.textContent = msg;
+                status.className = 'refresh-status ok';
+                btn.classList.remove('running');
+                btn.classList.add('done');
+                btn.innerHTML = '&#10003; Done';
+            }} else {{
+                throw new Error(data.error || 'Refresh failed');
+            }}
+        }})
+        .catch(function(e) {{
+            status.textContent = 'Error: ' + e.message;
+            status.className = 'refresh-status err';
+            btn.classList.remove('running');
+            btn.innerHTML = '&#8635; Refresh Data';
+        }})
+        .finally(function() {{
+            setTimeout(function() {{
+                btn.classList.remove('done');
+                btn.innerHTML = '&#8635; Refresh Data';
+            }}, 5000);
+        }});
+}}
+
+// Also load any previously-refreshed trades on page load
+(function loadNewTrades() {{
+    fetch('/api/calendar_trades')
+        .then(function(r) {{ return r.json(); }})
+        .then(function(newTrades) {{
+            if (newTrades && newTrades.length > 0) {{
+                var existing = {{}};
+                allTrades.forEach(function(t) {{ existing[t.date + '|' + t.strategy] = true; }});
+                var added = 0;
+                newTrades.forEach(function(t) {{
+                    var key = t.date + '|' + t.strategy;
+                    if (!existing[key]) {{
+                        allTrades.push(t);
+                        existing[key] = true;
+                        added++;
+                    }}
+                }});
+                if (added > 0) {{
+                    updateAll();
+                    var dates = {{}};
+                    allTrades.forEach(function(t) {{ dates[t.date] = true; }});
+                    var sortedDates = Object.keys(dates).sort();
+                    document.getElementById('tradeCount').textContent =
+                        allTrades.length + ' trades \\u2014 ' + sortedDates.length +
+                        ' dates \\u2014 ' + sortedDates[0] + ' to ' + sortedDates[sortedDates.length - 1];
+                    document.getElementById('refreshStatus').textContent =
+                        added + ' new trades loaded from previous refresh';
+                    document.getElementById('refreshStatus').className = 'refresh-status ok';
+                }}
+            }}
+        }})
+        .catch(function() {{}}); // silently fail if endpoint not available
+}})();
+
 </script>
 </body>
 </html>"""

@@ -9,13 +9,13 @@ Environment variables:
     SECRET_KEY       — Flask session key (optional, defaults to random)
 """
 
-import os, json, time, threading, logging, re
+import os, json, time, threading, logging, re, statistics
 from datetime import datetime, timedelta, timezone, date
 from collections import defaultdict
 from pathlib import Path
 
 import requests
-from flask import Flask, render_template, jsonify, Response
+from flask import Flask, render_template, jsonify, Response, request
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # ──────────────────────────────────────────────────────────────
@@ -25,6 +25,7 @@ POLYGON_KEY = os.environ.get('POLYGON_API_KEY', '')
 DATA_DIR = Path(__file__).parent / 'data'
 DATA_DIR.mkdir(exist_ok=True)
 STATE_FILE = DATA_DIR / 'state.json'
+CALENDAR_TRADES_FILE = DATA_DIR / 'calendar_trades.json'
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
 log = logging.getLogger('dashboard')
@@ -1273,6 +1274,474 @@ def api_stream():
 def clear_alerts():
     state.set('alerts', [])
     return jsonify({'ok': True})
+
+
+# ──────────────────────────────────────────────────────────────
+# CALENDAR REFRESH — backfill new trades from Polygon
+# ──────────────────────────────────────────────────────────────
+CAL_TRADES_FILE = DATA_DIR / 'calendar_trades.json'
+
+def _load_calendar_trades():
+    """Load persisted calendar trades (new trades added via refresh)."""
+    if CAL_TRADES_FILE.exists():
+        try:
+            with open(CAL_TRADES_FILE) as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return []
+
+def _save_calendar_trades(trades):
+    with open(CAL_TRADES_FILE, 'w') as f:
+        json.dump(trades, f)
+
+def _get_trading_days(start_date, end_date):
+    """Get list of actual trading days between two dates from Polygon."""
+    data = poly_get(f'/v2/aggs/ticker/I:SPX/range/1/day/{start_date}/{end_date}',
+                    {'adjusted': 'true', 'sort': 'asc', 'limit': 500})
+    if data and data.get('results'):
+        days = []
+        for b in data['results']:
+            dt = datetime.fromtimestamp(b['t'] / 1000, tz=timezone.utc)
+            days.append({
+                'date': dt.strftime('%Y-%m-%d'),
+                'o': b['o'], 'h': b['h'], 'l': b['l'], 'c': b['c']
+            })
+        return days
+    return []
+
+def _get_vix_daily(start_date, end_date):
+    """Get VIX daily bars."""
+    data = poly_get(f'/v2/aggs/ticker/I:VIX/range/1/day/{start_date}/{end_date}',
+                    {'adjusted': 'true', 'sort': 'asc', 'limit': 500})
+    out = {}
+    if data and data.get('results'):
+        for b in data['results']:
+            dt = datetime.fromtimestamp(b['t'] / 1000, tz=timezone.utc)
+            out[dt.strftime('%Y-%m-%d')] = {'o': b['o'], 'h': b['h'], 'l': b['l'], 'c': b['c']}
+    return out
+
+def _get_option_bars(ticker, date_str):
+    """Fetch 1-min option bars from Polygon for a specific date."""
+    data = poly_get(f'/v2/aggs/ticker/{ticker}/range/1/minute/{date_str}/{date_str}',
+                    {'adjusted': 'true', 'sort': 'asc', 'limit': 5000})
+    if data and data.get('results'):
+        bars = []
+        for b in data['results']:
+            dt = datetime.fromtimestamp(b['t'] / 1000, tz=timezone.utc)
+            m = dt.month
+            offset = -5 if m in (1, 2, 3, 11, 12) else -4
+            et = dt + timedelta(hours=offset)
+            bars.append({
+                't_ms': b['t'],
+                'time': et.strftime('%H:%M'),
+                'o': b['o'], 'h': b['h'], 'l': b['l'], 'c': b['c']
+            })
+        return bars
+    return []
+
+def _find_bar_at_mins(bars, target_mins):
+    """Find the bar closest to target_mins."""
+    best = None
+    for b in bars:
+        hh, mm = int(b['time'][:2]), int(b['time'][3:5])
+        bm = hh * 60 + mm
+        if bm >= target_mins:
+            return b
+        best = b
+    return best
+
+def _simulate_trade_on_bars(bars, entry_idx, direction, exit_params):
+    """Simulate a trade on 1-min bars and return entry/exit details."""
+    if entry_idx >= len(bars) - 1:
+        return None
+    eb = bars[entry_idx]
+    ep = eb['c']
+    em = eb['mins']
+    pt = exit_params.get('pt_pts')
+    sl = exit_params.get('sl_pts')
+    ts = exit_params.get('ts_min', 60)
+    deadline = min(em + ts, 959)
+
+    if exit_params.get('vix_mult'):
+        vix = exit_params.get('_vix', 20)
+        sc = vix / 20.0
+        if pt: pt = pt * sc
+        if sl: sl = sl * sc
+
+    if direction == 1:
+        ptl = ep + pt if pt else None
+        sll = ep - sl if sl else None
+    else:
+        ptl = ep - pt if pt else None
+        sll = ep + sl if sl else None
+
+    xp = ep; xr = 'time_stop'; xi = len(bars) - 1
+    peak = trough = ep
+
+    for j in range(entry_idx + 1, len(bars)):
+        b = bars[j]
+        if b['mins'] >= deadline or b['mins'] >= 959:
+            xp = b['c']; xr = 'time_stop'; xi = j; break
+        if direction == 1:
+            if b['h'] > peak: peak = b['h']
+            if sll and b['l'] <= sll: xp = sll; xr = 'stop_loss'; xi = j; break
+            if ptl and b['h'] >= ptl: xp = ptl; xr = 'profit_target'; xi = j; break
+        else:
+            if b['l'] < trough: trough = b['l']
+            if sll and b['h'] >= sll: xp = sll; xr = 'stop_loss'; xi = j; break
+            if ptl and b['l'] <= ptl: xp = ptl; xr = 'profit_target'; xi = j; break
+
+    return {
+        'entry_price': ep, 'exit_price': xp,
+        'entry_time': bars[entry_idx]['time'],
+        'exit_time': bars[xi]['time'],
+        'entry_mins': em, 'exit_mins': bars[xi]['mins'],
+        'hold_mins': bars[xi]['mins'] - em,
+        'exit_reason': xr,
+        'und_pts': round(xp - ep, 2) if direction == 1 else round(ep - xp, 2),
+    }
+
+def _price_option_trade(date_str, entry_mins, exit_mins, spx_price, direction, struct):
+    """Fetch option bars from Polygon and compute 1-lot P&L for a given structure.
+    Returns (pnl, ticker_str, entry_px_str, exit_px_str) or (None, ...) on failure."""
+    atm = gstrike(spx_price)
+    legs_count = 1 if struct in ('long_call', 'long_itm_call', 'long_otm_call', 'long_put') else 2
+    comm = COMMISSION_PER_CONTRACT * legs_count * 2
+
+    def single(cp, k):
+        tk = build_option_ticker(date_str, cp, k)
+        bars = _get_option_bars(tk, date_str)
+        if not bars: return None, tk, None, None
+        e = _find_bar_at_mins(bars, entry_mins)
+        x = _find_bar_at_mins(bars, exit_mins)
+        if not e or not x or e['c'] <= 0: return None, tk, None, None
+        return round((x['c'] - e['c']) * 100 - comm, 2), tk, e['c'], x['c']
+
+    def spread(cp, lk, sk):
+        lt = build_option_ticker(date_str, cp, lk)
+        st = build_option_ticker(date_str, cp, sk)
+        lb = _get_option_bars(lt, date_str)
+        sb = _get_option_bars(st, date_str)
+        if not lb or not sb: return None, f"{lt}|{st}", None, None
+        le = _find_bar_at_mins(lb, entry_mins)
+        lx = _find_bar_at_mins(lb, exit_mins)
+        se = _find_bar_at_mins(sb, entry_mins)
+        sx = _find_bar_at_mins(sb, exit_mins)
+        if not all([le, lx, se, sx]): return None, f"{lt}|{st}", None, None
+        d = le['c'] - se['c']; c = lx['c'] - sx['c']
+        return round((c - d) * 100 - comm, 2), f"{lt}|{st}", f"{le['c']}/{se['c']}", f"{lx['c']}/{sx['c']}"
+
+    def credit(cp, sell_k, buy_k):
+        st = build_option_ticker(date_str, cp, sell_k)
+        lt = build_option_ticker(date_str, cp, buy_k)
+        sb = _get_option_bars(st, date_str)
+        lb = _get_option_bars(lt, date_str)
+        if not sb or not lb: return None, f"{st}|{lt}", None, None
+        se = _find_bar_at_mins(sb, entry_mins)
+        sx = _find_bar_at_mins(sb, exit_mins)
+        le = _find_bar_at_mins(lb, entry_mins)
+        lx = _find_bar_at_mins(lb, exit_mins)
+        if not all([se, sx, le, lx]): return None, f"{st}|{lt}", None, None
+        cr = se['c'] - le['c']; dc = sx['c'] - lx['c']
+        return round((cr - dc) * 100 - comm, 2), f"{st}|{lt}", f"{se['c']}/{le['c']}", f"{sx['c']}/{lx['c']}"
+
+    if struct == 'long_call': return single('C', atm)
+    elif struct == 'long_itm_call': return single('C', atm - 5)
+    elif struct == 'long_otm_call': return single('C', atm + 5)
+    elif struct == 'long_put': return single('P', atm)
+    elif struct == 'bull_call_5': return spread('C', atm, atm + 5)
+    elif struct == 'bull_call_10': return spread('C', atm, atm + 10)
+    elif struct == 'bear_put_5': return spread('P', atm, atm - 5)
+    elif struct == 'credit_call_5': return credit('C', atm + 5, atm + 10)
+    return None, None, None, None
+
+def _make_readable_ticker(ticker_str):
+    """Convert O:SPXW240115C02725000 to human-readable."""
+    parts = ticker_str.split('|')
+    months = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    readable = []
+    for p in parts:
+        p = p.strip()
+        m = re.match(r'O:SPXW(\d{6})([CP])(\d{8})', p)
+        if m:
+            dstr, cp, sk = m.groups()
+            yr, mo, dy = int(dstr[:2]), int(dstr[2:4]), int(dstr[4:6])
+            strike = int(sk) / 1000
+            cpname = 'Call' if cp == 'C' else 'Put'
+            readable.append(f"SPXW {months[mo]} {dy} '{dstr[:2]} ${strike:,.0f} {cpname}")
+        else:
+            readable.append(p)
+    return ' / '.join(readable)
+
+
+@app.route('/api/calendar_trades')
+def api_calendar_trades():
+    """Return persisted new calendar trades (added via refresh)."""
+    return jsonify(_load_calendar_trades())
+
+
+@app.route('/api/refresh_calendar', methods=['POST'])
+def api_refresh_calendar():
+    """Backfill calendar trades for new dates up to yesterday.
+
+    Fetches SPX/VIX data from Polygon, runs all 11 edge signals,
+    prices with real option bars, and persists new trades.
+    """
+    if not POLYGON_KEY:
+        return jsonify({'ok': False, 'error': 'No POLYGON_API_KEY configured'}), 500
+
+    existing_new = _load_calendar_trades()
+    existing_dates = set(t['date'] for t in existing_new)
+
+    # Read baked-in trades from the static calendar to find last known date
+    cal_path = Path(__file__).parent / 'static' / 'widened_trade_calendar.html'
+    baked_last_date = '2026-02-06'  # fallback
+    if cal_path.exists():
+        try:
+            content = cal_path.read_text()
+            import re as _re
+            m = _re.search(r'var allTrades = (\[.*?\]);', content, _re.DOTALL)
+            if m:
+                baked = json.loads(m.group(1))
+                if baked:
+                    baked_dates = sorted(set(t['date'] for t in baked))
+                    baked_last_date = baked_dates[-1]
+        except Exception:
+            pass
+
+    # Combine baked + new to find the true last date
+    all_dates = set()
+    all_dates.add(baked_last_date)
+    all_dates.update(existing_dates)
+    last_date = max(all_dates)
+
+    # Yesterday in ET
+    now_utc = datetime.now(timezone.utc)
+    m = now_utc.month
+    offset = -4 if 3 <= m <= 10 else -5
+    et_now = now_utc + timedelta(hours=offset)
+    yesterday = (et_now - timedelta(days=1)).strftime('%Y-%m-%d')
+
+    if last_date >= yesterday:
+        return jsonify({'ok': True, 'new_trades': 0, 'message': 'Already up to date',
+                        'total_new': len(existing_new)})
+
+    # Fetch SPX daily bars for the range
+    start = (datetime.strptime(last_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
+    log.info(f"Calendar refresh: scanning {start} to {yesterday}")
+
+    spx_days = _get_trading_days(start, yesterday)
+    if not spx_days:
+        return jsonify({'ok': True, 'new_trades': 0, 'message': 'No new trading days found',
+                        'total_new': len(existing_new)})
+
+    vix_data = _get_vix_daily(start, yesterday)
+
+    # Also need a lookback window for prev_day, SMA, etc.
+    lookback_start = (datetime.strptime(start, '%Y-%m-%d') - timedelta(days=60)).strftime('%Y-%m-%d')
+    lookback_end = (datetime.strptime(start, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+    lookback_bars = _get_trading_days(lookback_start, lookback_end)
+    lookback_by_date = {b['date']: b for b in lookback_bars}
+
+    # Build full date series for SMA computation
+    all_daily = {b['date']: b for b in lookback_bars}
+    for b in spx_days:
+        all_daily[b['date']] = b
+
+    new_trades = []
+    dates_to_scan = [d for d in spx_days if d['date'] not in existing_dates]
+
+    # Strat-level stats needed for grading
+    sharpe_min, sharpe_max = 0.429, 1.398
+
+    for day_bar in dates_to_scan:
+        d = day_bar['date']
+        log.info(f"  Scanning {d}...")
+
+        # Fetch 1-min bars
+        bars_1m = get_spx_bars_today(d)
+        if len(bars_1m) < 60:
+            log.info(f"    Skipping {d}: only {len(bars_1m)} bars")
+            continue
+
+        # Get VIX
+        vd = vix_data.get(d)
+        vix_open = vd['o'] if vd else 20
+
+        # Previous day
+        sorted_daily = sorted(all_daily.keys())
+        d_idx = sorted_daily.index(d) if d in sorted_daily else -1
+        prev_bar = all_daily[sorted_daily[d_idx - 1]] if d_idx > 0 else None
+        if not prev_bar:
+            log.info(f"    Skipping {d}: no prev day data")
+            continue
+
+        # SMA20
+        sma20_val = None
+        if d_idx >= 20:
+            closes = [all_daily[sorted_daily[i]]['c'] for i in range(d_idx - 20, d_idx)]
+            sma20_val = sum(closes) / 20
+
+        # Day of week
+        dow = datetime.strptime(d, '%Y-%m-%d').weekday()
+
+        # Compute features
+        gap_pct = (day_bar['o'] - prev_bar['c']) / prev_bar['c'] * 100 if prev_bar['c'] else 0
+        prev_bullish = prev_bar['c'] > prev_bar['o']
+        above_20d = day_bar['o'] > sma20_val if sma20_val else None
+
+        fb = bars_1m[0]
+        fb_ret = (fb['c'] - fb['o']) / fb['o'] * 100 if fb['o'] else 0
+        fb_bullish = fb['c'] > fb['o']
+        rng = fb['h'] - fb['l']
+        fb_body_ratio = abs(fb['c'] - fb['o']) / rng if rng > 0 else 0
+
+        morning = [b for b in bars_1m if b['mins'] < 840]
+        afternoon = [b for b in bars_1m if b['mins'] >= 840]
+
+        morn_ret = range_pos = 0
+        cfb_ret = cfb_br = 0; cfb_bull = False
+        cfb2_bull = cfb2_bear = False; cfb2_ret = 0
+
+        if len(morning) >= 5 and len(afternoon) >= 1:
+            mo = morning[0]['o']; mc = morning[-1]['c']
+            mh = max(b['h'] for b in morning); ml = min(b['l'] for b in morning)
+            mr = mh - ml
+            morn_ret = (mc - mo) / mo * 100 if mo else 0
+            range_pos = (mc - ml) / mr if mr > 0 else 0.5
+
+            cfb = afternoon[0]
+            cfb_ret = (cfb['c'] - cfb['o']) / cfb['o'] * 100 if cfb['o'] else 0
+            cfb_bull = cfb['c'] > cfb['o']
+            cfb_rng = cfb['h'] - cfb['l']
+            cfb_br = abs(cfb['c'] - cfb['o']) / cfb_rng if cfb_rng > 0 else 0
+
+        if len(afternoon) >= 2:
+            cfb2_bull = afternoon[0]['c'] > afternoon[0]['o'] and afternoon[1]['c'] > afternoon[1]['o']
+            cfb2_bear = afternoon[0]['c'] < afternoon[0]['o'] and afternoon[1]['c'] < afternoon[1]['o']
+            cfb2_ret = (afternoon[1]['c'] - afternoon[0]['o']) / afternoon[0]['o'] * 100 if afternoon[0]['o'] else 0
+
+        features = {
+            'fb_bullish': fb_bullish, 'fb_ret': fb_ret, 'fb_body_ratio': fb_body_ratio,
+            'gap_pct': gap_pct, 'prev_bullish': prev_bullish, 'above_20d': above_20d,
+            'vix': vix_open, 'dow': dow,
+            'cfb_bull': cfb_bull, 'cfb_ret': cfb_ret, 'cfb_br': cfb_br,
+            'cfb2_bull': cfb2_bull, 'cfb2_bear': cfb2_bear, 'cfb2_ret': cfb2_ret,
+            'morn_ret': morn_ret, 'range_pos': range_pos,
+        }
+
+        # Run all 11 edge signals
+        for edge in EDGES:
+            if not edge['filter'](features):
+                continue
+            if not edge['signal'](features):
+                continue
+
+            bars_for_edge = bars_1m if edge['bars_key'] == 'bars' else afternoon
+            entry_idx = edge['entry_idx']
+            if not bars_for_edge or entry_idx >= len(bars_for_edge) - 3:
+                continue
+
+            epp = dict(edge['exit'])
+            if epp.get('vix_mult'):
+                epp['_vix'] = vix_open
+
+            t = _simulate_trade_on_bars(bars_for_edge, entry_idx, edge['direction'], epp)
+            if not t:
+                continue
+
+            # Price with options
+            pnl, ticker, epx, xpx = _price_option_trade(
+                d, t['entry_mins'], t['exit_mins'],
+                t['entry_price'], edge['direction'], edge['struct']
+            )
+            if pnl is None:
+                log.info(f"    {edge['name']}: signal fired but option pricing failed")
+                continue
+
+            # Grade
+            sharpe_score = (edge['sharpe'] - sharpe_min) / (sharpe_max - sharpe_min)
+            wr_score = edge['wr']
+            vix_min_g, vix_max_g = 9, 35
+            vix_score = max(0, min(1, 1.0 - (vix_open - vix_min_g) / (vix_max_g - vix_min_g)))
+            hold_score = 0.5
+            grade = round((sharpe_score * 0.40 + wr_score * 0.25 + vix_score * 0.20 + hold_score * 0.15) * 100, 1)
+
+            # Size
+            MIN_RISK, MAX_RISK = 25000, 200000
+            norm = max(0, min(1, (grade - 30) / 60))
+            risk_budget = MIN_RISK + norm * (MAX_RISK - MIN_RISK)
+
+            entry_px = epx
+            struct = edge['struct']
+            if struct in ('bull_call_5', 'bull_call_10', 'bear_put_5'):
+                if isinstance(entry_px, str) and '/' in entry_px:
+                    prices = entry_px.split('/')
+                    net_debit = abs(float(prices[0]) - float(prices[1]))
+                else:
+                    net_debit = float(entry_px) if entry_px else 1
+                per_contract_risk = net_debit * 100
+            elif struct == 'credit_call_5':
+                if isinstance(entry_px, str) and '/' in entry_px:
+                    prices = entry_px.split('/')
+                    credit_val = float(prices[0]) - float(prices[1])
+                    per_contract_risk = 500 - credit_val * 100
+                else:
+                    per_contract_risk = 500
+            else:
+                per_contract_risk = float(entry_px) * 100 if entry_px else 100
+
+            if per_contract_risk <= 0:
+                per_contract_risk = 100
+
+            contracts = max(1, round(risk_budget / per_contract_risk))
+            actual_risk = contracts * per_contract_risk
+            sized_pnl = pnl * contracts
+            total_comm = commission_for_trade(struct, contracts)
+
+            trade_rec = {
+                'date': d,
+                'strategy': edge['name'],
+                'label': edge['id'],
+                'session': edge['session'],
+                'structure': struct,
+                'direction': 'LONG' if edge['direction'] == 1 else 'SHORT',
+                'spx_entry': t['entry_price'],
+                'spx_exit': t['exit_price'],
+                'entry_time': t['entry_time'],
+                'exit_time': t['exit_time'],
+                'hold_mins': t['hold_mins'],
+                'exit_reason': t['exit_reason'],
+                'und_pts': t['und_pts'],
+                'vix': round(vix_open, 1),
+                'opt_pnl': pnl,
+                'opt_ticker': ticker or '',
+                'opt_ticker_readable': _make_readable_ticker(ticker) if ticker else '',
+                'opt_entry_px': str(epx) if epx is not None else '',
+                'opt_exit_px': str(xpx) if xpx is not None else '',
+                'color': edge['color'],
+                'grade': grade,
+                'contracts': contracts,
+                'risk': round(actual_risk, 2),
+                'sized_pnl': round(sized_pnl, 2),
+                'commission': round(total_comm, 2),
+            }
+            new_trades.append(trade_rec)
+            log.info(f"    {edge['name']}: SIGNAL → {struct} P&L ${pnl:.0f}/lot, sized ${sized_pnl:,.0f}")
+
+    # Persist
+    all_new = existing_new + new_trades
+    _save_calendar_trades(all_new)
+
+    log.info(f"Calendar refresh complete: {len(new_trades)} new trades found, {len(all_new)} total new")
+    return jsonify({
+        'ok': True,
+        'new_trades': len(new_trades),
+        'total_new': len(all_new),
+        'trades': new_trades,
+        'message': f'Found {len(new_trades)} new trades across {len(dates_to_scan)} days'
+    })
 
 
 # ──────────────────────────────────────────────────────────────
